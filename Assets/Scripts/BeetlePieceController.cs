@@ -5,7 +5,6 @@ using UnityEngine;
 public class BeetlePieceController : MonoBehaviour, IPieceController
 {
     private PieceType _type;
-    private List<((int, int) EvenRowPositionOffset, (int, int) OddRowPositionOffset)> _oneStepPositionOffsets;
 
     void Start()
     {
@@ -52,10 +51,5 @@ public class BeetlePieceController : MonoBehaviour, IPieceController
         //}
 
         //return positions;
-    }
-
-    public void SetPositionOffsets(List<((int, int) EvenRowPositionOffset, (int, int) OddRowPositionOffset)> oneStepPositionOffsets)
-    {
-        _oneStepPositionOffsets = oneStepPositionOffsets;
     }
 }

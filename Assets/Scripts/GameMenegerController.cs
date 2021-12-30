@@ -5,7 +5,6 @@ using UnityEngine;
 public class GameMenegerController : MonoBehaviour
 {
     const int GameBoardSize = 100;
-    const float Padding = 0.4f;
 
     public GameObject WhiteHex1;
     public GameObject WhiteHex2;
@@ -49,22 +48,20 @@ public class GameMenegerController : MonoBehaviour
     private List<(int, int)> _selectedHexAvailablePositions;
     private int _selectedHexCurrentPositionIndex = -1;
 
+    private List<(int, int)> _addingHexAvailablePositions;
+    private int _addingHexCurrentPositionIndex = -1;
+
+
     // it initializes values to zeros
     private int[,] _gameBoardGrid = new int[GameBoardSize, GameBoardSize];
 
-    private List<(Vector3 Vector,
-        (int, int) EvenRowNeighbourIdxsDelta,
-        (int, int) OddRowNeighbourIdxsDelta)> _neighboursLocationParameters;
     private List<(GameObject Value, int HexId)> _whiteHexes;
     private List<(GameObject Value, int HexId)> _blackHexes;
 
 
     void Start()
     {
-        InitializeNeighboursLocationParameters();
         InitializeHexes();
-        InitializePieces();
-
         _gameBoardGrid[GameBoardSize / 2, GameBoardSize / 2] = 1;
         _whiteHexesOnBoardIds.Add(_whiteHexes[0].HexId);
     }
@@ -114,11 +111,13 @@ public class GameMenegerController : MonoBehaviour
 
     private void ProposeNextAddingPosition()
     {
+        (int, int) currentPosition = _addingHexAvailablePositions[_addingHexCurrentPositionIndex];
+        _addingHexCurrentPositionIndex = (_addingHexCurrentPositionIndex+1) % _addingHexAvailablePositions.Count;
+        (int, int) nextPosition = _addingHexAvailablePositions[_addingHexCurrentPositionIndex];
+
         HexWrapperController hexScript = getHexThatIsAddedScript();
-        //MoveHexFromTo(_selectedHex, _selectedHexAvailablePositions[_selectedHexCurrentPositionIndex], _selectedHexAvailablePositions[_selectedHexCurrentPositionIndex]);
-        hexScript.transform.position -= hexScript.availableLocationOffsetVectors[hexScript.currentOffsetVectorIndex] + 2 * Padding * hexScript.availableLocationOffsetVectors[hexScript.currentOffsetVectorIndex].normalized;
-        hexScript.currentOffsetVectorIndex = (hexScript.currentOffsetVectorIndex + 1) % hexScript.availableLocationOffsetVectors.Count;
-        hexScript.transform.position += hexScript.availableLocationOffsetVectors[hexScript.currentOffsetVectorIndex] + 2 * Padding * hexScript.availableLocationOffsetVectors[hexScript.currentOffsetVectorIndex].normalized;
+        Vector3 movementVector = PieceMovesTools.getVectorFromStartToEnd(currentPosition, nextPosition);
+        hexScript.transform.position += movementVector;
     }
 
     private HexWrapperController getHexThatIsAddedScript()
@@ -133,14 +132,10 @@ public class GameMenegerController : MonoBehaviour
         List<int> hexOnBoardIds = _isWhiteTurn ? _whiteHexesOnBoardIds : _blackHexesOnBoardIds;
 
         HexWrapperController hexScript = getHexThatIsAddedScript();
-        var hexOffsetVector = hexScript.availableLocationOffsetVectors[hexScript.currentOffsetVectorIndex];
         hexScript.isOnGameboard = true;
 
-        var offsetParameters = _neighboursLocationParameters.Find(p => p.Vector == hexOffsetVector);
-        var selectedTilePosition = GetIndiciesByHexId(_selectedHex.GetComponent<HexWrapperController>().HexId);
-        var delta = selectedTilePosition.Item1 % 2 == 1 ? offsetParameters.EvenRowNeighbourIdxsDelta : offsetParameters.OddRowNeighbourIdxsDelta;
-        var idxs = (selectedTilePosition.Item1 + delta.Item1, selectedTilePosition.Item2 + delta.Item2);
-        _gameBoardGrid[idxs.Item1, idxs.Item2] = hexScript.HexId;
+        (int, int) currentPosition = _addingHexAvailablePositions[_addingHexCurrentPositionIndex];
+        _gameBoardGrid[currentPosition.Item1, currentPosition.Item2] = hexScript.HexId;
 
         hexOnBoardIds.Add(hexScript.HexId);
         _addingHexToBoard = false;
@@ -170,20 +165,7 @@ public class GameMenegerController : MonoBehaviour
 
     private void MoveHexFromTo(GameObject selectedHex, (int, int) startPosition, (int, int) endPositon)
     {
-        Vector3 movementVector = new Vector3(0, 0, 0);
-        if ((startPosition.Item1 + endPositon.Item1) % 2 == 1)
-        {
-            var deltaPosition = startPosition.Item1 % 2 == 1 ? _neighboursLocationParameters[0].EvenRowNeighbourIdxsDelta : _neighboursLocationParameters[0].OddRowNeighbourIdxsDelta;
-            var deltaVector = _neighboursLocationParameters[0].Vector;
-            startPosition = (startPosition.Item1 + deltaPosition.Item1, startPosition.Item2 + deltaPosition.Item2);
-            movementVector += deltaVector + 2 * deltaVector.normalized * Padding;
-        }
-
-        movementVector += new Vector3(
-            (endPositon.Item2 - startPosition.Item2) * (2 + 2 * Padding),
-            0,
-            (-(endPositon.Item1 - startPosition.Item1) / 2) * (3 * 2 / Mathf.Sqrt(3) + 2 * Padding * Mathf.Sqrt(3)));
-
+        Vector3 movementVector = PieceMovesTools.getVectorFromStartToEnd(startPosition, endPositon);
         selectedHex.transform.position += movementVector;
     }
 
@@ -243,20 +225,17 @@ public class GameMenegerController : MonoBehaviour
 
     public void StartAddingHexToGameboard(GameObject selectedHex)
     {
-        var hexPosition = GetIndiciesByHexId(selectedHex.GetComponent<HexWrapperController>().HexId);
         _selectedHex = selectedHex;
-        List<(Vector3 Vector, (int, int) EvenRowNeighbourIdxsDelta, (int, int) OddRowNeighbourIdxsDelta)> availablePositionOffsetParams = GetAvailablePositionOffsetParams(hexPosition);
+        var selectedHexPosition = GetIndiciesByHexId(selectedHex.GetComponent<HexWrapperController>().HexId);
+        List<(int, int)> emptyPositionsAroundHex = PieceMovesTools.GetEmptyPositionsAroundPosition(selectedHexPosition, _gameBoardGrid);
 
-        List<Vector3> availablePositionOffsetVectors;
+        List<(GameObject Value, int HexId)> opponents = _isWhiteTurn ? _blackHexes : _whiteHexes;
+        List<(int, int)> availablePositions;
         if (_blackHexesOnBoardIds.Count > 0 && _whiteHexesOnBoardIds.Count > 0)
-        {
-            availablePositionOffsetVectors = FilterPositionsWithOpponentNeighbours(availablePositionOffsetParams, hexPosition);
-        }
+            availablePositions = PieceMovesTools.FilterPositionsWithOpponentNeighbours(emptyPositionsAroundHex, opponents, _gameBoardGrid);
         else
-        {
-            availablePositionOffsetVectors = new List<Vector3>();
-            availablePositionOffsetParams.ForEach(positionParams => availablePositionOffsetVectors.Add(positionParams.Vector));
-        }
+            availablePositions = emptyPositionsAroundHex;
+
 
         var hexes = _isWhiteTurn ? _whiteHexes : _blackHexes;
         List<int> hexOnBoardIds = _isWhiteTurn ? _whiteHexesOnBoardIds : _blackHexesOnBoardIds;
@@ -265,76 +244,19 @@ public class GameMenegerController : MonoBehaviour
 
         if (hexOnBoardIds.Count < hexes.Count)
         {
-            if (availablePositionOffsetVectors.Count != 0)
+            if (availablePositions.Count != 0)
             {
                 _addingHexToBoard = true;
 
-                availablePositionOffsetVectors.ForEach(vector => {
-                    hexScript
-                        .availableLocationOffsetVectors
-                        .Add(vector);
-                });
+                _addingHexAvailablePositions = availablePositions;
+                _addingHexCurrentPositionIndex = 0;
 
-                hexScript.transform.position = selectedHex.GetComponent<HexWrapperController>().transform.position + availablePositionOffsetVectors[0] + 2 * Padding * availablePositionOffsetVectors[0].normalized;
-                hexScript.currentOffsetVectorIndex = 0;
+                Vector3 movementVector = PieceMovesTools.getVectorFromStartToEnd(selectedHexPosition, _addingHexAvailablePositions[_addingHexCurrentPositionIndex]);
+                hexScript.transform.position = selectedHex.GetComponent<HexWrapperController>().transform.position + movementVector;
                 hexScript.gameObject.SetActive(true);
             }
 
         }
-    }
-
-    private List<(Vector3 Vector, (int, int) EvenRowNeighbourIdxsDelta, (int, int) OddRowNeighbourIdxsDelta)> GetAvailablePositionOffsetParams((int, int) startPosition)
-    {
-        List<(Vector3 Vector, (int, int) EvenRowNeighbourIdxsDelta, (int, int) OddRowNeighbourIdxsDelta)> availablePositionOffsetParams
-            = new List<(Vector3 Vector, (int, int) EvenRowNeighbourIdxsDelta, (int, int) OddRowNeighbourIdxsDelta)>();
-
-        _neighboursLocationParameters.ForEach(locationParams =>
-        {
-            (int, int) idxsDelta = startPosition.Item1 % 2 == 1 ? locationParams.EvenRowNeighbourIdxsDelta : locationParams.OddRowNeighbourIdxsDelta;
-            (int, int) nextPositionAround = (startPosition.Item1 + idxsDelta.Item1, startPosition.Item2 + idxsDelta.Item2);
-            if (_gameBoardGrid[nextPositionAround.Item1, nextPositionAround.Item2] == 0)
-                availablePositionOffsetParams.Add(locationParams);
-        });
-
-        return availablePositionOffsetParams;
-    }
-
-    private List<Vector3> FilterPositionsWithOpponentNeighbours(List<(Vector3 Vector, (int, int) EvenRowNeighbourIdxsDelta, (int, int) OddRowNeighbourIdxsDelta)> postionOffsetParams, (int, int) hexPosition)
-    {
-        List<Vector3> filteredPositionVectors = new List<Vector3>();
-        bool noOpponentNeighbour;
-
-        foreach (var offsetParameters in postionOffsetParams)
-        {
-            noOpponentNeighbour = true;
-            (int, int) offset = hexPosition.Item1 % 2 == 1 ? offsetParameters.EvenRowNeighbourIdxsDelta : offsetParameters.OddRowNeighbourIdxsDelta;
-            (int, int) position = (hexPosition.Item1 + offset.Item1, hexPosition.Item2 + offset.Item2);
-
-            foreach (var locationParams in _neighboursLocationParameters)
-            {
-                (int, int) idxsDelta = position.Item1 % 2 == 1 ? locationParams.EvenRowNeighbourIdxsDelta : locationParams.OddRowNeighbourIdxsDelta;
-                (int, int) idxs = (position.Item1 + idxsDelta.Item1, position.Item2 + idxsDelta.Item2);
-                int currentNeighbourHexId = _gameBoardGrid[idxs.Item1, idxs.Item2];
-                if (currentNeighbourHexId != 0)
-                {
-                    List<(GameObject Value, int HexId)> neighboursList = new List<(GameObject Value, int HexId)>();
-
-                    if (_isWhiteTurn)
-                        neighboursList = _blackHexes.FindAll(hex => hex.HexId == currentNeighbourHexId);
-                    else
-                        neighboursList = _whiteHexes.FindAll(hex => hex.HexId == currentNeighbourHexId);
-
-                    if (neighboursList.Count == 1)
-                    {
-                        noOpponentNeighbour = false;
-                        break;
-                    }
-                }
-            }
-            if (noOpponentNeighbour)
-                filteredPositionVectors.Add(offsetParameters.Vector);
-        }
-        return filteredPositionVectors;
     }
 
     public void HexSelected(GameObject selectedHex)
@@ -344,50 +266,6 @@ public class GameMenegerController : MonoBehaviour
             _selectedHex = selectedHex;
             _isHexSelected = true;
         }
-    }
-
-    private void InitializeNeighboursLocationParameters()
-    {
-        _neighboursLocationParameters = new List<(Vector3 Vector, (int, int) EvenRowNeighbourIdxsDelta, (int, int) OddRowNeighbourIdxsDelta)>();
-        _neighboursLocationParameters.Add(
-        (
-            Vector: new Vector3(1, 0, Mathf.Sqrt(3)),
-            EvenRowNeighbourIdxsDelta: (-1, 0),
-            OddRowNeighbourIdxsDelta: (-1, 1)
-        ));
-        _neighboursLocationParameters.Add(
-        (
-            Vector: new Vector3(2, 0, 0),
-            EvenRowNeighbourIdxsDelta: (0, 1),
-            OddRowNeighbourIdxsDelta: (0, 1)
-        ));
-        _neighboursLocationParameters.Add(
-        (
-            Vector: new Vector3(1, 0, -Mathf.Sqrt(3)),
-            EvenRowNeighbourIdxsDelta: (1, 0),
-            OddRowNeighbourIdxsDelta: (1, 1)
-
-        ));
-        _neighboursLocationParameters.Add(
-        (
-            Vector: new Vector3(-1, 0, -Mathf.Sqrt(3)),
-            EvenRowNeighbourIdxsDelta: (1, -1),
-            OddRowNeighbourIdxsDelta: (1, 0)
-
-        ));
-        _neighboursLocationParameters.Add(
-        (
-            Vector: new Vector3(-2, 0, 0),
-            EvenRowNeighbourIdxsDelta: (0, -1),
-            OddRowNeighbourIdxsDelta: (0, -1)
-        ));
-        _neighboursLocationParameters.Add(
-        (
-            Vector: new Vector3(-1, 0, Mathf.Sqrt(3)),
-            EvenRowNeighbourIdxsDelta: (-1, -1),
-            OddRowNeighbourIdxsDelta: (-1, 0)
-        ));
-
     }
 
     private void InitializeHexes()
@@ -509,26 +387,5 @@ public class GameMenegerController : MonoBehaviour
         ));
         
         _blackHexes.ForEach(hex => hex.Value.GetComponent<HexWrapperController>().HexId = hex.HexId);
-    }
-
-    private void InitializePieces()
-    {
-        List<((int, int) EvenRowPositionOffset,
-            (int, int) OddRowPositionOffset)>
-            oneStepPositionOffsets = new List<((int, int) EvenRowPositionOffset, (int, int) OddRowPositionOffset)>();
-
-        _neighboursLocationParameters.ForEach(locationParams =>
-        {
-            oneStepPositionOffsets.Add((
-                EvenRowPositionOffset: locationParams.EvenRowNeighbourIdxsDelta,
-                OddRowPositionOffset: locationParams.OddRowNeighbourIdxsDelta
-            ));
-        });
-
-        BeePiece.GetComponent<BeePieceController>().SetPositionOffsets(oneStepPositionOffsets);
-        BeetlePiece.GetComponent<BeetlePieceController>().SetPositionOffsets(oneStepPositionOffsets);
-        GrasshopperPiece.GetComponent<GrasshopperPieceController>().SetPositionOffsets(oneStepPositionOffsets);
-        SpiderPiece.GetComponent<SpiderPieceController>().SetPositionOffsets(oneStepPositionOffsets);
-        AntPiece.GetComponent<AntPieceController>().SetPositionOffsets(oneStepPositionOffsets);
     }
 }

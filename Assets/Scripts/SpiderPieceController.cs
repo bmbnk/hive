@@ -6,7 +6,6 @@ using UnityEngine;
 public class SpiderPieceController : MonoBehaviour, IPieceController
 {
     private PieceType _type;
-    private List<((int, int) EvenRowPositionOffset, (int, int) OddRowPositionOffset)> _oneStepPositionOffsets;
 
     void Start()
     {
@@ -27,7 +26,7 @@ public class SpiderPieceController : MonoBehaviour, IPieceController
     private List<(int, int)> getMovePositions(int[,] gameBoard, (int, int) hexPosition)
     {
         List<(int, int)> positions = new List<(int, int)>();
-        List<(int, int)> neighbours = PieceMovesTools.getNeighbours(hexPosition, gameBoard, _oneStepPositionOffsets);
+        List<(int, int)> neighbours = PieceMovesTools.getNeighbours(hexPosition, gameBoard);
 
         neighbours.ForEach(neighbour => {
             positions.Add(getMovePositionFromNeighbour(hexPosition, neighbour, gameBoard, true));
@@ -54,9 +53,9 @@ public class SpiderPieceController : MonoBehaviour, IPieceController
 
         for (int i = 0; i < 3; i++)
         {
-            neighbours = PieceMovesTools.getNeighbours(movePosition, gameBoard, _oneStepPositionOffsets, !clockwise);
-            notAllowedPositions = PieceMovesTools.getNotAllowedNextPositions(neighbours, movePosition, _oneStepPositionOffsets);
-            (int, int) nextPosition = PieceMovesTools.nextPositionAroundHex(movePosition, lastPivotNeighbour, gameBoard, _oneStepPositionOffsets, clockwise);
+            neighbours = PieceMovesTools.getNeighbours(movePosition, gameBoard, !clockwise);
+            notAllowedPositions = PieceMovesTools.getNotAllowedNextPositions(neighbours, movePosition);
+            (int, int) nextPosition = PieceMovesTools.nextPositionAroundHex(movePosition, lastPivotNeighbour, gameBoard, clockwise);
             if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
             {
                 movePosition = nextPosition;
@@ -68,7 +67,7 @@ public class SpiderPieceController : MonoBehaviour, IPieceController
                 for (int j = 1; j < neighbours.Count; j++)
                 {
                     (int, int) nextNeighbour = neighbours[(lastPivotNeighbourIdx + j) % neighbours.Count];
-                    nextPosition = PieceMovesTools.nextPositionAroundHex(movePosition, nextNeighbour, gameBoard, _oneStepPositionOffsets, clockwise);
+                    nextPosition = PieceMovesTools.nextPositionAroundHex(movePosition, nextNeighbour, gameBoard, clockwise);
                     if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
                     {
                         movePosition = nextPosition;
@@ -87,10 +86,5 @@ public class SpiderPieceController : MonoBehaviour, IPieceController
         int[,] gameBoard = (int[,])originalGameBoard.Clone();
         gameBoard[hexPosition.Item1, hexPosition.Item2] = 0;
         return gameBoard;
-    }
-
-    public void SetPositionOffsets(List<((int, int) EvenRowPositionOffset, (int, int) OddRowPositionOffset)> oneStepPositionOffsets)
-    {
-        _oneStepPositionOffsets = oneStepPositionOffsets;
     }
 }

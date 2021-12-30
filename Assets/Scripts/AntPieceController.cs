@@ -5,7 +5,6 @@ using UnityEngine;
 public class AntPieceController : MonoBehaviour, IPieceController
 {
     private PieceType _type;
-    private List<((int, int) EvenRowPositionOffset, (int, int) OddRowPositionOffset)> _oneStepPositionOffsets;
 
     void Start()
     {
@@ -45,17 +44,16 @@ public class AntPieceController : MonoBehaviour, IPieceController
         (int, int) lastPivotNeighbour;
         List<(int, int)> notAllowedPositions;
 
-        List<(int, int)> neighbours = PieceMovesTools.getNeighbours(positions.Last(), gameBoard,
-            _oneStepPositionOffsets, false);
+        List<(int, int)> neighbours = PieceMovesTools.getNeighbours(positions.Last(), gameBoard, false);
         lastPivotNeighbour = neighbours[0];
 
         while (nextPositionFound)
         {
             nextPositionFound = false;
 
-            neighbours = PieceMovesTools.getNeighbours(positions.Last(), gameBoard, _oneStepPositionOffsets, false);
-            notAllowedPositions = PieceMovesTools.getNotAllowedNextPositions(neighbours, positions.Last(), _oneStepPositionOffsets);
-            (int, int) nextPosition = PieceMovesTools.nextPositionAroundHex(positions.Last(), lastPivotNeighbour, gameBoard, _oneStepPositionOffsets);
+            neighbours = PieceMovesTools.getNeighbours(positions.Last(), gameBoard, false);
+            notAllowedPositions = PieceMovesTools.getNotAllowedNextPositions(neighbours, positions.Last());
+            (int, int) nextPosition = PieceMovesTools.nextPositionAroundHex(positions.Last(), lastPivotNeighbour, gameBoard);
             if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
             {
                 positions.Add(nextPosition);
@@ -67,7 +65,7 @@ public class AntPieceController : MonoBehaviour, IPieceController
                 for (int i = 1; i < neighbours.Count; i++)
                 {
                     (int, int) nextNeighbour = neighbours[(lastPivotNeighbourIdx + i) % neighbours.Count];
-                    nextPosition = PieceMovesTools.nextPositionAroundHex(positions.Last(), nextNeighbour, gameBoard, _oneStepPositionOffsets);
+                    nextPosition = PieceMovesTools.nextPositionAroundHex(positions.Last(), nextNeighbour, gameBoard);
                     if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
                     {
                         positions.Add(nextPosition);
@@ -109,10 +107,5 @@ public class AntPieceController : MonoBehaviour, IPieceController
             }
         }
         return false;
-    }
-
-    public void SetPositionOffsets(List<((int, int) EvenRowPositionOffset, (int, int) OddRowPositionOffset)> oneStepPositionOffsets)
-    {
-        _oneStepPositionOffsets = oneStepPositionOffsets;
     }
 }
