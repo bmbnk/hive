@@ -79,7 +79,7 @@ public class GameMenegerController : MonoBehaviour
             }
             else if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                AddHexToGameboard();
+                ConfirmHexOnGameboard();
             }
         } else if (_movingHexOnBoard)
         {
@@ -114,21 +114,25 @@ public class GameMenegerController : MonoBehaviour
 
     private void ProposeNextAddingPosition()
     {
-        var hexes = _isWhiteTurn ? _whiteHexes : _blackHexes;
-        List<int> hexOnBoardIds = _isWhiteTurn ? _whiteHexesOnBoardIds : _blackHexesOnBoardIds;
-        var hexScript = hexes[hexOnBoardIds.Count].Value.GetComponent<HexWrapperController>();
+        HexWrapperController hexScript = getHexThatIsAddedScript();
         //MoveHexFromTo(_selectedHex, _selectedHexAvailablePositions[_selectedHexCurrentPositionIndex], _selectedHexAvailablePositions[_selectedHexCurrentPositionIndex]);
         hexScript.transform.position -= hexScript.availableLocationOffsetVectors[hexScript.currentOffsetVectorIndex] + 2 * Padding * hexScript.availableLocationOffsetVectors[hexScript.currentOffsetVectorIndex].normalized;
         hexScript.currentOffsetVectorIndex = (hexScript.currentOffsetVectorIndex + 1) % hexScript.availableLocationOffsetVectors.Count;
         hexScript.transform.position += hexScript.availableLocationOffsetVectors[hexScript.currentOffsetVectorIndex] + 2 * Padding * hexScript.availableLocationOffsetVectors[hexScript.currentOffsetVectorIndex].normalized;
     }
 
-    private void AddHexToGameboard()
+    private HexWrapperController getHexThatIsAddedScript()
     {
         var hexes = _isWhiteTurn ? _whiteHexes : _blackHexes;
         List<int> hexOnBoardIds = _isWhiteTurn ? _whiteHexesOnBoardIds : _blackHexesOnBoardIds;
+        return hexes[hexOnBoardIds.Count].Value.GetComponent<HexWrapperController>();
+    }
 
-        var hexScript = hexes[hexOnBoardIds.Count].Value.GetComponent<HexWrapperController>();
+    private void ConfirmHexOnGameboard()
+    {
+        List<int> hexOnBoardIds = _isWhiteTurn ? _whiteHexesOnBoardIds : _blackHexesOnBoardIds;
+
+        HexWrapperController hexScript = getHexThatIsAddedScript();
         var hexOffsetVector = hexScript.availableLocationOffsetVectors[hexScript.currentOffsetVectorIndex];
         hexScript.isOnGameboard = true;
 
@@ -256,6 +260,8 @@ public class GameMenegerController : MonoBehaviour
 
         var hexes = _isWhiteTurn ? _whiteHexes : _blackHexes;
         List<int> hexOnBoardIds = _isWhiteTurn ? _whiteHexesOnBoardIds : _blackHexesOnBoardIds;
+        HexWrapperController hexScript = getHexThatIsAddedScript();
+
 
         if (hexOnBoardIds.Count < hexes.Count)
         {
@@ -264,22 +270,14 @@ public class GameMenegerController : MonoBehaviour
                 _addingHexToBoard = true;
 
                 availablePositionOffsetVectors.ForEach(vector => {
-                    hexes[hexOnBoardIds.Count]
-                        .Value
-                        .GetComponent<HexWrapperController>()
+                    hexScript
                         .availableLocationOffsetVectors
                         .Add(vector);
                 });
 
-                hexes[hexOnBoardIds.Count].Value.transform.position = selectedHex.GetComponent<HexWrapperController>().transform.position + availablePositionOffsetVectors[0] + 2 * Padding * availablePositionOffsetVectors[0].normalized;
-
-                hexes[hexOnBoardIds.Count]
-                    .Value
-                    .GetComponent<HexWrapperController>()
-                    .currentOffsetVectorIndex = 0;
-
-                hexes[hexOnBoardIds.Count].Value.SetActive(true);
-
+                hexScript.transform.position = selectedHex.GetComponent<HexWrapperController>().transform.position + availablePositionOffsetVectors[0] + 2 * Padding * availablePositionOffsetVectors[0].normalized;
+                hexScript.currentOffsetVectorIndex = 0;
+                hexScript.gameObject.SetActive(true);
             }
 
         }
