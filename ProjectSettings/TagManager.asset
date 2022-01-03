@@ -3,7 +3,32 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - WhiteHex1
+  - WhiteHex2
+  - WhiteHex3
+  - WhiteHex4
+  - WhiteHex5
+  - WhiteHex6
+  - WhiteHex7
+  - WhiteHex8
+  - WhiteHex9
+  - WhiteHex10
+  - WhiteHex11
+  - BlackHex1
+  - BlackHex2
+  - BlackHex3
+  - BlackHex4
+  - BlackHex5
+  - BlackHex6
+  - BlackHex7
+  - BlackHex8
+  - BlackHex9
+  - BlackHex10
+  - BlackHex11
+  - Hexes
+  - HexesStore
+  - HexesManager
   layers:
   - Default
   - TransparentFX

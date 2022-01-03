@@ -208,7 +208,7 @@ public static class PieceMovesTools
         return emptyPositionsAroundPosition;
     }
 
-    public static List<(int, int)> FilterPositionsWithOpponentNeighbours(List<(int, int)> postions, List<(GameObject Value, int HexId)> opponents, int[,] gameBoard)
+    public static List<(int, int)> FilterPositionsWithOpponentNeighbours(List<(int, int)> postions, List<GameObject> opponents, int[,] gameBoard)
     {
         List<(int, int)> filteredPositions = new List<(int, int)>();
         bool noOpponentNeighbour;
@@ -226,9 +226,9 @@ public static class PieceMovesTools
 
                 if (currentNeighbourHexId != 0)
                 {
-                    int opponentNeighbourIdx = opponents.FindIndex(hex => hex.HexId == currentNeighbourHexId);
+                    int opponentNeighbourIdx = opponents.FindIndex(hex => hex.GetComponent<HexWrapperController>().HexId == currentNeighbourHexId);
 
-                    if (opponentNeighbourIdx != -1 && opponents[opponentNeighbourIdx].Value.activeSelf)
+                    if (opponentNeighbourIdx != -1 && opponents[opponentNeighbourIdx].activeSelf)
                     {
                         noOpponentNeighbour = false;
                         break;
