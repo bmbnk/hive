@@ -29,6 +29,7 @@ TagManager:
   - Hexes
   - HexesStore
   - HexesManager
+  - GameBoard
   layers:
   - Default
   - TransparentFX

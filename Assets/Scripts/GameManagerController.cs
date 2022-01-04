@@ -2,15 +2,20 @@ using UnityEngine;
 
 public class GameManagerController : MonoBehaviour
 {
+    private GameBoardScript _gameBoard;
+    private HexesManagerController _hexesMeneger;
+
     private bool _addingHexToBoard = false;
     private bool _movingHexOnBoard = false;
     private bool _isWhiteTurn = false;
     private bool _isHexSelected = false;
 
-    private HexesManagerController _hexesMeneger;
 
     void Start()
     {
+        GameObject gameBoardGameobject = GameObject.FindWithTag("GameBoard");
+        _gameBoard = gameBoardGameobject.GetComponent<GameBoardScript>();
+
         GameObject hexesMenegerGameobject = GameObject.FindWithTag("HexesManager");
         _hexesMeneger = hexesMenegerGameobject.GetComponent<HexesManagerController>();
     }
