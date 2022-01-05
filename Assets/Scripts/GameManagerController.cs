@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class GameManagerController : MonoBehaviour
 {
-    private GameBoardScript _gameBoard;
     private HexesManagerController _hexesMeneger;
 
     private bool _addingHexToBoard = false;
@@ -13,9 +12,6 @@ public class GameManagerController : MonoBehaviour
 
     void Start()
     {
-        GameObject gameBoardGameobject = GameObject.FindWithTag("GameBoard");
-        _gameBoard = gameBoardGameobject.GetComponent<GameBoardScript>();
-
         GameObject hexesMenegerGameobject = GameObject.FindWithTag("HexesManager");
         _hexesMeneger = hexesMenegerGameobject.GetComponent<HexesManagerController>();
     }

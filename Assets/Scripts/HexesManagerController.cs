@@ -230,6 +230,15 @@ public class HexesManagerController : MonoBehaviour
         return false;
     }
 
+    private bool IsGameOver()
+    {
+        bool white = true;
+
+        if (IsBeeFullySurrounded(white) || IsBeeFullySurrounded(!white))
+            return true;
+        return false;
+    }
+
     private bool IsBeeOnGameboardRuleBroken(HexWrapperController hexToAdd) //If it is fourth move of the player and the bee piece is not on the table than the rule is broken
     {
         var hexesOnBoardIds = hexToAdd.isWhite ? _hexesStore.blackHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
@@ -246,14 +255,6 @@ public class HexesManagerController : MonoBehaviour
         return true;
     }
 
-    private bool IsGameOver()
-    {
-        bool white = true;
-
-        if (IsBeeFullySurrounded(white) || IsBeeFullySurrounded(!white))
-            return true;
-        return false;
-    }
 
     private bool IsBeeFullySurrounded(bool whiteBee)
     {
