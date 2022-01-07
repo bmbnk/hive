@@ -15,8 +15,8 @@ public class BeePieceController : MonoBehaviour, IPieceController
     public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] gameBoard)
     {
         List<(int, int)> positions = PieceMovesTools.GetPositionsWithNeighboursAroundPosition(hexPosition, gameBoard);
-        List<(int, int)> neighbours = PieceMovesTools.getNeighbours(hexPosition, gameBoard);
-        List<(int, int)> notAllowedPositions = PieceMovesTools.getNotAllowedNextPositions(neighbours, hexPosition);
+        List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(hexPosition, gameBoard);
+        List<(int, int)> notAllowedPositions = PieceMovesTools.GetNotAllowedNextPositions(neighbours, hexPosition);
 
         notAllowedPositions.ForEach(notAllowedPosition =>
         {

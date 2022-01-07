@@ -44,16 +44,16 @@ public class AntPieceController : MonoBehaviour, IPieceController
         (int, int) lastPivotNeighbour;
         List<(int, int)> notAllowedPositions;
 
-        List<(int, int)> neighbours = PieceMovesTools.getNeighbours(positions.Last(), gameBoard, false);
+        List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(positions.Last(), gameBoard, false);
         lastPivotNeighbour = neighbours[0];
 
         while (nextPositionFound)
         {
             nextPositionFound = false;
 
-            neighbours = PieceMovesTools.getNeighbours(positions.Last(), gameBoard, false);
-            notAllowedPositions = PieceMovesTools.getNotAllowedNextPositions(neighbours, positions.Last());
-            (int, int) nextPosition = PieceMovesTools.nextPositionAroundHex(positions.Last(), lastPivotNeighbour, gameBoard);
+            neighbours = PieceMovesTools.GetNeighbours(positions.Last(), gameBoard, false);
+            notAllowedPositions = PieceMovesTools.GetNotAllowedNextPositions(neighbours, positions.Last());
+            (int, int) nextPosition = PieceMovesTools.NextPositionAroundHex(positions.Last(), lastPivotNeighbour, gameBoard);
             if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
             {
                 positions.Add(nextPosition);
@@ -65,7 +65,7 @@ public class AntPieceController : MonoBehaviour, IPieceController
                 for (int i = 1; i < neighbours.Count; i++)
                 {
                     (int, int) nextNeighbour = neighbours[(lastPivotNeighbourIdx + i) % neighbours.Count];
-                    nextPosition = PieceMovesTools.nextPositionAroundHex(positions.Last(), nextNeighbour, gameBoard);
+                    nextPosition = PieceMovesTools.NextPositionAroundHex(positions.Last(), nextNeighbour, gameBoard);
                     if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
                     {
                         positions.Add(nextPosition);

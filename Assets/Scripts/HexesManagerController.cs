@@ -195,7 +195,7 @@ public class HexesManagerController : MonoBehaviour
 
         positions.ForEach(position =>
         {
-            Vector3 vectorPosition= PieceMovesTools.getVectorFromStartToEnd(centerPosition, position);
+            Vector3 vectorPosition= PieceMovesTools.GetVectorFromStartToEnd(centerPosition, position);
             GameObject proposition = Instantiate(HexPrefeab, vectorPosition, new Quaternion(0,0,0,0));
             var propositionScript = proposition.GetComponent<HexWrapperController>();
             GameObject gameManager = GameObject.FindWithTag("GameManager");
@@ -311,7 +311,7 @@ public class HexesManagerController : MonoBehaviour
         {
             int beeHexId = GetFirstFoundPieceId(whiteBee, PieceType.BEE);
             (int, int) beePosition = PieceMovesTools.GetIndiciesByHexId(beeHexId, _gameBoard.gameBoard);
-            if (PieceMovesTools.getNeighbours(beePosition, _gameBoard.gameBoard).Count == 6)
+            if (PieceMovesTools.GetNeighbours(beePosition, _gameBoard.gameBoard).Count == 6)
                 return true;
         }
         return false;

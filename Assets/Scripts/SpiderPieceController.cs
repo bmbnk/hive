@@ -26,7 +26,7 @@ public class SpiderPieceController : MonoBehaviour, IPieceController
     private List<(int, int)> getMovePositions(int[,] gameBoard, (int, int) hexPosition)
     {
         List<(int, int)> positions = new List<(int, int)>();
-        List<(int, int)> neighbours = PieceMovesTools.getNeighbours(hexPosition, gameBoard);
+        List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(hexPosition, gameBoard);
 
         neighbours.ForEach(neighbour => {
             positions.Add(getMovePositionFromNeighbour(hexPosition, neighbour, gameBoard, true));
@@ -53,9 +53,9 @@ public class SpiderPieceController : MonoBehaviour, IPieceController
 
         for (int i = 0; i < 3; i++)
         {
-            neighbours = PieceMovesTools.getNeighbours(movePosition, gameBoard, !clockwise);
-            notAllowedPositions = PieceMovesTools.getNotAllowedNextPositions(neighbours, movePosition);
-            (int, int) nextPosition = PieceMovesTools.nextPositionAroundHex(movePosition, lastPivotNeighbour, gameBoard, clockwise);
+            neighbours = PieceMovesTools.GetNeighbours(movePosition, gameBoard, !clockwise);
+            notAllowedPositions = PieceMovesTools.GetNotAllowedNextPositions(neighbours, movePosition);
+            (int, int) nextPosition = PieceMovesTools.NextPositionAroundHex(movePosition, lastPivotNeighbour, gameBoard, clockwise);
             if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
             {
                 movePosition = nextPosition;
@@ -67,7 +67,7 @@ public class SpiderPieceController : MonoBehaviour, IPieceController
                 for (int j = 1; j < neighbours.Count; j++)
                 {
                     (int, int) nextNeighbour = neighbours[(lastPivotNeighbourIdx + j) % neighbours.Count];
-                    nextPosition = PieceMovesTools.nextPositionAroundHex(movePosition, nextNeighbour, gameBoard, clockwise);
+                    nextPosition = PieceMovesTools.NextPositionAroundHex(movePosition, nextNeighbour, gameBoard, clockwise);
                     if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
                     {
                         movePosition = nextPosition;
