@@ -30,6 +30,13 @@ TagManager:
   - HexesStore
   - HexesManager
   - GameBoard
+  - GameManager
+  - UI
+  - AntCounter
+  - GrasshopperCounter
+  - SpiderCounter
+  - BeetleCounter
+  - BeeCounter
   layers:
   - Default
   - TransparentFX

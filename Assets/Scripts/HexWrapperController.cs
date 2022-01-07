@@ -8,4 +8,5 @@ public class HexWrapperController : MonoBehaviour
     public bool isOnGameboard = false;
     public GameObject piece;
     public bool isWhite;
+    public (int, int) positionOnBoard;
 }

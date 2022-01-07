@@ -3,78 +3,97 @@ using UnityEngine;
 public class GameManagerController : MonoBehaviour
 {
     private HexesManagerController _hexesMeneger;
+    private UIController _ui;
 
     private bool _addingHexToBoard = false;
     private bool _movingHexOnBoard = false;
-    private bool _isWhiteTurn = false;
-    private bool _isHexSelected = false;
+    private bool _isWhiteTurn = true;
+    private PieceType _lastSelectedTileType;
 
 
     void Start()
     {
         GameObject hexesMenegerGameobject = GameObject.FindWithTag("HexesManager");
         _hexesMeneger = hexesMenegerGameobject.GetComponent<HexesManagerController>();
+
+        GameObject uiGameobject = GameObject.FindWithTag("UI");
+        _ui = uiGameobject.GetComponent<UIController>();
     }
 
-    void Update()
-    {   
-        if (_addingHexToBoard)
+    public void TileSelected(PieceType type, bool white)
+    {
+        if (white == _isWhiteTurn)
         {
-            if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                _hexesMeneger.ProposeNextAddingPosition();
-            }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                ConfirmAddedHexOnGameboard();
-            }
-        } else if (_movingHexOnBoard)
+            _lastSelectedTileType = type;
+            StartAddingHex(type, white);
+        }
+    }
+
+    private void StartAddingHex(PieceType type, bool white)
+    {
+        bool isItFirstMove = _hexesMeneger.IsItFirstMove();
+
+        if (_hexesMeneger.PrepareHexToAddToBoard(type, white))
         {
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            _movingHexOnBoard = false;
+            _addingHexToBoard = true;
+            if (isItFirstMove)
             {
-                _hexesMeneger.ProposeNextMovePosition(); ;
-            }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                ConfirmMovingHexOnGameboard();
-            }
-        } else if (_isHexSelected)
-        {
-            if (_hexesMeneger.CanMakeActionFromSelectedHex(_isWhiteTurn))
-            {
-                if (Input.GetKeyDown(KeyCode.LeftArrow))
-                {
-                    if (_hexesMeneger.CanSelectedHexMove(_isWhiteTurn) && _hexesMeneger.StartMovingSelectedHex())
-                        _movingHexOnBoard = true;
-                }
-                else if (Input.GetKeyDown(KeyCode.RightArrow))
-                    _addingHexToBoard = _hexesMeneger.StartAddingHexToGameboard(_isWhiteTurn);
+                _isWhiteTurn = !_isWhiteTurn;
+                _addingHexToBoard = false;
+                UpdateTileCounterLabel(type, white);
             }
         }
     }
 
-    private void ConfirmMovingHexOnGameboard()
+    private void UpdateTileCounterLabel(PieceType type, bool white)
     {
-        _hexesMeneger.ConfirmMovingHexOnGameboard();
-        _movingHexOnBoard = false;
-        _isWhiteTurn = !_isWhiteTurn;
-        _isHexSelected = false;
-    }
-
-    private void ConfirmAddedHexOnGameboard()
-    {
-        _hexesMeneger.ConfirmAddedHexOnGameboard();
-        _addingHexToBoard = false;
-        _isWhiteTurn = !_isWhiteTurn;
-        _isHexSelected = false;
+        int count = _hexesMeneger.GetRemainingHexCount(type, white);
+        _ui.UpdateLabel(type, white, count);
     }
 
     public void HexSelected(GameObject selectedHex)
     {
-        if (!_movingHexOnBoard && !_addingHexToBoard)
+        if (_hexesMeneger.IsItPropositionHex(selectedHex))
         {
-            _hexesMeneger.PrepareSelectedHex(selectedHex);
-            _isHexSelected = true;
+            if (_addingHexToBoard)
+            {
+                ConfirmAddedHexOnGameboard(selectedHex);
+            } else if (_movingHexOnBoard)
+            {
+                ConfirmMovingHexOnGameboard(selectedHex);
+            }
+        } else if (_hexesMeneger.IsItCurrentPlayerHex(selectedHex, _isWhiteTurn))
+        {
+            StartMovingHex(selectedHex);
+        }
+    }
+
+    private void ConfirmAddedHexOnGameboard(GameObject selectedHex)
+    {
+        if (_hexesMeneger.ConfirmAddedHexOnGameboard(selectedHex))
+        {
+            UpdateTileCounterLabel(_lastSelectedTileType, _isWhiteTurn);
+            _addingHexToBoard = false;
+            _isWhiteTurn = !_isWhiteTurn;
+        }
+    }
+
+    private void ConfirmMovingHexOnGameboard(GameObject selectedHex)
+    {
+        if (_hexesMeneger.ConfirmMovingHexOnGameboard(selectedHex))
+        {
+            _movingHexOnBoard = false;
+            _isWhiteTurn = !_isWhiteTurn;
+        }
+    }
+
+    private void StartMovingHex(GameObject selectedHex)
+    {
+        if (_hexesMeneger.PrepareSelectedHexToMove(selectedHex))
+        {
+            _movingHexOnBoard = true;
+            _addingHexToBoard = false;
         }
     }
 }

@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class HexesManagerController : MonoBehaviour
 {
+    public GameObject HexPrefeab;
     private GameBoardScript _gameBoard;
     private HexesStoreScript _hexesStore;
 
@@ -16,27 +18,16 @@ public class HexesManagerController : MonoBehaviour
         _hexesStore = hexesStoreGameObject.GetComponent<HexesStoreScript>();
 
         _hexesStore.InitializeHexes();
-
-        PrepareHexToAddToBoard(true);
-        HexWrapperController firstHex = GetHexThatIsAdded();
-        _hexesStore.whiteHexesOnBoardIds.Add(firstHex.HexId);
-        _gameBoard.gameBoard[GameBoardScript.GameBoardSize / 2, GameBoardScript.GameBoardSize / 2] = firstHex.HexId;
     }
-
-    void Update()
-    {
-
-    }
-
 
     public bool CanMakeActionFromSelectedHex(bool isWhiteTurn)
     {
-        return GetSelectedHex().isWhite == isWhiteTurn || !FirstMovesWereMade();
+        return GetHexToMoveScript().isWhite == isWhiteTurn || !FirstMovesWereMade();
     }
 
-    private HexWrapperController GetSelectedHex()
+    private HexWrapperController GetHexToMoveScript()
     {
-        return _hexesStore.selectedHex.GetComponent<HexWrapperController>();
+        return _hexesStore.hexToMove.GetComponent<HexWrapperController>();
     }
 
     private bool FirstMovesWereMade()
@@ -49,180 +40,238 @@ public class HexesManagerController : MonoBehaviour
         return CanMakeActionFromSelectedHex(isWhiteTurn) || _hexesStore.blackHexesOnBoardIds.Count > 0;
     }
 
-    public void ConfirmAddedHexOnGameboard()
+    public bool ConfirmAddedHexOnGameboard(GameObject selectedHex)
     {
-        HexWrapperController hex = GetHexThatIsAdded();
-        List<int> hexesOnBoardIds = hex.isWhite ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
+        HexWrapperController selectedHexScript = selectedHex.GetComponent<HexWrapperController>();
+        if (selectedHexScript.HexId == 0)
+        {
+            HexWrapperController hexToAddScript = GetHexThatIsAddedScript();
+            List<int> hexesOnBoardIds = hexToAddScript.isWhite ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
 
-        hex.isOnGameboard = true;
-        hexesOnBoardIds.Add(hex.HexId);
+            hexToAddScript.isOnGameboard = true;
+            hexesOnBoardIds.Add(hexToAddScript.HexId);
 
-        (int, int) currentPosition = GetCurrentAddingPosition();
-        _gameBoard.gameBoard[currentPosition.Item1, currentPosition.Item2] = hex.HexId;
+            hexToAddScript.transform.position = selectedHexScript.transform.position;
+            hexToAddScript.positionOnBoard = selectedHexScript.positionOnBoard;
+            hexToAddScript.isOnGameboard = true;
+            _hexesStore.hexToAdd.SetActive(true);
+            (int, int) addedHexPosition = hexToAddScript.positionOnBoard;
+            _gameBoard.gameBoard[addedHexPosition.Item1, addedHexPosition.Item2] = hexToAddScript.HexId;
 
-        _hexesStore.hexToAdd = null;
+            ResetHexToAdd();
+            return true;
+        }
+        return false;
     }
 
-    private HexWrapperController GetHexThatIsAdded()
+    public int GetRemainingHexCount(PieceType pieceType, bool white)
+    {
+        var hexes = white ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
+        var hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
+        int counter = 0;
+
+        hexes.ForEach(hex =>
+        {
+            var hexScript = hex.GetComponent<HexWrapperController>();
+            if (hexScript.piece.GetComponent<IPieceController>().GetPieceType() == pieceType && !hexesOnBoardIds.Contains(hexScript.HexId))
+                counter++;
+        });
+
+        return counter;
+    }
+
+    private HexWrapperController GetHexThatIsAddedScript()
     {
         return _hexesStore.hexToAdd.GetComponent<HexWrapperController>();
     }
 
-    private (int, int) GetCurrentAddingPosition()
+    public bool IsItCurrentPlayerHex(GameObject selectedHex, bool isWhiteTurn)
     {
-        return _hexesStore.addingHexAvailablePositions[_hexesStore.addingHexCurrentPositionIndex];
+        return !IsItPropositionHex(selectedHex) && selectedHex.GetComponent<HexWrapperController>().isWhite == isWhiteTurn;
     }
 
-    public void ConfirmMovingHexOnGameboard()
+    public bool IsItPropositionHex(GameObject selectedHex)
     {
-        HexWrapperController selectedHex = GetSelectedHex();
-
-        (int, int) selectedHexConfirmedPosition = GetIndiciesByHexId(selectedHex.HexId);
-        _gameBoard.gameBoard[selectedHexConfirmedPosition.Item1, selectedHexConfirmedPosition.Item2] = 0;
-
-        (int, int) hexCurrentPosition = GetCurrentSelectedHexMovePosition();
-        _gameBoard.gameBoard[hexCurrentPosition.Item1, hexCurrentPosition.Item2] = selectedHex.HexId;
-        SetSelectedHex(null, null);
+        return selectedHex.GetComponent<HexWrapperController>().HexId == 0;
     }
 
-    private (int, int) GetIndiciesByHexId(int HexId)
+    public bool IsItFirstMove()
     {
-        for (int i = 0; i < GameBoardScript.GameBoardSize; i++)
-            for (int j = 0; j < GameBoardScript.GameBoardSize; j++)
-                if (_gameBoard.gameBoard[i, j] == HexId)
-                    return (i, j);
-
-        return (-1, -1);
+        return _hexesStore.blackHexesOnBoardIds.Count == 0 && _hexesStore.whiteHexesOnBoardIds.Count == 0;
     }
 
-    private (int, int) GetCurrentSelectedHexMovePosition()
+    private void ResetHexToAdd()
     {
-        return _hexesStore.selectedHexAvailablePositions[_hexesStore.selectedHexCurrentPositionIndex];
-    }
-
-    private void SetSelectedHex(GameObject selectedHex, List<(int, int)> availablePositions)
-    {
-        _hexesStore.selectedHex = selectedHex;
-        _hexesStore.selectedHexAvailablePositions = availablePositions;
-        _hexesStore.selectedHexCurrentPositionIndex = 0;
-    }
-
-    public void PrepareSelectedHex(GameObject selectedHex)
-    {
-        var hexWrapperScript = selectedHex.GetComponent<HexWrapperController>();
-        List<(int, int)> availableMovePositions = hexWrapperScript
-            .piece
-            .GetComponent<IPieceController>()
-            .GetPieceSpecificPositions(GetIndiciesByHexId(hexWrapperScript.HexId), _gameBoard.gameBoard);
-
-        availableMovePositions.Add(GetIndiciesByHexId(hexWrapperScript.HexId));
-        availableMovePositions.Reverse();
-
-        SetSelectedHex(selectedHex, availableMovePositions);
-    }
-
-
-    public void ProposeNextAddingPosition()
-    {
-        (int, int) currentPosition = GetCurrentAddingPosition();
-        ChangeCurrentAddingPositionToNext();
-        (int, int) nextPosition = GetCurrentAddingPosition();
-
-        HexWrapperController hexToAdd = GetHexThatIsAdded();
-
-        MoveHexFromTo(hexToAdd, currentPosition, nextPosition);
-    }
-
-    private void ChangeCurrentAddingPositionToNext()
-    {
-        _hexesStore.addingHexCurrentPositionIndex = (_hexesStore.addingHexCurrentPositionIndex + 1) % _hexesStore.addingHexAvailablePositions.Count;
-    }
-
-    private void MoveHexFromTo(HexWrapperController selectedHex, (int, int) startPosition, (int, int) endPositon)
-    {
-        Vector3 movementVector = PieceMovesTools.getVectorFromStartToEnd(startPosition, endPositon);
-        selectedHex.transform.position += movementVector;
-    }
-
-    public bool ProposeNextMovePosition()
-    {
-        (int, int) startPosition = GetCurrentSelectedHexMovePosition();
-        (int, int) endPosition = ProposeSelectedHexNextMovePosition();
-        if (startPosition != endPosition) //sprawdz jeszcze !IsOneHiveRuleBroken(GetSelectedHex())
+        if (_hexesStore.hexPropositionsToAdd != null)
         {
-            HexWrapperController selectedHex = GetSelectedHex();
-            MoveHexFromTo(selectedHex, startPosition, endPosition);
+            for (int i = _hexesStore.hexPropositionsToAdd.Count - 1; i >= 0; i--)
+            {
+                Destroy(_hexesStore.hexPropositionsToAdd[i]);
+            }
+        }
+        SetHexToAdd(null, null);
+    }
+
+    private void SetHexToAdd(GameObject hexToAdd, List<GameObject> hexPropositionsToAdd)
+    {
+        _hexesStore.hexToAdd = hexToAdd;
+        _hexesStore.hexPropositionsToAdd = hexPropositionsToAdd; 
+    }
+
+    public bool ConfirmMovingHexOnGameboard(GameObject selectedHex)
+    {
+        HexWrapperController selectedHexScript = selectedHex.GetComponent<HexWrapperController>();
+
+        if (selectedHexScript.HexId == 0)
+        {
+            HexWrapperController hexToMoveScript = GetHexToMoveScript();
+
+            (int, int) currentHexToMovePosition = hexToMoveScript.positionOnBoard;
+            _gameBoard.gameBoard[currentHexToMovePosition.Item1, currentHexToMovePosition.Item2] = 0;
+
+            hexToMoveScript.positionOnBoard = selectedHexScript.positionOnBoard;
+
+            (int, int) movedHexPosition = hexToMoveScript.positionOnBoard;
+            _gameBoard.gameBoard[movedHexPosition.Item1, movedHexPosition.Item2] = hexToMoveScript.HexId;
+
+            hexToMoveScript.transform.position = selectedHexScript.transform.position;
+
+            ResetHexToMove();
             return true;
+        }
+
+        return false;
+    }
+
+    private void ResetHexToMove()
+    {
+        if (_hexesStore.hexPropositionsToMove != null)
+        {
+            for (int i = _hexesStore.hexPropositionsToMove.Count - 1; i >= 0; i--)
+            {
+                Destroy(_hexesStore.hexPropositionsToMove[i]);
+            }
+        }
+        SetHexToMove(null, null);
+    }
+
+    private void SetHexToMove(GameObject selectedHex, List<GameObject> hexPropositionsToMove)
+    {
+        _hexesStore.hexToMove = selectedHex;
+        _hexesStore.hexPropositionsToMove = hexPropositionsToMove; 
+    }
+
+    public bool PrepareSelectedHexToMove(GameObject selectedHex)
+    {
+        if (_hexesStore.hexToMove != null)
+            ResetHexToMove();
+
+        if (FirstMovesWereMade())
+        {
+            var selectedHexScript = selectedHex.GetComponent<HexWrapperController>();
+            if (selectedHexScript.HexId != 0)
+            {
+                List<(int, int)> availableMovePositions = selectedHexScript
+                    .piece
+                    .GetComponent<IPieceController>()
+                    .GetPieceSpecificPositions(PieceMovesTools.GetIndiciesByHexId(selectedHexScript.HexId, _gameBoard.gameBoard), _gameBoard.gameBoard);
+
+                if (availableMovePositions.Count > 0)
+                {
+                    List<GameObject> hexMovePropositions = CreateHexPositionsPropositions(availableMovePositions);
+                    SetHexToMove(selectedHex, hexMovePropositions);
+                    ResetHexToAdd();
+                    return true;
+                }
+            }
         }
         return false;
     }
 
-    private (int, int) ProposeSelectedHexNextMovePosition()
+    private List<GameObject> CreateHexPositionsPropositions(List<(int, int)> positions)
     {
-        _hexesStore.selectedHexCurrentPositionIndex++;
-        _hexesStore.selectedHexCurrentPositionIndex %= _hexesStore.selectedHexAvailablePositions.Count;
+        List<GameObject> propositions = new List<GameObject>();
+        (int, int) centerPosition = (GameBoardScript.CenterPositionX, GameBoardScript.CenterPositionY);
 
-        return GetCurrentSelectedHexMovePosition();
+        positions.ForEach(position =>
+        {
+            Vector3 vectorPosition= PieceMovesTools.getVectorFromStartToEnd(centerPosition, position);
+            GameObject proposition = Instantiate(HexPrefeab, vectorPosition, new Quaternion(0,0,0,0));
+            var propositionScript = proposition.GetComponent<HexWrapperController>();
+            GameObject gameManager = GameObject.FindWithTag("GameManager");
+            var hexPropositionColor = propositionScript.hex.GetComponent<Renderer>().material.color;
+            propositionScript.hex.GetComponent<Renderer>().material.color = new Color(hexPropositionColor.r, hexPropositionColor.g, hexPropositionColor.b, 0.2f);
+            propositionScript.gameMeneger = gameManager;
+            propositionScript.positionOnBoard = position;
+            propositionScript.hex.GetComponent<HexController>().gameMeneger = gameManager;
+            propositions.Add(proposition);
+        });
+
+        return propositions;
     }
 
-    public bool StartAddingHexToGameboard(bool isWhiteTurn)
+    public bool PrepareHexToAddToBoard(PieceType type, bool white)
     {
-        var selectedHexPosition = GetIndiciesByHexId(GetSelectedHex().HexId);
-        List<(int, int)> emptyPositionsAroundHex = PieceMovesTools.GetEmptyPositionsAroundPosition(selectedHexPosition, _gameBoard.gameBoard);
+        if (_hexesStore.hexToAdd != null)
+        {
+            ResetHexToAdd();
+        }
 
-        List<GameObject> opponents = isWhiteTurn ? _hexesStore.blackHexes : _hexesStore.whiteHexes;
+        var hexes = white ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
+        List<int> hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
+
+        GameObject hexToAdd = null;
+        foreach (var hex in hexes)
+        {
+            HexWrapperController hexScript = hex.GetComponent<HexWrapperController>();
+            if (hexScript.piece.GetComponent<IPieceController>().GetPieceType() == type
+                && !hexesOnBoardIds.Contains(hexScript.HexId))
+            {
+                hexToAdd = hex;
+                break;
+            }
+        }
+
+        if (hexToAdd != null)
+        {
+            List<(int, int)> availablePositions = GetAvailablePositionsToAddHex(white);
+            if (availablePositions.Count > 0)
+            {
+                List<GameObject> hexAddPropositions = CreateHexPositionsPropositions(availablePositions);
+                SetHexToAdd(hexToAdd, hexAddPropositions);
+                ResetHexToMove();
+
+                if (IsItFirstMove() && hexAddPropositions.Count == 1)
+                    ConfirmAddedHexOnGameboard(hexAddPropositions[0]);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<(int, int)> GetAvailablePositionsToAddHex(bool white)
+    {
+        List<GameObject> hexes = white ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
+        List<int> hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
+        List<int> opponentHexesOnBoardIds = white ? _hexesStore.blackHexesOnBoardIds: _hexesStore.whiteHexesOnBoardIds;
+
         List<(int, int)> availablePositions;
         if (FirstMovesWereMade())
-            availablePositions = PieceMovesTools.FilterPositionsWithOpponentNeighbours(emptyPositionsAroundHex, opponents, _gameBoard.gameBoard);
-        else
-            availablePositions = emptyPositionsAroundHex;
-
-
-        var hexes = isWhiteTurn ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
-        List<int> hexesOnBoardIds = isWhiteTurn ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
-
-        PrepareHexToAddToBoard(isWhiteTurn);
-        HexWrapperController hexScript = GetHexThatIsAdded();
-
-
-        if (hexesOnBoardIds.Count < hexes.Count && availablePositions.Count != 0)
         {
-            _hexesStore.addingHexAvailablePositions = availablePositions;
-            _hexesStore.addingHexCurrentPositionIndex = 0;
-
-            Vector3 movementVector = PieceMovesTools.getVectorFromStartToEnd(selectedHexPosition, _hexesStore.addingHexAvailablePositions[_hexesStore.addingHexCurrentPositionIndex]);
-            hexScript.transform.position = GetSelectedHex().transform.position + movementVector;
-            hexScript.gameObject.SetActive(true);
-        
-            return true;
-        }
-        return false;
-    }
-
-    private bool PrepareHexToAddToBoard(bool isWhiteTurn)
-    {
-        var hexes = isWhiteTurn ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
-        List<int> hexesOnBoardIds = isWhiteTurn ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
-        if (hexesOnBoardIds.Count < hexes.Count)
+            availablePositions = PieceMovesTools.GetPositionsToAddHex(hexesOnBoardIds, _gameBoard.gameBoard);
+        } else if (opponentHexesOnBoardIds.Count == 1)
         {
-            _hexesStore.hexToAdd = hexes[hexesOnBoardIds.Count];
-            return true;
-        }
-        return false;
-    }
-
-    //private bool PrepareHexToAddToBoard(PieceType type)
-    //{
-
-    //}
-
-    public bool StartMovingSelectedHex()
-    {
-        if (ProposeNextMovePosition())
+            List<GameObject> opponentHexes = white ? _hexesStore.blackHexes : _hexesStore.whiteHexes;
+            var opponentHex = opponentHexes.FindLast(hex => hex.GetComponent<HexWrapperController>().HexId == opponentHexesOnBoardIds[0]);
+            (int, int) opponentHexPosition = opponentHex.GetComponent<HexWrapperController>().positionOnBoard;
+            availablePositions = PieceMovesTools.GetEmptyPositionsAroundPosition(opponentHexPosition, _gameBoard.gameBoard);
+        } else
         {
-            return true;
+            availablePositions = new List<(int, int)>();
+            availablePositions.Add((GameBoardScript.CenterPositionX, GameBoardScript.CenterPositionY));
         }
-        return false;
+
+        return availablePositions;
     }
 
     private bool IsOneHiveRuleBroken(HexWrapperController movedHex) //If there are more than one hive than the rule is broken
@@ -261,7 +310,7 @@ public class HexesManagerController : MonoBehaviour
         if (IsBeeOnBoard(whiteBee))
         {
             int beeHexId = GetFirstFoundPieceId(whiteBee, PieceType.BEE);
-            (int, int) beePosition = GetIndiciesByHexId(beeHexId);
+            (int, int) beePosition = PieceMovesTools.GetIndiciesByHexId(beeHexId, _gameBoard.gameBoard);
             if (PieceMovesTools.getNeighbours(beePosition, _gameBoard.gameBoard).Count == 6)
                 return true;
         }
@@ -289,10 +338,4 @@ public class HexesManagerController : MonoBehaviour
 
         return beeHexId;
     }
-
-    //private void MoveHexThatIsAdded(Vector3 movementVector)
-    //{
-    //    HexWrapperController hex = GetHexThatIsAdded();
-    //    hex.transform.position += movementVector;
-    //}
 }

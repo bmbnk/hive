@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 2449543555522651668}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 285489281344629131}
@@ -47,11 +47,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameMeneger: {fileID: 0}
   hex: {fileID: 7887453238657973690}
-  positionNumber: 0
-  availableLocationOffsetVectors: []
-  currentOffsetVectorIndex: 0
+  HexId: 0
   isOnGameboard: 0
   piece: {fileID: 0}
+  isWhite: 0
 --- !u!1 &7887453238657973690
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,7 +114,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: ff3ec07017a214f119c75e6bb6ddc883, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

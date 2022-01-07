@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -130,20 +130,34 @@ public static class PieceMovesTools
 
     public static List<(int, int)> getNeighbours((int, int) currentPosition, int[,] gameBoard, bool clockwise=true)
     {
-        List<(int, int)> neighours = new List<(int, int)>();
+        List<(int, int)> neighbours = new List<(int, int)>();
 
         _neighboursLocationParameters.ForEach(locationParams =>
         {
             (int, int) idxsDelta = currentPosition.Item1 % 2 == 1 ? locationParams.EvenRowNeighbourIdxsDelta : locationParams.OddRowNeighbourIdxsDelta;
             (int, int) idxs = (currentPosition.Item1 + idxsDelta.Item1, currentPosition.Item2 + idxsDelta.Item2);
             if (gameBoard[idxs.Item1, idxs.Item2] != 0)
-                neighours.Add(idxs);
+                neighbours.Add(idxs);
         });
 
         if (!clockwise)
-            neighours.Reverse();
+            neighbours.Reverse();
 
-        return neighours;
+        return neighbours;
+    }
+
+    public static List<(int, int)> GetPositionsToAddHex(List<int> playerHexesOnBoardIds, int[,] gameBoard)
+    {
+        HashSet<(int, int)> positions = new HashSet<(int, int)>();
+
+        playerHexesOnBoardIds.ForEach(hexId => {
+            (int, int) hexPosition = GetIndiciesByHexId(hexId, gameBoard);
+            List<(int, int)> emptyPositionsAroundPosition = GetEmptyPositionsAroundPosition(hexPosition, gameBoard);
+            List<(int, int)> availablePositionsAroundPosition = FilterPositionsWithOpponentNeighbours(emptyPositionsAroundPosition, playerHexesOnBoardIds, gameBoard);
+            availablePositionsAroundPosition.ForEach(position => positions.Add(position));
+        });
+
+        return positions.ToList();
     }
 
     public static (int, int) nextPositionAroundHex((int, int) hexToMove, (int, int) hex, int[,] gameBoard, bool clockwise=true)
@@ -208,7 +222,7 @@ public static class PieceMovesTools
         return emptyPositionsAroundPosition;
     }
 
-    public static List<(int, int)> FilterPositionsWithOpponentNeighbours(List<(int, int)> postions, List<GameObject> opponents, int[,] gameBoard)
+    public static List<(int, int)> FilterPositionsWithOpponentNeighbours(List<(int, int)> postions, List<int> playerHexesOnBoardIds, int[,] gameBoard)
     {
         List<(int, int)> filteredPositions = new List<(int, int)>();
         bool noOpponentNeighbour;
@@ -226,9 +240,7 @@ public static class PieceMovesTools
 
                 if (currentNeighbourHexId != 0)
                 {
-                    int opponentNeighbourIdx = opponents.FindIndex(hex => hex.GetComponent<HexWrapperController>().HexId == currentNeighbourHexId);
-
-                    if (opponentNeighbourIdx != -1 && opponents[opponentNeighbourIdx].activeSelf)
+                    if (!playerHexesOnBoardIds.Contains(currentNeighbourHexId))
                     {
                         noOpponentNeighbour = false;
                         break;
@@ -270,5 +282,14 @@ public static class PieceMovesTools
         if (gameBoard[nextPosition.Item1, nextPosition.Item2] == 0)
             return nextPosition;
         return getFirstEmptyPositionInDirection(nextPosition, offsetParams, gameBoard);
+    }
+
+    public static (int, int) GetIndiciesByHexId(int HexId, int[,] gameBoard)
+    {
+        for (int i = 0; i < GameBoardScript.GameBoardSize; i++)
+            for (int j = 0; j < GameBoardScript.GameBoardSize; j++)
+                if (gameBoard[i, j] == HexId)
+                    return (i, j);
+        return (-1, -1);
     }
 }

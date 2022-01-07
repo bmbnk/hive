@@ -31,13 +31,11 @@ public class HexesStoreScript : MonoBehaviour
     public List<int> whiteHexesOnBoardIds = new List<int>();
     public List<int> blackHexesOnBoardIds = new List<int>();
 
-    public GameObject selectedHex;
-    public List<(int, int)> selectedHexAvailablePositions;
-    public int selectedHexCurrentPositionIndex = -1;
+    public GameObject hexToMove;
+    public List<GameObject> hexPropositionsToMove;
 
     public GameObject hexToAdd;
-    public List<(int, int)> addingHexAvailablePositions;
-    public int addingHexCurrentPositionIndex = -1;
+    public List<GameObject> hexPropositionsToAdd;
 
     public List<GameObject> whiteHexes;
     public List<GameObject> blackHexes;
@@ -45,7 +43,6 @@ public class HexesStoreScript : MonoBehaviour
     void Setup()
     {
         //InitializeHexes();
-        //whiteHexesOnBoardIds.Add(whiteHexes[0].GetComponent<HexWrapperController>().HexId);
     }
 
     public void InitializeHexes()
