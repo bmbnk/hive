@@ -5402,6 +5402,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HexPrefeab: {fileID: 2449543555522651668, guid: dc74985fb4d4d4c288f583c8d2722113, type: 3}
+  BeetlePiece: {fileID: 319325111}
 --- !u!4 &1459286722
 Transform:
   m_ObjectHideFlags: 0

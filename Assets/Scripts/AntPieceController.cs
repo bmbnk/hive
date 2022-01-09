@@ -52,8 +52,8 @@ public class AntPieceController : MonoBehaviour, IPieceController
             nextPositionFound = false;
 
             neighbours = PieceMovesTools.GetNeighbours(positions.Last(), gameBoard, false);
-            notAllowedPositions = PieceMovesTools.GetNotAllowedNextPositions(neighbours, positions.Last());
-            (int, int) nextPosition = PieceMovesTools.NextPositionAroundHex(positions.Last(), lastPivotNeighbour, gameBoard);
+            notAllowedPositions = PieceMovesTools.GetNotAllowedPositionsAroundPosition(neighbours, positions.Last());
+            (int, int) nextPosition = PieceMovesTools.GetNextFreePositionAroundHex(positions.Last(), lastPivotNeighbour, gameBoard);
             if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
             {
                 positions.Add(nextPosition);
@@ -65,7 +65,7 @@ public class AntPieceController : MonoBehaviour, IPieceController
                 for (int i = 1; i < neighbours.Count; i++)
                 {
                     (int, int) nextNeighbour = neighbours[(lastPivotNeighbourIdx + i) % neighbours.Count];
-                    nextPosition = PieceMovesTools.NextPositionAroundHex(positions.Last(), nextNeighbour, gameBoard);
+                    nextPosition = PieceMovesTools.GetNextFreePositionAroundHex(positions.Last(), nextNeighbour, gameBoard);
                     if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
                     {
                         positions.Add(nextPosition);

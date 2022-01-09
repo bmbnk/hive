@@ -53,7 +53,7 @@ public static class PieceMovesTools
         ));
     }
 
-    public static List<(int, int)> GetNotAllowedNextPositions(List<(int, int)> neighbours, (int, int) currentPosition)
+    public static List<(int, int)> GetNotAllowedPositionsAroundPosition(List<(int, int)> neighbours, (int, int) currentPosition)
     {
         List<(int, int)> notAllowedPositions = new List<(int, int)>();
 
@@ -92,11 +92,10 @@ public static class PieceMovesTools
         return notAllowedPositions;
     }
 
-    internal static List<(int, int)> GetPositionsWithNeighboursAroundPosition((int, int) hexPosition, int[,] gameBoard)
+    public static List<(int, int)> GetPositionsNextToNeighboursAroundPosition((int, int) hexPosition, int[,] gameBoard)
     {
         List<(int, int)> positions = new List<(int, int)>();
         List<(int, int)> neighbours = GetNeighbours(hexPosition, gameBoard);
-        List<(int, int)> notAllowedPositions = GetNotAllowedNextPositions(neighbours, hexPosition);
 
         int offsetsListLen = _neighboursLocationParameters.Count;
 
@@ -113,15 +112,19 @@ public static class PieceMovesTools
                     : _neighboursLocationParameters[(offsetsListLen + i - 1) % offsetsListLen].OddRowNeighbourIdxsDelta;
                 (int, int) previousOffsetPosition = (hexPosition.Item1 + previousPositionOffset.Item1, hexPosition.Item2 + previousPositionOffset.Item2);
 
-                if (!neighbours.Contains(previousOffsetPosition) && !notAllowedPositions.Contains(previousOffsetPosition))
+                if (!neighbours.Contains(previousOffsetPosition) && !positions.Contains(previousOffsetPosition))
+                {
                     positions.Add(previousOffsetPosition);
+                }
 
                 (int, int) nextPositionOffset = hexPosition.Item1 % 2 == 1 ? _neighboursLocationParameters[(offsetsListLen + i + 1) % offsetsListLen].EvenRowNeighbourIdxsDelta
                     : _neighboursLocationParameters[(offsetsListLen + i + 1) % offsetsListLen].OddRowNeighbourIdxsDelta;
                 (int, int) nextOffsetPosition = (hexPosition.Item1 + nextPositionOffset.Item1, hexPosition.Item2 + nextPositionOffset.Item2);
 
-                if (!neighbours.Contains(nextOffsetPosition) && !notAllowedPositions.Contains(nextOffsetPosition))
+                if (!neighbours.Contains(nextOffsetPosition) && !positions.Contains(nextOffsetPosition))
+                {
                     positions.Add(nextOffsetPosition);
+                }
             }
         }
 
@@ -150,17 +153,28 @@ public static class PieceMovesTools
     {
         HashSet<(int, int)> positions = new HashSet<(int, int)>();
 
-        playerHexesOnBoardIds.ForEach(hexId => {
+        List<int> activePlayerHexesOnBoardIds = FilterActiveHexIds(playerHexesOnBoardIds, gameBoard);
+
+        activePlayerHexesOnBoardIds.ForEach(hexId => {
             (int, int) hexPosition = GetIndiciesByHexId(hexId, gameBoard);
-            List<(int, int)> emptyPositionsAroundPosition = GetEmptyPositionsAroundPosition(hexPosition, gameBoard);
-            List<(int, int)> availablePositionsAroundPosition = FilterPositionsWithOpponentNeighbours(emptyPositionsAroundPosition, playerHexesOnBoardIds, gameBoard);
+            List<(int, int)> freePositionsAroundPosition = GetFreePositionsAroundPosition(hexPosition, gameBoard);
+            List<(int, int)> availablePositionsAroundPosition = FilterPositionsWithOpponentNeighbours(freePositionsAroundPosition, playerHexesOnBoardIds, gameBoard);
             availablePositionsAroundPosition.ForEach(position => positions.Add(position));
         });
 
         return positions.ToList();
     }
 
-    public static (int, int) NextPositionAroundHex((int, int) hexToMove, (int, int) hex, int[,] gameBoard, bool clockwise=true)
+    public static (int, int) GetNextFreePositionAroundHex((int, int) hexToMove, (int, int) hex, int[,] gameBoard, bool clockwise=true)
+    {
+        (int, int) nextPositionAroundHex = GetNextPositionAroundHex(hexToMove, hex, clockwise);
+        if (nextPositionAroundHex != (-1, -1)
+            && gameBoard[nextPositionAroundHex.Item1, nextPositionAroundHex.Item2] == 0)
+            return nextPositionAroundHex;
+        return (-1, -1);
+    }
+
+    public static (int, int) GetNextPositionAroundHex((int, int) hexToMove, (int, int) hex, bool clockwise = true)
     {
         (int, int) relativePosition = (hexToMove.Item1 - hex.Item1, hexToMove.Item2 - hex.Item2);
 
@@ -180,9 +194,7 @@ public static class PieceMovesTools
                     : _neighboursLocationParameters[nextPositionOffsetIdx].OddRowNeighbourIdxsDelta;
 
                 (int, int) nextPosition = (hex.Item1 + nextPositionOffset.Item1, hex.Item2 + nextPositionOffset.Item2);
-                if (gameBoard[nextPosition.Item1, nextPosition.Item2] == 0)
-                    return nextPosition;
-                break;
+                return nextPosition;
             }
         }
         return (-1, -1);
@@ -207,19 +219,26 @@ public static class PieceMovesTools
         return vector;
     }
 
-    public static List<(int, int)> GetEmptyPositionsAroundPosition((int, int) position, int[,] gameBoard)
+    public static Vector3 GetVerticalVector(int hexesNumber)
     {
-        List<(int, int)> emptyPositionsAroundPosition = new List<(int, int)>();
+        Vector3 hexesHeightVector = hexesNumber * new Vector3(0, 1, 0);
+        Vector3 result = hexesHeightVector + hexesNumber * new Vector3(0, 2 * Padding, 0);
+        return result;
+    }
+
+    public static List<(int, int)> GetFreePositionsAroundPosition((int, int) position, int[,] gameBoard)
+    {
+        List<(int, int)> freePositionsAroundPosition = new List<(int, int)>();
 
         _neighboursLocationParameters.ForEach(locationParams =>
         {
             (int, int) idxsDelta = position.Item1 % 2 == 1 ? locationParams.EvenRowNeighbourIdxsDelta : locationParams.OddRowNeighbourIdxsDelta;
             (int, int) nextPositionAround = (position.Item1 + idxsDelta.Item1, position.Item2 + idxsDelta.Item2);
             if (gameBoard[nextPositionAround.Item1, nextPositionAround.Item2] == 0)
-                emptyPositionsAroundPosition.Add(nextPositionAround);
+                freePositionsAroundPosition.Add(nextPositionAround);
         });
 
-        return emptyPositionsAroundPosition;
+        return freePositionsAroundPosition;
     }
 
     public static List<(int, int)> FilterPositionsWithOpponentNeighbours(List<(int, int)> postions, List<int> playerHexesOnBoardIds, int[,] gameBoard)
@@ -253,7 +272,7 @@ public static class PieceMovesTools
         return filteredPositions;
     }
 
-    public static (int, int) GetFirstEmptyPositionInDirectionOfNeighbour((int, int) startPosition, (int, int) neighbour, int[,] gameBoard)
+    public static (int, int) GetFirstFreePositionInDirectionOfNeighbour((int, int) startPosition, (int, int) neighbour, int[,] gameBoard)
     {
         (int, int) offset = (neighbour.Item1 - startPosition.Item1, neighbour.Item2 - startPosition.Item2);
         int offsetParamsIdx = _neighboursLocationParameters.FindIndex(parameters =>
@@ -266,13 +285,13 @@ public static class PieceMovesTools
         {
             var offsetParams = (_neighboursLocationParameters[offsetParamsIdx].EvenRowNeighbourIdxsDelta,
                     _neighboursLocationParameters[offsetParamsIdx].OddRowNeighbourIdxsDelta);
-            return GetFirstEmptyPositionInDirection(startPosition, offsetParams, gameBoard);
+            return GetFirstFreePositionInDirection(startPosition, offsetParams, gameBoard);
         }
 
         return (-1, -1);
     }
 
-    private static (int, int) GetFirstEmptyPositionInDirection(
+    private static (int, int) GetFirstFreePositionInDirection(
         (int, int) startPosition,
         ((int, int) EvenRowNeighbourIdxsDelta, (int, int) OddRowNeighbourIdxsDelta) offsetParams,
         int[,] gameBoard)
@@ -281,7 +300,7 @@ public static class PieceMovesTools
         var nextPosition = (startPosition.Item1 + offset.Item1, startPosition.Item2 + offset.Item2);
         if (gameBoard[nextPosition.Item1, nextPosition.Item2] == 0)
             return nextPosition;
-        return GetFirstEmptyPositionInDirection(nextPosition, offsetParams, gameBoard);
+        return GetFirstFreePositionInDirection(nextPosition, offsetParams, gameBoard);
     }
 
     public static (int, int) GetIndiciesByHexId(int HexId, int[,] gameBoard)
@@ -291,5 +310,19 @@ public static class PieceMovesTools
                 if (gameBoard[i, j] == HexId)
                     return (i, j);
         return (-1, -1);
+    }
+
+    private static List<int> FilterActiveHexIds(List<int> hexIds, int[,] gameBoard)
+    {
+        List<int> activeHexIds = new List<int>();
+
+        hexIds.ForEach(hexId =>
+        {
+            var hexPosition = GetIndiciesByHexId(hexId, gameBoard);
+            if (hexPosition != (-1, -1))
+                activeHexIds.Add(hexId);
+        });
+
+        return activeHexIds;
     }
 }

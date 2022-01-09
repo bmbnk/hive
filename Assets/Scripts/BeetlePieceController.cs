@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class BeetlePieceController : MonoBehaviour, IPieceController
 {
     private PieceType _type;
+    private Dictionary<int, int> _beetleIdToHexUnderneathId;
 
     void Start()
     {
+        _beetleIdToHexUnderneathId = new Dictionary<int, int>();
         _type = PieceType.BEETLE;
     }
 
@@ -15,41 +16,74 @@ public class BeetlePieceController : MonoBehaviour, IPieceController
 
     public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] gameBoard)
     {
-        throw new NotImplementedException();
+        List<(int, int)> positions = PieceMovesTools.GetPositionsNextToNeighboursAroundPosition(hexPosition, gameBoard);
+        List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(hexPosition, gameBoard);
 
-        //List<(int, int)> positions = new List<(int, int)>();
-        //List<(int, int)> neighbours = PieceMovesTools.getNeighbours(hexPosition, gameBoard, _oneStepPositionOffsets);
-        //List<(int, int)> notAllowedPositions = PieceMovesTools.getNotAllowedNextPositions(neighbours, hexPosition, _oneStepPositionOffsets);
+        neighbours.ForEach(neighbour => positions.Add(neighbour));
 
-        //int offsetsListLen = _oneStepPositionOffsets.Count;
+        for (int i = positions.Count - 1; i >= 0; i--)
+        {
+            int heightOfLowerStackNextToPosition = HexesOnPositionNumber(PieceMovesTools.GetNextPositionAroundHex(positions[i], hexPosition, true), gameBoard);
+            int heightOfSecondStackNextToPosition = HexesOnPositionNumber(PieceMovesTools.GetNextPositionAroundHex(positions[i], hexPosition, false), gameBoard);
 
-        //for (int i = 0; i < _oneStepPositionOffsets.Count; i++)
-        //{
-        //    (int, int) positionOffset = hexPosition.Item1 % 2 == 1 ?
-        //        _oneStepPositionOffsets[i].EvenRowPositionOffset : _oneStepPositionOffsets[i].OddRowPositionOffset;
+            if (heightOfSecondStackNextToPosition < heightOfLowerStackNextToPosition)
+                    heightOfLowerStackNextToPosition = heightOfSecondStackNextToPosition;
 
-        //    (int, int) offsetPosition = (hexPosition.Item1 + positionOffset.Item1, hexPosition.Item2 + positionOffset.Item2);
+            int heightOfPositionStack = HexesOnPositionNumber(positions[i], gameBoard);
+            int heightOfCurrentPositionStack = HexesUnderBeetleNumber(gameBoard[hexPosition.Item1, hexPosition.Item2]);
 
-        //    if (neighbours.Contains(offsetPosition))
-        //    {
-        //        positions.Add(offsetPosition);
+            if (heightOfPositionStack < heightOfLowerStackNextToPosition && heightOfCurrentPositionStack < heightOfLowerStackNextToPosition)
+                positions.Remove(positions[i]);
+        }
 
-        //        (int, int) previousPositionOffset = hexPosition.Item1 % 2 == 1 ? _oneStepPositionOffsets[(offsetsListLen + i - 1) % offsetsListLen].EvenRowPositionOffset
-        //            : _oneStepPositionOffsets[(offsetsListLen + i - 1) % offsetsListLen].OddRowPositionOffset;
-        //        (int, int) previousOffsetPosition = (hexPosition.Item1 + previousPositionOffset.Item1, hexPosition.Item2 + previousPositionOffset.Item2);
-
-        //        if (!neighbours.Contains(previousOffsetPosition) && !notAllowedPositions.Contains(previousOffsetPosition))
-        //            positions.Add(previousOffsetPosition);
-
-        //        (int, int) nextPositionOffset = hexPosition.Item1 % 2 == 1 ? _oneStepPositionOffsets[(offsetsListLen + i + 1) % offsetsListLen].EvenRowPositionOffset
-        //            : _oneStepPositionOffsets[(offsetsListLen + i + 1) % offsetsListLen].OddRowPositionOffset;
-        //        (int, int) nextOffsetPosition = (hexPosition.Item1 + nextPositionOffset.Item1, hexPosition.Item2 + nextPositionOffset.Item2);
-
-        //        if (!neighbours.Contains(nextOffsetPosition) && !notAllowedPositions.Contains(nextOffsetPosition))
-        //            positions.Add(nextOffsetPosition);
-        //    }
-        //}
-
-        //return positions;
+        return positions;
     }
+
+    public int GetIdOfFirstHexUnderneathBeetle(int beetleId)
+    {
+        if (_beetleIdToHexUnderneathId.ContainsKey(beetleId))
+            return _beetleIdToHexUnderneathId[beetleId];
+        return -1;
+    }
+
+    public void RemoveHexUnderneathBeetle(int beetleId)
+    {
+        if (_beetleIdToHexUnderneathId.ContainsKey(beetleId))
+            _beetleIdToHexUnderneathId.Remove(beetleId);
+    }
+
+    public void SetHexUnderneathBeetle(int beetleId, int hexUnderneathId)
+    {
+        _beetleIdToHexUnderneathId[beetleId] = hexUnderneathId;
+    }
+
+    public bool IsHexUnderneathBeetle(int hexId)
+    {
+        return _beetleIdToHexUnderneathId.ContainsValue(hexId);
+    }
+
+    public int HexesUnderBeetleNumber(int beetleId)
+    {
+        int hexesUnderBeetleCounter = 0;
+
+        int hexUnderneathId = GetIdOfFirstHexUnderneathBeetle(beetleId);
+        while (hexUnderneathId != -1)
+        {
+            hexesUnderBeetleCounter++;
+            hexUnderneathId = GetIdOfFirstHexUnderneathBeetle(hexUnderneathId);
+        }
+        return hexesUnderBeetleCounter;
+    }
+
+    private int HexesOnPositionNumber((int, int) position, int[,] gameBoard)
+    {
+        int hexId = gameBoard[position.Item1, position.Item2];
+        if (hexId > 0)
+        {
+            int hexesUnderHexNumber = HexesUnderBeetleNumber(hexId);
+            return hexesUnderHexNumber + 1;
+        }
+        return 0;
+    }
+
 }

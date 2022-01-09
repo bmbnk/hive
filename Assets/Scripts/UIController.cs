@@ -70,7 +70,7 @@ public class UIController : MonoBehaviour
     {
         var counters = white ? _whiteCounters : _blackCounters;
         var counter = counters.FindLast(counter => IsCounterOfType(counter, type));
-        counter.text = count.ToString();
+        counter.text = count > 0 ? count.ToString() : "";
     }
 
     private bool IsCounterOfType(TextMeshProUGUI counter, PieceType type)

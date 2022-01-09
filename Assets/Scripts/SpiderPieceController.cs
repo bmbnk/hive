@@ -54,8 +54,8 @@ public class SpiderPieceController : MonoBehaviour, IPieceController
         for (int i = 0; i < 3; i++)
         {
             neighbours = PieceMovesTools.GetNeighbours(movePosition, gameBoard, !clockwise);
-            notAllowedPositions = PieceMovesTools.GetNotAllowedNextPositions(neighbours, movePosition);
-            (int, int) nextPosition = PieceMovesTools.NextPositionAroundHex(movePosition, lastPivotNeighbour, gameBoard, clockwise);
+            notAllowedPositions = PieceMovesTools.GetNotAllowedPositionsAroundPosition(neighbours, movePosition);
+            (int, int) nextPosition = PieceMovesTools.GetNextFreePositionAroundHex(movePosition, lastPivotNeighbour, gameBoard, clockwise);
             if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
             {
                 movePosition = nextPosition;
@@ -67,7 +67,7 @@ public class SpiderPieceController : MonoBehaviour, IPieceController
                 for (int j = 1; j < neighbours.Count; j++)
                 {
                     (int, int) nextNeighbour = neighbours[(lastPivotNeighbourIdx + j) % neighbours.Count];
-                    nextPosition = PieceMovesTools.NextPositionAroundHex(movePosition, nextNeighbour, gameBoard, clockwise);
+                    nextPosition = PieceMovesTools.GetNextFreePositionAroundHex(movePosition, nextNeighbour, gameBoard, clockwise);
                     if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
                     {
                         movePosition = nextPosition;

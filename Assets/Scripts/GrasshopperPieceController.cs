@@ -21,7 +21,7 @@ public class GrasshopperPieceController : MonoBehaviour, IPieceController
         {
             if (gameBoard[neighbour.Item1, neighbour.Item2] != 0)
             {
-                (int, int) position = PieceMovesTools.GetFirstEmptyPositionInDirectionOfNeighbour(hexPosition, neighbour, gameBoard);
+                (int, int) position = PieceMovesTools.GetFirstFreePositionInDirectionOfNeighbour(hexPosition, neighbour, gameBoard);
                 if (position != (-1, -1))
                     positions.Add(position);
             }
