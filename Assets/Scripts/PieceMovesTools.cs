@@ -153,7 +153,7 @@ public static class PieceMovesTools
     {
         HashSet<(int, int)> positions = new HashSet<(int, int)>();
 
-        List<int> activePlayerHexesOnBoardIds = FilterActiveHexIds(playerHexesOnBoardIds, gameBoard);
+        List<int> activePlayerHexesOnBoardIds = FilterNotActiveHexIds(playerHexesOnBoardIds, gameBoard);
 
         activePlayerHexesOnBoardIds.ForEach(hexId => {
             (int, int) hexPosition = GetIndiciesByHexId(hexId, gameBoard);
@@ -228,17 +228,30 @@ public static class PieceMovesTools
 
     public static List<(int, int)> GetFreePositionsAroundPosition((int, int) position, int[,] gameBoard)
     {
-        List<(int, int)> freePositionsAroundPosition = new List<(int, int)>();
+        List<(int, int)> freePositionsAroundPosition = GetPositionsAroundPosition(position);
+
+        for (int i = freePositionsAroundPosition.Count - 1; i >= 0; i--)
+        {
+            var positionAround = freePositionsAroundPosition[i];
+            if (gameBoard[positionAround.Item1, positionAround.Item2] != 0)
+                freePositionsAroundPosition.Remove(positionAround);
+        }
+
+        return freePositionsAroundPosition;
+    }
+
+    public static List<(int, int)> GetPositionsAroundPosition((int, int) position)
+    {
+        List<(int, int)> positionsAroundPosition = new List<(int, int)>();
 
         _neighboursLocationParameters.ForEach(locationParams =>
         {
             (int, int) idxsDelta = position.Item1 % 2 == 1 ? locationParams.EvenRowNeighbourIdxsDelta : locationParams.OddRowNeighbourIdxsDelta;
             (int, int) nextPositionAround = (position.Item1 + idxsDelta.Item1, position.Item2 + idxsDelta.Item2);
-            if (gameBoard[nextPositionAround.Item1, nextPositionAround.Item2] == 0)
-                freePositionsAroundPosition.Add(nextPositionAround);
+            positionsAroundPosition.Add(nextPositionAround);
         });
 
-        return freePositionsAroundPosition;
+        return positionsAroundPosition;
     }
 
     public static List<(int, int)> FilterPositionsWithOpponentNeighbours(List<(int, int)> postions, List<int> playerHexesOnBoardIds, int[,] gameBoard)
@@ -312,7 +325,7 @@ public static class PieceMovesTools
         return (-1, -1);
     }
 
-    private static List<int> FilterActiveHexIds(List<int> hexIds, int[,] gameBoard)
+    private static List<int> FilterNotActiveHexIds(List<int> hexIds, int[,] gameBoard)
     {
         List<int> activeHexIds = new List<int>();
 

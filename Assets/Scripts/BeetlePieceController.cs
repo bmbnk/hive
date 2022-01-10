@@ -16,10 +16,18 @@ public class BeetlePieceController : MonoBehaviour, IPieceController
 
     public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] gameBoard)
     {
-        List<(int, int)> positions = PieceMovesTools.GetPositionsNextToNeighboursAroundPosition(hexPosition, gameBoard);
-        List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(hexPosition, gameBoard);
+        List<(int, int)> positions;
 
-        neighbours.ForEach(neighbour => positions.Add(neighbour));
+        if (HexesOnPositionNumber(hexPosition, gameBoard) > 1)
+        {
+            positions = PieceMovesTools.GetPositionsAroundPosition(hexPosition);
+        } else
+        {
+            positions = PieceMovesTools.GetPositionsNextToNeighboursAroundPosition(hexPosition, gameBoard);
+            List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(hexPosition, gameBoard);
+            neighbours.ForEach(neighbour => positions.Add(neighbour));
+        }
+
 
         for (int i = positions.Count - 1; i >= 0; i--)
         {
