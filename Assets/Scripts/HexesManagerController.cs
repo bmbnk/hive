@@ -286,7 +286,8 @@ public class HexesManagerController : MonoBehaviour
         var propositionScript = proposition.GetComponent<HexWrapperController>();
         GameObject gameManager = GameObject.FindWithTag("GameManager");
         var hexPropositionColor = propositionScript.hex.GetComponent<Renderer>().material.color;
-        propositionScript.hex.GetComponent<Renderer>().material.color = new Color(hexPropositionColor.r, hexPropositionColor.g, hexPropositionColor.b, 0.2f);
+        Color color = new Color(hexPropositionColor.r, hexPropositionColor.g, hexPropositionColor.b, 0.2f);
+        propositionScript.hex.GetComponent<Renderer>().material.color = color;
         propositionScript.gameMeneger = gameManager;
         propositionScript.positionOnBoard = position;
         propositionScript.hex.GetComponent<HexController>().gameMeneger = gameManager;

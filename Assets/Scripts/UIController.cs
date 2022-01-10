@@ -5,7 +5,11 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    public GameObject gameManager;
+    private const string _endGameTextTemplate = "insects won";
+
+    public GameObject GameManager;
+    public GameObject GamePanel;
+    public GameObject EndGamePanel;
 
     public Button BlackAntButton;
     public Button BlackGrasshopperButton;
@@ -34,9 +38,13 @@ public class UIController : MonoBehaviour
     private List<TextMeshProUGUI> _blackCounters;
     private List<TextMeshProUGUI> _whiteCounters;
 
+
     void Start()
     {
-        GameManagerController gameManagerScript = gameManager.GetComponent<GameManagerController>();
+        GamePanel.SetActive(true);
+        EndGamePanel.SetActive(false);
+
+        GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
 
         BlackAntButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.ANT, false));
         BlackGrasshopperButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.GRASSHOPPER, false));
@@ -64,6 +72,13 @@ public class UIController : MonoBehaviour
         _whiteCounters.Add(WhiteSpidersLeftCounter);
         _whiteCounters.Add(WhiteBeetlesLeftCounter);
         _whiteCounters.Add(WhiteBeesLeftCounter);
+    }
+
+    public void ShowGameEndingPanel(bool whiteWon)
+    {
+        EndGamePanel.GetComponentInChildren<TextMeshProUGUI>().SetText((whiteWon ? "White " : "Black ") + _endGameTextTemplate);
+        GamePanel.SetActive(false);
+        EndGamePanel.SetActive(true);
     }
 
     public void UpdateLabel(PieceType type, bool white, int count)

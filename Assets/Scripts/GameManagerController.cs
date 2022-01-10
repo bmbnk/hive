@@ -7,8 +7,9 @@ public class GameManagerController : MonoBehaviour
     private UIController _ui;
 
     private bool _addingHexToBoard = false;
-    private bool _movingHexOnBoard = false;
+    private bool _gameOver = false;
     private bool _isWhiteTurn = true;
+    private bool _movingHexOnBoard = false;
     private PieceType _lastSelectedTileType;
 
 
@@ -22,6 +23,14 @@ public class GameManagerController : MonoBehaviour
 
         GameObject uiGameobject = GameObject.FindWithTag("UI");
         _ui = uiGameobject.GetComponent<UIController>();
+    }
+
+    void Update()
+    {
+        if (_gameOver)
+        {
+            _ui.ShowGameEndingPanel(_hexesInfoProvider.WhiteHexesWon());
+        }     
     }
 
     public void TileSelected(PieceType type, bool white)
@@ -58,18 +67,21 @@ public class GameManagerController : MonoBehaviour
 
     public void HexSelected(GameObject selectedHex)
     {
-        if (_hexesInfoProvider.IsItPropositionHex(selectedHex))
+        if (!_gameOver)
         {
-            if (_addingHexToBoard)
+            if (_hexesInfoProvider.IsItPropositionHex(selectedHex))
             {
-                ConfirmAddedHexOnGameboard(selectedHex);
-            } else if (_movingHexOnBoard)
+                if (_addingHexToBoard)
+                {
+                    ConfirmAddedHexOnGameboard(selectedHex);
+                } else if (_movingHexOnBoard)
+                {
+                    ConfirmMovingHexOnGameboard(selectedHex);
+                }
+            } else if (_hexesInfoProvider.IsItCurrentPlayerHex(selectedHex, _isWhiteTurn))
             {
-                ConfirmMovingHexOnGameboard(selectedHex);
+                StartMovingHex(selectedHex);
             }
-        } else if (_hexesInfoProvider.IsItCurrentPlayerHex(selectedHex, _isWhiteTurn))
-        {
-            StartMovingHex(selectedHex);
         }
     }
 
@@ -77,6 +89,7 @@ public class GameManagerController : MonoBehaviour
     {
         if (_hexesMeneger.ConfirmAddedHexOnGameboard(selectedHex))
         {
+            _gameOver = _hexesInfoProvider.IsGameOver();
             UpdateTileCounterLabel(_lastSelectedTileType, _isWhiteTurn);
             _addingHexToBoard = false;
             _isWhiteTurn = !_isWhiteTurn;
@@ -87,6 +100,7 @@ public class GameManagerController : MonoBehaviour
     {
         if (_hexesMeneger.ConfirmMovingHexOnGameboard(selectedHex))
         {
+            _gameOver = _hexesInfoProvider.IsGameOver();
             _movingHexOnBoard = false;
             _isWhiteTurn = !_isWhiteTurn;
         }

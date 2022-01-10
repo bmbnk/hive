@@ -61,13 +61,19 @@ public class HexesInfoProvider : MonoBehaviour
         return selectedHex.GetComponent<HexWrapperController>().HexId == 0;
     }
 
-    private bool IsGameOver()
+    public bool IsGameOver()
     {
-        bool white = true;
+        return BlackHexesWon() || WhiteHexesWon();
+    }
 
-        if (IsBeeFullySurrounded(white) || IsBeeFullySurrounded(!white))
-            return true;
-        return false;
+    public bool BlackHexesWon()
+    {
+        return IsBeeFullySurrounded(true);
+    }
+
+    public bool WhiteHexesWon()
+    {
+        return IsBeeFullySurrounded(false);
     }
 
     private bool IsBeeFullySurrounded(bool whiteBee)
