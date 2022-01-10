@@ -3,6 +3,7 @@ using UnityEngine;
 public class GameManagerController : MonoBehaviour
 {
     private HexesManagerController _hexesMeneger;
+    private HexesInfoProvider _hexesInfoProvider;
     private UIController _ui;
 
     private bool _addingHexToBoard = false;
@@ -15,6 +16,9 @@ public class GameManagerController : MonoBehaviour
     {
         GameObject hexesMenegerGameobject = GameObject.FindWithTag("HexesManager");
         _hexesMeneger = hexesMenegerGameobject.GetComponent<HexesManagerController>();
+
+        GameObject hexesInfoProviderGameObject = GameObject.FindWithTag("HexesInfoProvider");
+        _hexesInfoProvider = hexesInfoProviderGameObject.GetComponent<HexesInfoProvider>();
 
         GameObject uiGameobject = GameObject.FindWithTag("UI");
         _ui = uiGameobject.GetComponent<UIController>();
@@ -31,7 +35,7 @@ public class GameManagerController : MonoBehaviour
 
     private void StartAddingHex(PieceType type, bool white)
     {
-        bool isItFirstMove = _hexesMeneger.IsItFirstMove();
+        bool isItFirstMove = _hexesInfoProvider.IsItFirstMove();
 
         if (_hexesMeneger.PrepareHexToAddToBoard(type, white))
         {
@@ -48,13 +52,13 @@ public class GameManagerController : MonoBehaviour
 
     private void UpdateTileCounterLabel(PieceType type, bool white)
     {
-        int count = _hexesMeneger.GetRemainingHexCount(type, white);
+        int count = _hexesInfoProvider.GetRemainingHexCount(type, white);
         _ui.UpdateLabel(type, white, count);
     }
 
     public void HexSelected(GameObject selectedHex)
     {
-        if (_hexesMeneger.IsItPropositionHex(selectedHex))
+        if (_hexesInfoProvider.IsItPropositionHex(selectedHex))
         {
             if (_addingHexToBoard)
             {
@@ -63,7 +67,7 @@ public class GameManagerController : MonoBehaviour
             {
                 ConfirmMovingHexOnGameboard(selectedHex);
             }
-        } else if (_hexesMeneger.IsItCurrentPlayerHex(selectedHex, _isWhiteTurn))
+        } else if (_hexesInfoProvider.IsItCurrentPlayerHex(selectedHex, _isWhiteTurn))
         {
             StartMovingHex(selectedHex);
         }
