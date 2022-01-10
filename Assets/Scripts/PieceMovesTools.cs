@@ -222,8 +222,7 @@ public static class PieceMovesTools
     public static Vector3 GetVerticalVector(int hexesNumber)
     {
         Vector3 hexesHeightVector = hexesNumber * new Vector3(0, 1, 0);
-        Vector3 result = hexesHeightVector + hexesNumber * new Vector3(0, 2 * Padding, 0);
-        return result;
+        return hexesHeightVector;
     }
 
     public static List<(int, int)> GetFreePositionsAroundPosition((int, int) position, int[,] gameBoard)
