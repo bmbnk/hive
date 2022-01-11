@@ -9,8 +9,7 @@ public class HexesManagerController : MonoBehaviour
     private GameBoardScript _gameBoard;
     private HexesStoreScript _hexesStore;
     private HexesInfoProvider _hexesInfoProvider;
-    private IMovePostValidator _movePostValidator;
-    private IMovePreValidator _movePreValidator;
+    private IMoveValidator _moveValidator;
 
     void Start()
     {
@@ -28,11 +27,8 @@ public class HexesManagerController : MonoBehaviour
         GameObject hexesInfoProviderGameObject = GameObject.FindWithTag("HexesInfoProvider");
         _hexesInfoProvider = hexesInfoProviderGameObject.GetComponent<HexesInfoProvider>();
 
-        GameObject movePostValidatorGameObject = GameObject.FindWithTag("MovePostValidator");
-        _movePostValidator = movePostValidatorGameObject.GetComponent<IMovePostValidator>();
-
-        GameObject movePreValidatorGameObject = GameObject.FindWithTag("MovePreValidator");
-        _movePreValidator = movePreValidatorGameObject.GetComponent<IMovePreValidator>();
+        GameObject moveValidatorGameObject = GameObject.FindWithTag("MoveValidator");
+        _moveValidator = moveValidatorGameObject.GetComponent<IMoveValidator>();
 
         _hexesStore.InitializeHexes();
     }
@@ -45,7 +41,7 @@ public class HexesManagerController : MonoBehaviour
     public bool ConfirmAddedHexOnGameboard(GameObject selectedHex)
     {
         HexWrapperController selectedHexScript = selectedHex.GetComponent<HexWrapperController>();
-        if (selectedHexScript.HexId == 0 && _movePostValidator.IsAddingCorrect(_hexesStore.hexToAdd, selectedHex))
+        if (selectedHexScript.HexId == 0)
         {
             HexWrapperController hexToAddScript = GetHexThatIsAddedScript();
             List<int> hexesOnBoardIds = hexToAddScript.isWhite ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
@@ -87,7 +83,7 @@ public class HexesManagerController : MonoBehaviour
     public bool ConfirmMovingHexOnGameboard(GameObject selectedHex)
     {
         HexWrapperController selectedHexScript = selectedHex.GetComponent<HexWrapperController>();
-        if (selectedHexScript.HexId == 0 && _movePostValidator.IsMovingCorrect(_hexesStore.hexToMove, selectedHex))
+        if (selectedHexScript.HexId == 0)
         {
             HexWrapperController hexToMoveScript = GetHexToMoveScript();
 
@@ -150,7 +146,7 @@ public class HexesManagerController : MonoBehaviour
 
     public bool PrepareHexToAddToBoard(PieceType type, bool white)
     {
-        if (_movePreValidator.CanAdd(type, white))
+        if (_moveValidator.CanAdd(type, white))
         {
             if (_hexesStore.hexToAdd != null)
             {
@@ -219,7 +215,7 @@ public class HexesManagerController : MonoBehaviour
 
     public bool PrepareSelectedHexToMove(GameObject selectedHex)
     {
-        if (_movePreValidator.CanMove(selectedHex))
+        if (_moveValidator.CanMove(selectedHex))
         {
             var beetleScript = BeetlePiece.GetComponent<BeetlePieceController>();
             int hexId = selectedHex.GetComponent<HexWrapperController>().HexId;
@@ -236,7 +232,7 @@ public class HexesManagerController : MonoBehaviour
                         List<(int, int)> availableMovePositions = selectedHexScript
                             .piece
                             .GetComponent<IPieceController>()
-                            .GetPieceSpecificPositions(PieceMovesTools.GetIndiciesByHexId(selectedHexScript.HexId, _gameBoard.gameBoard), _gameBoard.gameBoard);
+                            .GetPieceSpecificPositions(selectedHexScript.positionOnBoard, _gameBoard.gameBoard);
 
                         if (availableMovePositions.Count > 0)
                         {

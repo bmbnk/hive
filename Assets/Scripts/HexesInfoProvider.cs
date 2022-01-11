@@ -76,13 +76,12 @@ public class HexesInfoProvider : MonoBehaviour
         return IsBeeFullySurrounded(false);
     }
 
-    private bool IsBeeFullySurrounded(bool whiteBee)
+    private bool IsBeeFullySurrounded(bool white)
     {
-        if (IsBeeOnBoard(whiteBee))
+        if (IsBeeOnBoard(white))
         {
-            int beeHexId = GetFirstFoundPieceId(whiteBee, PieceType.BEE);
-            (int, int) beePosition = PieceMovesTools.GetIndiciesByHexId(beeHexId, _gameBoard.gameBoard);
-            if (PieceMovesTools.GetNeighbours(beePosition, _gameBoard.gameBoard).Count == 6)
+            GameObject beeHex = GetFirstFoundPiece(white, PieceType.BEE);
+            if (PieceMovesTools.GetNeighbours(beeHex.GetComponent<HexWrapperController>().positionOnBoard, _gameBoard.gameBoard).Count == 6)
                 return true;
         }
         return false;
@@ -90,7 +89,8 @@ public class HexesInfoProvider : MonoBehaviour
 
     public bool IsBeeOnBoard(bool white)
     {
-        int beeHexId = GetFirstFoundPieceId(white, PieceType.BEE);
+        GameObject beeHex = GetFirstFoundPiece(white, PieceType.BEE);
+        int beeHexId = beeHex.GetComponent<HexWrapperController>().HexId;
         List<int> hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
 
         if (beeHexId != -1 && hexesOnBoardIds.Contains(beeHexId))
@@ -98,7 +98,7 @@ public class HexesInfoProvider : MonoBehaviour
         return false;
     }
 
-    private int GetFirstFoundPieceId(bool whiteHexes, PieceType pieceType)
+    private GameObject GetFirstFoundPiece(bool whiteHexes, PieceType pieceType)
     {
         List<GameObject> hexes = whiteHexes ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
         int beeHexIdx = hexes.FindIndex(hex => hex
@@ -107,7 +107,7 @@ public class HexesInfoProvider : MonoBehaviour
             .GetComponent<IPieceController>()
             .GetPieceType() == pieceType);
 
-        return hexes[beeHexIdx].GetComponent<HexWrapperController>().HexId;
+        return hexes[beeHexIdx];
     }
 
 }

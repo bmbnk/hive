@@ -38,8 +38,7 @@ TagManager:
   - BeetleCounter
   - BeeCounter
   - HexesInfoProvider
-  - MovePreValidator
-  - MovePostValidator
+  - MoveValidator
   layers:
   - Default
   - TransparentFX

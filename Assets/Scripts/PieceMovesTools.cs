@@ -315,7 +315,7 @@ public static class PieceMovesTools
         return GetFirstFreePositionInDirection(nextPosition, offsetParams, gameBoard);
     }
 
-    public static (int, int) GetIndiciesByHexId(int HexId, int[,] gameBoard)
+    private static (int, int) GetIndiciesByHexId(int HexId, int[,] gameBoard)
     {
         for (int i = 0; i < GameBoardScript.GameBoardSize; i++)
             for (int j = 0; j < GameBoardScript.GameBoardSize; j++)

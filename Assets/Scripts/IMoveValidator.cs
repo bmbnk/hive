@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public interface IMovePreValidator
+public interface IMoveValidator
 {
     bool CanAdd(PieceType type, bool white);
     bool CanMove(GameObject hex);
