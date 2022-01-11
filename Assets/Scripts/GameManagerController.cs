@@ -23,6 +23,12 @@ public class GameManagerController : MonoBehaviour
 
         GameObject uiGameobject = GameObject.FindWithTag("UI");
         _ui = uiGameobject.GetComponent<UIController>();
+
+        _ui.GreyOutPlayerMenu(!_isWhiteTurn);
+        _ui.DisableButtons(!_isWhiteTurn);
+
+        _ui.UnGreyPlayerMenu(_isWhiteTurn);
+        _ui.EnableButtons(_isWhiteTurn);
     }
 
     void Update()
@@ -52,7 +58,7 @@ public class GameManagerController : MonoBehaviour
             _addingHexToBoard = true;
             if (isItFirstMove)
             {
-                _isWhiteTurn = !_isWhiteTurn;
+                ChangeTurn();
                 _addingHexToBoard = false;
                 UpdateTileCounterLabel(type, white);
             }
@@ -92,7 +98,7 @@ public class GameManagerController : MonoBehaviour
             _gameOver = _hexesInfoProvider.IsGameOver();
             UpdateTileCounterLabel(_lastSelectedTileType, _isWhiteTurn);
             _addingHexToBoard = false;
-            _isWhiteTurn = !_isWhiteTurn;
+            ChangeTurn();
         }
     }
 
@@ -102,7 +108,7 @@ public class GameManagerController : MonoBehaviour
         {
             _gameOver = _hexesInfoProvider.IsGameOver();
             _movingHexOnBoard = false;
-            _isWhiteTurn = !_isWhiteTurn;
+            ChangeTurn();
         }
     }
 
@@ -113,5 +119,16 @@ public class GameManagerController : MonoBehaviour
             _movingHexOnBoard = true;
             _addingHexToBoard = false;
         }
+    }
+
+    private void ChangeTurn()
+    {
+        _isWhiteTurn = !_isWhiteTurn;
+
+        _ui.UnGreyPlayerMenu(_isWhiteTurn);
+        _ui.EnableButtons(_isWhiteTurn);
+
+        _ui.GreyOutPlayerMenu(!_isWhiteTurn);
+        _ui.DisableButtons(!_isWhiteTurn);
     }
 }

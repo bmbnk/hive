@@ -239,9 +239,9 @@ RectTransform:
   m_Father: {fileID: 189734127}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -244.79999}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &44601211
@@ -319,6 +319,7 @@ GameObject:
   - component: {fileID: 62709423}
   - component: {fileID: 62709425}
   - component: {fileID: 62709424}
+  - component: {fileID: 62709426}
   m_Layer: 5
   m_Name: BlackAntCounter
   m_TagString: AntCounter
@@ -341,9 +342,9 @@ RectTransform:
   m_Father: {fileID: 1783351462}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 126.25, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &62709424
@@ -443,6 +444,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 62709422}
   m_CullTransparentMesh: 1
+--- !u!225 &62709426
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 62709422}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &68605901 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2449543555522651668, guid: dc74985fb4d4d4c288f583c8d2722113, type: 3}
@@ -576,6 +589,7 @@ GameObject:
   - component: {fileID: 121875261}
   - component: {fileID: 121875263}
   - component: {fileID: 121875262}
+  - component: {fileID: 121875264}
   m_Layer: 5
   m_Name: BlackBeetleCounter
   m_TagString: BeetleCounter
@@ -598,9 +612,9 @@ RectTransform:
   m_Father: {fileID: 1971927171}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 126.25, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &121875262
@@ -700,6 +714,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 121875260}
   m_CullTransparentMesh: 1
+--- !u!225 &121875264
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 121875260}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &182082571 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2449543555522651668, guid: dc74985fb4d4d4c288f583c8d2722113, type: 3}
@@ -1175,6 +1201,7 @@ GameObject:
   - component: {fileID: 277248800}
   - component: {fileID: 277248799}
   - component: {fileID: 277248798}
+  - component: {fileID: 277248801}
   m_Layer: 5
   m_Name: BlackSpiderButton
   m_TagString: Untagged
@@ -1198,9 +1225,9 @@ RectTransform:
   m_Father: {fileID: 609859813}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 58.75, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &277248798
@@ -1285,6 +1312,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 277248796}
   m_CullTransparentMesh: 1
+--- !u!225 &277248801
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277248796}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &277639190
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1458,6 +1497,7 @@ GameObject:
   - component: {fileID: 566695559}
   - component: {fileID: 566695558}
   - component: {fileID: 566695557}
+  - component: {fileID: 566695560}
   m_Layer: 5
   m_Name: BlackGrasshopperButton
   m_TagString: Untagged
@@ -1481,9 +1521,9 @@ RectTransform:
   m_Father: {fileID: 44601210}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 58.75, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &566695557
@@ -1568,6 +1608,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 566695555}
   m_CullTransparentMesh: 1
+--- !u!225 &566695560
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 566695555}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &587763897
 GameObject:
   m_ObjectHideFlags: 0
@@ -1815,9 +1867,9 @@ RectTransform:
   m_Father: {fileID: 189734127}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -408}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &609859814
@@ -2085,9 +2137,9 @@ RectTransform:
   m_Father: {fileID: 189734127}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -734.39996}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &655167575
@@ -2246,6 +2298,7 @@ GameObject:
   - component: {fileID: 685113970}
   - component: {fileID: 685113969}
   - component: {fileID: 685113968}
+  - component: {fileID: 685113971}
   m_Layer: 5
   m_Name: WhiteBeetleButton
   m_TagString: Untagged
@@ -2269,9 +2322,9 @@ RectTransform:
   m_Father: {fileID: 1493530130}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 101.25, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &685113968
@@ -2356,6 +2409,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 685113966}
   m_CullTransparentMesh: 1
+--- !u!225 &685113971
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685113966}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &699036651
 GameObject:
   m_ObjectHideFlags: 0
@@ -2614,6 +2679,7 @@ GameObject:
   - component: {fileID: 816801383}
   - component: {fileID: 816801385}
   - component: {fileID: 816801384}
+  - component: {fileID: 816801386}
   m_Layer: 5
   m_Name: WhiteSpiderCounter
   m_TagString: SpiderCounter
@@ -2636,9 +2702,9 @@ RectTransform:
   m_Father: {fileID: 1114123165}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 33.75, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &816801384
@@ -2738,6 +2804,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 816801382}
   m_CullTransparentMesh: 1
+--- !u!225 &816801386
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 816801382}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &829355148
 GameObject:
   m_ObjectHideFlags: 0
@@ -2835,7 +2913,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &845596537
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3322,6 +3400,7 @@ GameObject:
   - component: {fileID: 932829747}
   - component: {fileID: 932829746}
   - component: {fileID: 932829745}
+  - component: {fileID: 932829748}
   m_Layer: 5
   m_Name: WhiteGrasshopperButton
   m_TagString: Untagged
@@ -3345,9 +3424,9 @@ RectTransform:
   m_Father: {fileID: 2138695219}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 101.25, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &932829745
@@ -3432,6 +3511,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 932829743}
   m_CullTransparentMesh: 1
+--- !u!225 &932829748
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932829743}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &948248648
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3837,6 +3928,7 @@ GameObject:
   - component: {fileID: 1043854407}
   - component: {fileID: 1043854409}
   - component: {fileID: 1043854408}
+  - component: {fileID: 1043854410}
   m_Layer: 5
   m_Name: BlackSpiderCounter
   m_TagString: SpiderCounter
@@ -3859,9 +3951,9 @@ RectTransform:
   m_Father: {fileID: 609859813}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 126.25, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1043854408
@@ -3961,6 +4053,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1043854406}
   m_CullTransparentMesh: 1
+--- !u!225 &1043854410
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1043854406}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1046084888
 GameObject:
   m_ObjectHideFlags: 0
@@ -3972,6 +4076,7 @@ GameObject:
   - component: {fileID: 1046084889}
   - component: {fileID: 1046084891}
   - component: {fileID: 1046084890}
+  - component: {fileID: 1046084892}
   m_Layer: 5
   m_Name: BlackGrasshopperCounter
   m_TagString: GrasshopperCounter
@@ -3994,9 +4099,9 @@ RectTransform:
   m_Father: {fileID: 44601210}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 126.25, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1046084890
@@ -4096,6 +4201,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1046084888}
   m_CullTransparentMesh: 1
+--- !u!225 &1046084892
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1046084888}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1060713448
 GameObject:
   m_ObjectHideFlags: 0
@@ -4175,6 +4292,7 @@ GameObject:
   - component: {fileID: 1086610042}
   - component: {fileID: 1086610041}
   - component: {fileID: 1086610040}
+  - component: {fileID: 1086610043}
   m_Layer: 5
   m_Name: WhiteAntButton
   m_TagString: Untagged
@@ -4198,9 +4316,9 @@ RectTransform:
   m_Father: {fileID: 2085186087}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 101.25, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1086610040
@@ -4285,6 +4403,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1086610038}
   m_CullTransparentMesh: 1
+--- !u!225 &1086610043
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1086610038}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &1093715783
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4535,9 +4665,9 @@ RectTransform:
   m_Father: {fileID: 1754669542}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -408}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1114123166
@@ -5100,9 +5230,9 @@ RectTransform:
   m_Father: {fileID: 1754669542}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -734.39996}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1261308078
@@ -5180,6 +5310,7 @@ GameObject:
   - component: {fileID: 1278303717}
   - component: {fileID: 1278303719}
   - component: {fileID: 1278303718}
+  - component: {fileID: 1278303720}
   m_Layer: 5
   m_Name: WhiteAntCounter
   m_TagString: AntCounter
@@ -5202,9 +5333,9 @@ RectTransform:
   m_Father: {fileID: 2085186087}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 33.75, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1278303718
@@ -5304,6 +5435,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1278303716}
   m_CullTransparentMesh: 1
+--- !u!225 &1278303720
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1278303716}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1330847684
 GameObject:
   m_ObjectHideFlags: 0
@@ -5321,7 +5464,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1330847685
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5398,6 +5541,7 @@ GameObject:
   - component: {fileID: 1379577987}
   - component: {fileID: 1379577986}
   - component: {fileID: 1379577985}
+  - component: {fileID: 1379577988}
   m_Layer: 5
   m_Name: BlackBeetleButton
   m_TagString: Untagged
@@ -5421,9 +5565,9 @@ RectTransform:
   m_Father: {fileID: 1971927171}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 58.75, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1379577985
@@ -5508,6 +5652,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1379577983}
   m_CullTransparentMesh: 1
+--- !u!225 &1379577988
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1379577983}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1385564543
 GameObject:
   m_ObjectHideFlags: 0
@@ -5875,9 +6031,9 @@ RectTransform:
   m_Father: {fileID: 1754669542}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -571.19995}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1493530131
@@ -6266,6 +6422,7 @@ GameObject:
   - component: {fileID: 1658153360}
   - component: {fileID: 1658153362}
   - component: {fileID: 1658153361}
+  - component: {fileID: 1658153363}
   m_Layer: 5
   m_Name: WhiteBeetleCounter
   m_TagString: BeetleCounter
@@ -6288,9 +6445,9 @@ RectTransform:
   m_Father: {fileID: 1493530130}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 33.75, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1658153361
@@ -6390,6 +6547,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1658153359}
   m_CullTransparentMesh: 1
+--- !u!225 &1658153363
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1658153359}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1688877470 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2449543555522651668, guid: dc74985fb4d4d4c288f583c8d2722113, type: 3}
@@ -6602,6 +6771,7 @@ GameObject:
   - component: {fileID: 1770688186}
   - component: {fileID: 1770688188}
   - component: {fileID: 1770688187}
+  - component: {fileID: 1770688189}
   m_Layer: 5
   m_Name: BlackBeeCounter
   m_TagString: BeeCounter
@@ -6624,9 +6794,9 @@ RectTransform:
   m_Father: {fileID: 655167574}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 126.25, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1770688187
@@ -6728,6 +6898,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1770688185}
   m_CullTransparentMesh: 1
+--- !u!225 &1770688189
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1770688185}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1783139996 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2449543555522651668, guid: dc74985fb4d4d4c288f583c8d2722113, type: 3}
@@ -6769,9 +6951,9 @@ RectTransform:
   m_Father: {fileID: 189734127}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -81.6}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1783351463
@@ -7001,6 +7183,7 @@ GameObject:
   - component: {fileID: 1851199338}
   - component: {fileID: 1851199337}
   - component: {fileID: 1851199336}
+  - component: {fileID: 1851199339}
   m_Layer: 5
   m_Name: BlackAntButton
   m_TagString: Untagged
@@ -7024,9 +7207,9 @@ RectTransform:
   m_Father: {fileID: 1783351462}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 58.75, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1851199336
@@ -7111,6 +7294,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1851199334}
   m_CullTransparentMesh: 1
+--- !u!225 &1851199339
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851199334}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &1858382657
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7231,6 +7426,7 @@ GameObject:
   - component: {fileID: 1895258061}
   - component: {fileID: 1895258063}
   - component: {fileID: 1895258062}
+  - component: {fileID: 1895258064}
   m_Layer: 5
   m_Name: WhiteBeeCounter
   m_TagString: BeeCounter
@@ -7253,9 +7449,9 @@ RectTransform:
   m_Father: {fileID: 1261308077}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 33.75, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1895258062
@@ -7357,6 +7553,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1895258060}
   m_CullTransparentMesh: 1
+--- !u!225 &1895258064
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895258060}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &1904257156
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7510,9 +7718,9 @@ RectTransform:
   m_Father: {fileID: 189734127}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -571.19995}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1971927172
@@ -7591,6 +7799,7 @@ GameObject:
   - component: {fileID: 2032216940}
   - component: {fileID: 2032216939}
   - component: {fileID: 2032216938}
+  - component: {fileID: 2032216941}
   m_Layer: 5
   m_Name: WhiteBeeButton
   m_TagString: Untagged
@@ -7614,9 +7823,9 @@ RectTransform:
   m_Father: {fileID: 1261308077}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 101.25, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2032216938
@@ -7701,6 +7910,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2032216936}
   m_CullTransparentMesh: 1
+--- !u!225 &2032216941
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2032216936}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &2038424023
 GameObject:
   m_ObjectHideFlags: 0
@@ -7713,6 +7934,7 @@ GameObject:
   - component: {fileID: 2038424027}
   - component: {fileID: 2038424026}
   - component: {fileID: 2038424025}
+  - component: {fileID: 2038424028}
   m_Layer: 5
   m_Name: WhiteSpiderButton
   m_TagString: Untagged
@@ -7736,9 +7958,9 @@ RectTransform:
   m_Father: {fileID: 1114123165}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 101.25, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2038424025
@@ -7823,6 +8045,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2038424023}
   m_CullTransparentMesh: 1
+--- !u!225 &2038424028
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2038424023}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &2085186086
 GameObject:
   m_ObjectHideFlags: 0
@@ -7859,9 +8093,9 @@ RectTransform:
   m_Father: {fileID: 1754669542}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -81.6}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2085186088
@@ -7939,6 +8173,7 @@ GameObject:
   - component: {fileID: 2085488365}
   - component: {fileID: 2085488367}
   - component: {fileID: 2085488366}
+  - component: {fileID: 2085488368}
   m_Layer: 5
   m_Name: WhiteGrasshopperCounter
   m_TagString: GrasshopperCounter
@@ -7961,9 +8196,9 @@ RectTransform:
   m_Father: {fileID: 2138695219}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 33.75, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2085488366
@@ -8063,6 +8298,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2085488364}
   m_CullTransparentMesh: 1
+--- !u!225 &2085488368
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2085488364}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &2104204108 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2449543555522651668, guid: dc74985fb4d4d4c288f583c8d2722113, type: 3}
@@ -8178,9 +8425,9 @@ RectTransform:
   m_Father: {fileID: 1754669542}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -244.79999}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2138695220
@@ -8259,6 +8506,7 @@ GameObject:
   - component: {fileID: 2147047808}
   - component: {fileID: 2147047807}
   - component: {fileID: 2147047806}
+  - component: {fileID: 2147047809}
   m_Layer: 5
   m_Name: BlackBeeButton
   m_TagString: Untagged
@@ -8282,9 +8530,9 @@ RectTransform:
   m_Father: {fileID: 655167574}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 58.75, y: -30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2147047806
@@ -8369,6 +8617,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2147047804}
   m_CullTransparentMesh: 1
+--- !u!225 &2147047809
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2147047804}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &6903164419991779533
 PrefabInstance:
   m_ObjectHideFlags: 0

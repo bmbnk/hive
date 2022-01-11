@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    private const string _endGameTextTemplate = "insects won";
+    public const string EndGameTextTemplate = "insects won";
+    public const float AlphaValue = 0.5f;
 
     public GameObject GameManager;
     public GameObject GamePanel;
@@ -38,6 +39,9 @@ public class UIController : MonoBehaviour
     private List<TextMeshProUGUI> _blackCounters;
     private List<TextMeshProUGUI> _whiteCounters;
 
+    private List<Button> _blackButtons;
+    private List<Button> _whiteButtons;
+
 
     void Start()
     {
@@ -58,6 +62,21 @@ public class UIController : MonoBehaviour
         WhiteBeetleButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.BEETLE, true));
         WhiteBeeButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.BEE, true));
 
+        _blackButtons = new List<Button>();
+        _whiteButtons = new List<Button>();
+        
+        _blackButtons.Add(BlackAntButton);
+        _blackButtons.Add(BlackGrasshopperButton);
+        _blackButtons.Add(BlackSpiderButton);
+        _blackButtons.Add(BlackBeetleButton);
+        _blackButtons.Add(BlackBeeButton);
+        
+        _whiteButtons.Add(WhiteAntButton);
+        _whiteButtons.Add(WhiteGrasshopperButton);
+        _whiteButtons.Add(WhiteSpiderButton);
+        _whiteButtons.Add(WhiteBeetleButton);
+        _whiteButtons.Add(WhiteBeeButton);
+
         _blackCounters = new List<TextMeshProUGUI>();
         _whiteCounters = new List<TextMeshProUGUI>();
 
@@ -76,7 +95,7 @@ public class UIController : MonoBehaviour
 
     public void ShowGameEndingPanel(bool whiteWon)
     {
-        EndGamePanel.GetComponentInChildren<TextMeshProUGUI>().SetText((whiteWon ? "White " : "Black ") + _endGameTextTemplate);
+        EndGamePanel.GetComponentInChildren<TextMeshProUGUI>().SetText((whiteWon ? "White " : "Black ") + EndGameTextTemplate);
         GamePanel.SetActive(false);
         EndGamePanel.SetActive(true);
     }
@@ -86,6 +105,48 @@ public class UIController : MonoBehaviour
         var counters = white ? _whiteCounters : _blackCounters;
         var counter = counters.FindLast(counter => IsCounterOfType(counter, type));
         counter.text = count > 0 ? count.ToString() : "";
+    }
+
+    public void DisableButtons(bool white)
+    {
+        SetButtonsInteractable(white, false);
+    }
+
+    public void EnableButtons(bool white)
+    {
+        SetButtonsInteractable(white, true);
+    }
+
+    private void SetButtonsInteractable(bool white, bool interactable)
+    {
+        var buttons = white ? _whiteButtons : _blackButtons;
+        buttons.ForEach(button => button.interactable = interactable);
+    }
+
+    public void GreyOutPlayerMenu(bool white)
+    {
+        SetAlphaForSideMenu(white, AlphaValue);
+    }
+
+    public void UnGreyPlayerMenu(bool white)
+    {
+        SetAlphaForSideMenu(white, 1.0f);
+    }
+
+    private void SetAlphaForSideMenu(bool white, float alpha)
+    {
+        var buttons = white ? _whiteButtons : _blackButtons;
+        var counters = white ? _whiteCounters : _blackCounters;
+
+        buttons.ForEach(button =>
+        {
+            button.GetComponent<CanvasGroup>().alpha = alpha;
+        });
+
+        counters.ForEach(counter =>
+        {
+            counter.GetComponent<CanvasGroup>().alpha = alpha;
+        });
     }
 
     private bool IsCounterOfType(TextMeshProUGUI counter, PieceType type)
