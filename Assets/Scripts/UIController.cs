@@ -94,30 +94,6 @@ public class UIController : MonoBehaviour
         _whiteCounters.Add(WhiteBeesLeftCounter);
     }
 
-    public void ShowWinEndingPanel(bool whiteWon)
-    {
-        ShowEndingPanel((whiteWon ? "White " : "Black ") + WinGameEndTextTemplate);
-    }
-
-    public void ShowGameDrawnEndingPanel()
-    {
-        ShowEndingPanel(DrawnGameEndTextTemplate);
-    }
-
-    private void ShowEndingPanel(string endText)
-    {
-        EndGamePanel.GetComponentInChildren<TextMeshProUGUI>().SetText(endText);
-        GamePanel.SetActive(false);
-        EndGamePanel.SetActive(true);
-    }
-
-    public void UpdateLabel(PieceType type, bool white, int count)
-    {
-        var counters = white ? _whiteCounters : _blackCounters;
-        var counter = counters.FindLast(counter => IsCounterOfType(counter, type));
-        counter.text = count > 0 ? count.ToString() : "";
-    }
-
     public void DisableButtons(bool white)
     {
         SetButtonsInteractable(white, false);
@@ -132,6 +108,11 @@ public class UIController : MonoBehaviour
     {
         var buttons = white ? _whiteButtons : _blackButtons;
         buttons.ForEach(button => button.interactable = interactable);
+    }
+
+    public void HideSideMenus()
+    {
+        GamePanel.SetActive(false);
     }
 
     public void GreyOutPlayerMenu(bool white)
@@ -158,6 +139,30 @@ public class UIController : MonoBehaviour
         {
             counter.GetComponent<CanvasGroup>().alpha = alpha;
         });
+    }
+
+    public void ShowWinEndingPanel(bool whiteWon)
+    {
+        ShowEndingPanel((whiteWon ? "White " : "Black ") + WinGameEndTextTemplate);
+    }
+
+    public void ShowGameDrawnEndingPanel()
+    {
+        ShowEndingPanel(DrawnGameEndTextTemplate);
+    }
+
+    private void ShowEndingPanel(string endText)
+    {
+        EndGamePanel.GetComponentInChildren<TextMeshProUGUI>().SetText(endText);
+        GamePanel.SetActive(false);
+        EndGamePanel.SetActive(true);
+    }
+
+    public void UpdateLabel(PieceType type, bool white, int count)
+    {
+        var counters = white ? _whiteCounters : _blackCounters;
+        var counter = counters.FindLast(counter => IsCounterOfType(counter, type));
+        counter.text = count > 0 ? count.ToString() : "";
     }
 
     private bool IsCounterOfType(TextMeshProUGUI counter, PieceType type)

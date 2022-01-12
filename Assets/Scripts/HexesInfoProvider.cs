@@ -46,6 +46,12 @@ public class HexesInfoProvider : MonoBehaviour
         return counter;
     }
 
+    public bool IsAnyHexLeftInHand()
+    {
+        return _hexesStore.whiteHexesOnBoardIds.Count < _hexesStore.whiteHexes.Count
+            || _hexesStore.blackHexesOnBoardIds.Count < _hexesStore.blackHexes.Count;
+    }
+
     public bool IsItCurrentPlayerHex(GameObject selectedHex, bool isWhiteTurn)
     {
         return !IsItPropositionHex(selectedHex) && selectedHex.GetComponent<HexWrapperController>().isWhite == isWhiteTurn;

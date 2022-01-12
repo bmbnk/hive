@@ -100,6 +100,10 @@ public class GameManagerController : MonoBehaviour
         {
             _gameOver = _hexesInfoProvider.IsGameOver();
             UpdateTileCounterLabel(_lastSelectedTileType, _isWhiteTurn);
+            if (!_hexesInfoProvider.IsAnyHexLeftInHand())
+            {
+                _ui.HideSideMenus();
+            }
             _addingHexToBoard = false;
             ChangeTurn();
         }
