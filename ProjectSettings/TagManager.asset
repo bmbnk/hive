@@ -39,6 +39,11 @@ TagManager:
   - BeeCounter
   - HexesInfoProvider
   - MoveValidator
+  - BeeButton
+  - BeetleButton
+  - SpiderButton
+  - AntButton
+  - GrasshopperButton
   layers:
   - Default
   - TransparentFX

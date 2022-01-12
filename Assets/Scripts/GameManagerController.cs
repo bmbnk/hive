@@ -24,11 +24,8 @@ public class GameManagerController : MonoBehaviour
         GameObject uiGameobject = GameObject.FindWithTag("UI");
         _ui = uiGameobject.GetComponent<UIController>();
 
-        _ui.GreyOutPlayerMenu(!_isWhiteTurn);
-        _ui.DisableButtons(!_isWhiteTurn);
-
-        _ui.UnGreyPlayerMenu(_isWhiteTurn);
-        _ui.EnableButtons(_isWhiteTurn);
+        _ui.EnablePlayerSideMenu(_isWhiteTurn);
+        _ui.DisablePlayerSideMenu(!_isWhiteTurn);
     }
 
     void Update()
@@ -71,7 +68,7 @@ public class GameManagerController : MonoBehaviour
     private void UpdateTileCounterLabel(PieceType type, bool white)
     {
         int count = _hexesInfoProvider.GetRemainingHexCount(type, white);
-        _ui.UpdateLabel(type, white, count);
+        _ui.UpdateTileLayoutElement(type, white, count);
     }
 
     public void HexSelected(GameObject selectedHex)
@@ -132,10 +129,7 @@ public class GameManagerController : MonoBehaviour
     {
         _isWhiteTurn = !_isWhiteTurn;
 
-        _ui.UnGreyPlayerMenu(_isWhiteTurn);
-        _ui.EnableButtons(_isWhiteTurn);
-
-        _ui.GreyOutPlayerMenu(!_isWhiteTurn);
-        _ui.DisableButtons(!_isWhiteTurn);
+        _ui.EnablePlayerSideMenu(_isWhiteTurn);
+        _ui.DisablePlayerSideMenu(!_isWhiteTurn);
     }
 }

@@ -1204,7 +1204,7 @@ GameObject:
   - component: {fileID: 277248801}
   m_Layer: 5
   m_Name: BlackSpiderButton
-  m_TagString: Untagged
+  m_TagString: SpiderButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1500,7 +1500,7 @@ GameObject:
   - component: {fileID: 566695560}
   m_Layer: 5
   m_Name: BlackGrasshopperButton
-  m_TagString: Untagged
+  m_TagString: GrasshopperButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2301,7 +2301,7 @@ GameObject:
   - component: {fileID: 685113971}
   m_Layer: 5
   m_Name: WhiteBeetleButton
-  m_TagString: Untagged
+  m_TagString: BeetleButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3403,7 +3403,7 @@ GameObject:
   - component: {fileID: 932829748}
   m_Layer: 5
   m_Name: WhiteGrasshopperButton
-  m_TagString: Untagged
+  m_TagString: GrasshopperButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4295,7 +4295,7 @@ GameObject:
   - component: {fileID: 1086610043}
   m_Layer: 5
   m_Name: WhiteAntButton
-  m_TagString: Untagged
+  m_TagString: AntButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5544,7 +5544,7 @@ GameObject:
   - component: {fileID: 1379577988}
   m_Layer: 5
   m_Name: BlackBeetleButton
-  m_TagString: Untagged
+  m_TagString: BeetleButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7186,7 +7186,7 @@ GameObject:
   - component: {fileID: 1851199339}
   m_Layer: 5
   m_Name: BlackAntButton
-  m_TagString: Untagged
+  m_TagString: AntButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7802,7 +7802,7 @@ GameObject:
   - component: {fileID: 2032216941}
   m_Layer: 5
   m_Name: WhiteBeeButton
-  m_TagString: Untagged
+  m_TagString: BeeButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7937,7 +7937,7 @@ GameObject:
   - component: {fileID: 2038424028}
   m_Layer: 5
   m_Name: WhiteSpiderButton
-  m_TagString: Untagged
+  m_TagString: SpiderButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8509,7 +8509,7 @@ GameObject:
   - component: {fileID: 2147047809}
   m_Layer: 5
   m_Name: BlackBeeButton
-  m_TagString: Untagged
+  m_TagString: BeeButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

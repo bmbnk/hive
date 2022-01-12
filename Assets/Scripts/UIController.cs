@@ -40,8 +40,8 @@ public class UIController : MonoBehaviour
     private List<TextMeshProUGUI> _blackCounters;
     private List<TextMeshProUGUI> _whiteCounters;
 
-    private List<Button> _blackButtons;
-    private List<Button> _whiteButtons;
+    private List<Button> _activeBlackButtons;
+    private List<Button> _activeWhiteButtons;
 
 
     void Start()
@@ -63,20 +63,20 @@ public class UIController : MonoBehaviour
         WhiteBeetleButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.BEETLE, true));
         WhiteBeeButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.BEE, true));
 
-        _blackButtons = new List<Button>();
-        _whiteButtons = new List<Button>();
+        _activeBlackButtons = new List<Button>();
+        _activeWhiteButtons = new List<Button>();
         
-        _blackButtons.Add(BlackAntButton);
-        _blackButtons.Add(BlackGrasshopperButton);
-        _blackButtons.Add(BlackSpiderButton);
-        _blackButtons.Add(BlackBeetleButton);
-        _blackButtons.Add(BlackBeeButton);
+        _activeBlackButtons.Add(BlackAntButton);
+        _activeBlackButtons.Add(BlackGrasshopperButton);
+        _activeBlackButtons.Add(BlackSpiderButton);
+        _activeBlackButtons.Add(BlackBeetleButton);
+        _activeBlackButtons.Add(BlackBeeButton);
         
-        _whiteButtons.Add(WhiteAntButton);
-        _whiteButtons.Add(WhiteGrasshopperButton);
-        _whiteButtons.Add(WhiteSpiderButton);
-        _whiteButtons.Add(WhiteBeetleButton);
-        _whiteButtons.Add(WhiteBeeButton);
+        _activeWhiteButtons.Add(WhiteAntButton);
+        _activeWhiteButtons.Add(WhiteGrasshopperButton);
+        _activeWhiteButtons.Add(WhiteSpiderButton);
+        _activeWhiteButtons.Add(WhiteBeetleButton);
+        _activeWhiteButtons.Add(WhiteBeeButton);
 
         _blackCounters = new List<TextMeshProUGUI>();
         _whiteCounters = new List<TextMeshProUGUI>();
@@ -94,41 +94,29 @@ public class UIController : MonoBehaviour
         _whiteCounters.Add(WhiteBeesLeftCounter);
     }
 
-    public void DisableButtons(bool white)
+    public void DisablePlayerSideMenu(bool white)
     {
         SetButtonsInteractable(white, false);
+        SetAlphaForSideMenu(white, AlphaValue);
     }
 
-    public void EnableButtons(bool white)
+    public void EnablePlayerSideMenu(bool white)
     {
         SetButtonsInteractable(white, true);
+        SetAlphaForSideMenu(white, 1.0f);
     }
 
     private void SetButtonsInteractable(bool white, bool interactable)
     {
-        var buttons = white ? _whiteButtons : _blackButtons;
+        var buttons = white ? _activeWhiteButtons : _activeBlackButtons;
         buttons.ForEach(button => button.interactable = interactable);
-    }
-
-    public void HideSideMenus()
-    {
-        GamePanel.SetActive(false);
-    }
-
-    public void GreyOutPlayerMenu(bool white)
-    {
-        SetAlphaForSideMenu(white, AlphaValue);
-    }
-
-    public void UnGreyPlayerMenu(bool white)
-    {
-        SetAlphaForSideMenu(white, 1.0f);
     }
 
     private void SetAlphaForSideMenu(bool white, float alpha)
     {
-        var buttons = white ? _whiteButtons : _blackButtons;
+        var buttons = white ? _activeWhiteButtons : _activeBlackButtons;
         var counters = white ? _whiteCounters : _blackCounters;
+
 
         buttons.ForEach(button =>
         {
@@ -139,6 +127,11 @@ public class UIController : MonoBehaviour
         {
             counter.GetComponent<CanvasGroup>().alpha = alpha;
         });
+    }
+
+    public void HideSideMenus()
+    {
+        GamePanel.SetActive(false);
     }
 
     public void ShowWinEndingPanel(bool whiteWon)
@@ -158,11 +151,15 @@ public class UIController : MonoBehaviour
         EndGamePanel.SetActive(true);
     }
 
-    public void UpdateLabel(PieceType type, bool white, int count)
+    public void UpdateTileLayoutElement(PieceType type, bool white, int count)
     {
         var counters = white ? _whiteCounters : _blackCounters;
         var counter = counters.FindLast(counter => IsCounterOfType(counter, type));
-        counter.text = count > 0 ? count.ToString() : "";
+        UpdateLabel(counter, count);
+        if (counter.text == "")
+        {
+            DeactivateButton(type, white);
+        }
     }
 
     private bool IsCounterOfType(TextMeshProUGUI counter, PieceType type)
@@ -170,5 +167,26 @@ public class UIController : MonoBehaviour
         string counterTag = counter.tag;
         string counterTypeString = counterTag.Replace("Counter", "").ToUpper();
         return counterTypeString.Equals(type.ToString());
+    }
+
+    private void UpdateLabel(TextMeshProUGUI counter, int count)
+    {
+        counter.text = count > 0 ? count.ToString() : "";
+    }
+
+    private void DeactivateButton(PieceType type, bool white)
+    {
+        var buttons = white ? _activeWhiteButtons : _activeBlackButtons;
+        var button = buttons.FindLast(button => IsButtonOfType(button, type));
+        button.GetComponent<CanvasGroup>().alpha = AlphaValue;
+        button.interactable = false;
+        buttons.Remove(button);
+    }
+
+    private bool IsButtonOfType(Button button, PieceType type)
+    {
+        string buttonTag = button.tag;
+        string buttonTypeString = buttonTag.Replace("Button", "").ToUpper();
+        return buttonTypeString.Equals(type.ToString());
     }
 }
