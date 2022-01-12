@@ -35,7 +35,10 @@ public class GameManagerController : MonoBehaviour
     {
         if (_gameOver)
         {
-            _ui.ShowGameEndingPanel(_hexesInfoProvider.WhiteHexesWon());
+            if (_hexesInfoProvider.GameIsDrawn())
+                _ui.ShowGameDrawnEndingPanel();
+            else
+                _ui.ShowWinEndingPanel(_hexesInfoProvider.WhiteHexesWon());
         }     
     }
 

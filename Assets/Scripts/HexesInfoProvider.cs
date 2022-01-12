@@ -76,6 +76,11 @@ public class HexesInfoProvider : MonoBehaviour
         return IsBeeFullySurrounded(false);
     }
 
+    public bool GameIsDrawn()
+    {
+        return BlackHexesWon() && WhiteHexesWon();
+    }
+
     private bool IsBeeFullySurrounded(bool white)
     {
         if (IsBeeOnBoard(white))

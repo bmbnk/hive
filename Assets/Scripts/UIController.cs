@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    public const string EndGameTextTemplate = "insects won";
+    public const string WinGameEndTextTemplate = "insects won";
+    public const string DrawnGameEndTextTemplate = "DRAW";
     public const float AlphaValue = 0.5f;
 
     public GameObject GameManager;
@@ -93,9 +94,19 @@ public class UIController : MonoBehaviour
         _whiteCounters.Add(WhiteBeesLeftCounter);
     }
 
-    public void ShowGameEndingPanel(bool whiteWon)
+    public void ShowWinEndingPanel(bool whiteWon)
     {
-        EndGamePanel.GetComponentInChildren<TextMeshProUGUI>().SetText((whiteWon ? "White " : "Black ") + EndGameTextTemplate);
+        ShowEndingPanel((whiteWon ? "White " : "Black ") + WinGameEndTextTemplate);
+    }
+
+    public void ShowGameDrawnEndingPanel()
+    {
+        ShowEndingPanel(DrawnGameEndTextTemplate);
+    }
+
+    private void ShowEndingPanel(string endText)
+    {
+        EndGamePanel.GetComponentInChildren<TextMeshProUGUI>().SetText(endText);
         GamePanel.SetActive(false);
         EndGamePanel.SetActive(true);
     }
