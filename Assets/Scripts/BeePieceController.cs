@@ -3,14 +3,8 @@ using UnityEngine;
 
 public class BeePieceController : MonoBehaviour, IPieceController
 {
-    private PieceType _type;
+    public PieceType GetPieceType() => PieceType.BEE;
 
-    void Start()
-    {
-        _type = PieceType.BEE;
-    }
-
-    public PieceType GetPieceType() { return _type; }
 
     public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] gameBoard)
     {

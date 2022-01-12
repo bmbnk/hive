@@ -3,14 +3,8 @@ using UnityEngine;
 
 public class GrasshopperPieceController : MonoBehaviour, IPieceController
 {
-    private PieceType _type;
+    public PieceType GetPieceType() => PieceType.GRASSHOPPER;
 
-    void Start()
-    {
-        _type = PieceType.GRASSHOPPER;
-    }
-
-    public PieceType GetPieceType() { return _type; }
 
     public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] gameBoard)
     {

@@ -3,16 +3,14 @@ using UnityEngine;
 
 public class BeetlePieceController : MonoBehaviour, IPieceController
 {
-    private PieceType _type;
+    public PieceType GetPieceType() => PieceType.BEETLE;
     private Dictionary<int, int> _beetleIdToHexUnderneathId;
+
 
     void Start()
     {
         _beetleIdToHexUnderneathId = new Dictionary<int, int>();
-        _type = PieceType.BEETLE;
     }
-
-    public PieceType GetPieceType() { return _type; }
 
     public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] gameBoard)
     {
@@ -47,27 +45,15 @@ public class BeetlePieceController : MonoBehaviour, IPieceController
         return positions;
     }
 
-    public int GetIdOfFirstHexUnderneathBeetle(int beetleId)
+    private int HexesOnPositionNumber((int, int) position, int[,] gameBoard)
     {
-        if (_beetleIdToHexUnderneathId.ContainsKey(beetleId))
-            return _beetleIdToHexUnderneathId[beetleId];
-        return -1;
-    }
-
-    public void RemoveHexUnderneathBeetle(int beetleId)
-    {
-        if (_beetleIdToHexUnderneathId.ContainsKey(beetleId))
-            _beetleIdToHexUnderneathId.Remove(beetleId);
-    }
-
-    public void SetHexUnderneathBeetle(int beetleId, int hexUnderneathId)
-    {
-        _beetleIdToHexUnderneathId[beetleId] = hexUnderneathId;
-    }
-
-    public bool IsHexUnderneathBeetle(int hexId)
-    {
-        return _beetleIdToHexUnderneathId.ContainsValue(hexId);
+        int hexId = gameBoard[position.Item1, position.Item2];
+        if (hexId > 0)
+        {
+            int hexesUnderHexNumber = HexesUnderBeetleNumber(hexId);
+            return hexesUnderHexNumber + 1;
+        }
+        return 0;
     }
 
     public int HexesUnderBeetleNumber(int beetleId)
@@ -83,15 +69,27 @@ public class BeetlePieceController : MonoBehaviour, IPieceController
         return hexesUnderBeetleCounter;
     }
 
-    private int HexesOnPositionNumber((int, int) position, int[,] gameBoard)
+    public int GetIdOfFirstHexUnderneathBeetle(int beetleId)
     {
-        int hexId = gameBoard[position.Item1, position.Item2];
-        if (hexId > 0)
-        {
-            int hexesUnderHexNumber = HexesUnderBeetleNumber(hexId);
-            return hexesUnderHexNumber + 1;
-        }
-        return 0;
+        if (_beetleIdToHexUnderneathId.ContainsKey(beetleId))
+            return _beetleIdToHexUnderneathId[beetleId];
+        return -1;
+    }
+
+    public bool IsHexUnderneathBeetle(int hexId)
+    {
+        return _beetleIdToHexUnderneathId.ContainsValue(hexId);
+    }
+
+    public void RemoveHexUnderneathBeetle(int beetleId)
+    {
+        if (_beetleIdToHexUnderneathId.ContainsKey(beetleId))
+            _beetleIdToHexUnderneathId.Remove(beetleId);
+    }
+
+    public void SetHexUnderneathBeetle(int beetleId, int hexUnderneathId)
+    {
+        _beetleIdToHexUnderneathId[beetleId] = hexUnderneathId;
     }
 
 }

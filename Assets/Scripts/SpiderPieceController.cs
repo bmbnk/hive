@@ -5,14 +5,8 @@ using UnityEngine;
 
 public class SpiderPieceController : MonoBehaviour, IPieceController
 {
-    private PieceType _type;
+    public PieceType GetPieceType() => PieceType.SPIDER;
 
-    void Start()
-    {
-        _type = PieceType.SPIDER;
-    }
-
-    public PieceType GetPieceType() { return _type; }
 
     public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] originalGameBoard)
     {
@@ -21,6 +15,13 @@ public class SpiderPieceController : MonoBehaviour, IPieceController
 
         int[,] gameBoard = GetGameBoardWithoutHex(originalGameBoard, hexPosition);
         return getMovePositions(gameBoard, hexPosition);
+    }
+
+    private int[,] GetGameBoardWithoutHex(int[,] originalGameBoard, (int, int) hexPosition)
+    {
+        int[,] gameBoard = (int[,])originalGameBoard.Clone();
+        gameBoard[hexPosition.Item1, hexPosition.Item2] = 0;
+        return gameBoard;
     }
 
     private List<(int, int)> getMovePositions(int[,] gameBoard, (int, int) hexPosition)
@@ -79,12 +80,5 @@ public class SpiderPieceController : MonoBehaviour, IPieceController
         }
 
         return movePosition;
-    }
-
-    private int[,] GetGameBoardWithoutHex(int[,] originalGameBoard, (int, int) hexPosition)
-    {
-        int[,] gameBoard = (int[,])originalGameBoard.Clone();
-        gameBoard[hexPosition.Item1, hexPosition.Item2] = 0;
-        return gameBoard;
     }
 }

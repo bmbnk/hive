@@ -4,37 +4,11 @@ using UnityEngine;
 
 public class AntPieceController : MonoBehaviour, IPieceController
 {
-    private PieceType _type;
+    public PieceType GetPieceType() => PieceType.ANT;
 
-    void Start()
-    {
-        _type = PieceType.ANT;
-    }
-
-    public PieceType GetPieceType() { return _type; }
 
     public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] originalGameBoard)
     {
-        // Szukamy przejscia wokol sasiada zgodnie z ruchem wskazowek zegara
-        // czyli taka kolejnosc w jakiej sa wpisywane _oneStepPositionOffsets
-
-        // dodajemy do pozycji startowa pozycje
-
-        // PETLA //
-
-        // 1. znajdz sasiadow dla aktualnej pozycji
-        // 2. sprawdzaj, czy jestes w stanie poruszyc sie wokol ktoregos sasiada w te strone,
-        // ktora jest ustawiona:
-        // - bierz pod uwage, ze nie mozesz wejsc jak jest za ciasno (metoda getNotAllowedPositions())
-        // - zawsze obracasz sie wokol danego hexa tak dlugo, az dalej nie bedziesz mogl
-        // - jesli musisz przejsc na nastepnego hexa i masz wiecej niz jednego do wyboru
-        // to wybierz tego, ktory sasiadowal z poprzednim
-        // - przy kazdym przejsciu do nastepnej pozycji zapisuj te pozycje do listy
-        // - jesli 2 ostatnio dodane pozycje stanowia subliste list positions to konczymy petle
-        // i usuwamy ostatnie 2 pozycje
-
-        // usuwamy z pozycji pozycje startowa
-
         int[,] gameBoard = GetGameBoardWithoutHex(originalGameBoard, hexPosition);
 
         List<(int, int)> positions = new List<(int, int)>();
