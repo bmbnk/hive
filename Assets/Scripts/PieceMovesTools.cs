@@ -5,7 +5,10 @@ using UnityEngine;
 
 public static class PieceMovesTools
 {
-    private const float Padding = 0.3f;
+    private const float Padding = 0.0f;
+    private const float HexHeight = 0.7f;
+    private const float HexHalfDistanceBetweenSides = 1.3f;
+
     private static List<(Vector3 Vector,
         (int, int) EvenRowNeighbourIdxsDelta,
         (int, int) OddRowNeighbourIdxsDelta)> _neighboursLocationParameters;
@@ -15,39 +18,39 @@ public static class PieceMovesTools
         _neighboursLocationParameters = new List<(Vector3 Vector, (int, int) EvenRowNeighbourIdxsDelta, (int, int) OddRowNeighbourIdxsDelta)>();
         _neighboursLocationParameters.Add(
         (
-            Vector: new Vector3(1, 0, Mathf.Sqrt(3)),
+            Vector: new Vector3(1, 0, Mathf.Sqrt(3)) * HexHalfDistanceBetweenSides,
             EvenRowNeighbourIdxsDelta: (-1, 0),
             OddRowNeighbourIdxsDelta: (-1, 1)
-        ));
+        )); ;
         _neighboursLocationParameters.Add(
         (
-            Vector: new Vector3(2, 0, 0),
+            Vector: new Vector3(2, 0, 0) * HexHalfDistanceBetweenSides,
             EvenRowNeighbourIdxsDelta: (0, 1),
             OddRowNeighbourIdxsDelta: (0, 1)
         ));
         _neighboursLocationParameters.Add(
         (
-            Vector: new Vector3(1, 0, -Mathf.Sqrt(3)),
+            Vector: new Vector3(1, 0, -Mathf.Sqrt(3)) * HexHalfDistanceBetweenSides,
             EvenRowNeighbourIdxsDelta: (1, 0),
             OddRowNeighbourIdxsDelta: (1, 1)
 
         ));
         _neighboursLocationParameters.Add(
         (
-            Vector: new Vector3(-1, 0, -Mathf.Sqrt(3)),
+            Vector: new Vector3(-1, 0, -Mathf.Sqrt(3)) * HexHalfDistanceBetweenSides,
             EvenRowNeighbourIdxsDelta: (1, -1),
             OddRowNeighbourIdxsDelta: (1, 0)
 
         ));
         _neighboursLocationParameters.Add(
         (
-            Vector: new Vector3(-2, 0, 0),
+            Vector: new Vector3(-2, 0, 0) * HexHalfDistanceBetweenSides,
             EvenRowNeighbourIdxsDelta: (0, -1),
             OddRowNeighbourIdxsDelta: (0, -1)
         ));
         _neighboursLocationParameters.Add(
         (
-            Vector: new Vector3(-1, 0, Mathf.Sqrt(3)),
+            Vector: new Vector3(-1, 0, Mathf.Sqrt(3)) * HexHalfDistanceBetweenSides,
             EvenRowNeighbourIdxsDelta: (-1, -1),
             OddRowNeighbourIdxsDelta: (-1, 0)
         ));
@@ -203,6 +206,8 @@ public static class PieceMovesTools
     public static Vector3 GetVectorFromStartToEnd((int, int) startPosition, (int, int) endPositon)
     {
         Vector3 vector = new Vector3(0, 0, 0);
+
+        //make both positions rows even or odd
         if ((startPosition.Item1 + endPositon.Item1) % 2 == 1)
         {
             var positionOffset = startPosition.Item1 % 2 == 1 ? _neighboursLocationParameters[0].EvenRowNeighbourIdxsDelta : _neighboursLocationParameters[0].OddRowNeighbourIdxsDelta;
@@ -211,17 +216,20 @@ public static class PieceMovesTools
             vector += offsetVector + 2 * offsetVector.normalized * Padding;
         }
 
-        vector += new Vector3(
-            (endPositon.Item2 - startPosition.Item2) * (2 + 2 * Padding),
-            0,
-            (-(endPositon.Item1 - startPosition.Item1) / 2) * (3 * 2 / Mathf.Sqrt(3) + 2 * Padding * Mathf.Sqrt(3)));
+        Vector3 moveHexLeftVector = _neighboursLocationParameters[1].Vector;
+        int positionToLeftNumber = (endPositon.Item2 - startPosition.Item2);
+        vector += positionToLeftNumber * (moveHexLeftVector + moveHexLeftVector.normalized * 2 * Padding);
+
+        Vector3 moveHexDownVector = new Vector3(0, 0, 3 * HexHalfDistanceBetweenSides / Mathf.Sqrt(3) * 2);
+        int positionsDownNumber = (startPosition.Item1 - endPositon.Item1);
+        vector += positionsDownNumber / 2 * (moveHexDownVector + 2 *  moveHexDownVector.normalized * Padding * Mathf.Sqrt(3));
 
         return vector;
     }
 
     public static Vector3 GetVerticalVector(int hexesNumber)
     {
-        Vector3 hexesHeightVector = hexesNumber * new Vector3(0, 1, 0);
+        Vector3 hexesHeightVector = hexesNumber * new Vector3(0, HexHeight, 0);
         return hexesHeightVector;
     }
 

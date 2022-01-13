@@ -64,6 +64,7 @@ public class GameManagerController : MonoBehaviour
                 ChangeTurn();
                 _addingHexToBoard = false;
                 UpdateTileCounterLabel(type, white);
+                _camera.UpdateCamera();
             }
         }
     }
@@ -106,7 +107,7 @@ public class GameManagerController : MonoBehaviour
             }
             _addingHexToBoard = false;
             ChangeTurn();
-            _camera.UpdatePosition();
+            _camera.UpdateCamera();
         }
     }
 
@@ -117,7 +118,7 @@ public class GameManagerController : MonoBehaviour
             _gameOver = _hexesInfoProvider.IsGameOver();
             _movingHexOnBoard = false;
             ChangeTurn();
-            _camera.UpdatePosition();
+            _camera.UpdateCamera();
         }
     }
 

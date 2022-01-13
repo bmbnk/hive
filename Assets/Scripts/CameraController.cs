@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    public const int MinFieldOfView = 80;
+
     public GameObject Hex;
 
     private HexesStoreScript _hexesStore;
@@ -17,11 +20,17 @@ public class CameraController : MonoBehaviour
         _offset = transform.position - Hex.transform.position;
     }
 
-    public void UpdatePosition()
+    public void UpdateCamera()
     {
         List<Vector3> hexPositionVectors = new List<Vector3>();
         hexPositionVectors.AddRange(GetHexesOnBoard(true));
         hexPositionVectors.AddRange(GetHexesOnBoard(false));
+        UpdatePosition(hexPositionVectors);
+        UpdateZoom(hexPositionVectors);
+    }
+
+    private void UpdatePosition(List<Vector3> hexPositionVectors)
+    {
         Vector3 nextPosition = GetCenterOfMass(hexPositionVectors);
         transform.position = nextPosition + _offset;
     }
@@ -47,5 +56,43 @@ public class CameraController : MonoBehaviour
         positionsVectors.ForEach(vector => vectorSum += vector);
 
         return vectorSum / positionsVectors.Count;
+    }
+
+    private void UpdateZoom(List<Vector3> hexPositionVectors)
+    {
+        if (AreAllHexesWithMarginVisible(hexPositionVectors))
+        {
+            while (AreAllHexesWithMarginVisible(hexPositionVectors) && Camera.main.fieldOfView > MinFieldOfView)
+                Camera.main.fieldOfView = Camera.main.fieldOfView - 1;
+            Camera.main.fieldOfView = Camera.main.fieldOfView + 1;
+        }
+        else
+        {
+            while (!AreAllHexesWithMarginVisible(hexPositionVectors))
+                Camera.main.fieldOfView = Camera.main.fieldOfView + 1;
+        }
+    }
+
+    private bool AreAllHexesWithMarginVisible(List<Vector3> hexPositionVectors)
+    {
+        foreach (var hexPositionVector in hexPositionVectors)
+        {
+            Vector3 positionPlusDelta = hexPositionVector + new Vector3(1, 0, 1);
+            Vector3 positionMinusDelta = hexPositionVector + new Vector3(-1, 0, -1);
+            if (!IsPositionInCameraView(positionPlusDelta)
+                || !IsPositionInCameraView(positionMinusDelta))
+                return false;
+        }
+        return true;
+    }
+
+    private bool IsPositionInCameraView(Vector3 position)
+    {
+        Vector3 viewPosition = Camera.main.WorldToViewportPoint(position);
+        if (viewPosition.x < 0 || viewPosition.x > 1 ||
+            viewPosition.y < 0 || viewPosition.y > 1 ||
+            viewPosition.z < 0)
+            return false;
+        return true;
     }
 }
