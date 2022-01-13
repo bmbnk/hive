@@ -43,7 +43,6 @@ public class SideMenusController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GamePanel.SetActive(true);
         GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
 
         BlackAntButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.ANT, false));

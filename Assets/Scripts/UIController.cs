@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
@@ -11,18 +9,17 @@ public class UIController : MonoBehaviour
     public const float AlphaValue = 0.5f;
 
     public GameObject GameManager;
-    public GameObject GamePanel;
-    public GameObject EndGamePanel;
     public GameObject StartMenuPanel;
+    public GameObject ChoiceMenuPanel;
+    public GameObject GamePanel;
+    public GameObject PauseMenuPanel;
+    public GameObject EndGamePanel;
     private SideMenusController _sideMenus;
 
     void Start()
     {
         GameObject sideMenusGameobject = GameObject.FindWithTag("SideMenus");
         _sideMenus = sideMenusGameobject.GetComponent<SideMenusController>();
-
-        GamePanel.SetActive(true);
-        EndGamePanel.SetActive(false);
     }
 
     public void ChangeSideMenu(bool white)
@@ -44,6 +41,11 @@ public class UIController : MonoBehaviour
         GamePanel.SetActive(false);
     }
 
+    public void HideChoiceMenu()
+    {
+        ChoiceMenuPanel.SetActive(false);
+    }
+
     public void ShowWinEndingPanel(bool whiteWon)
     {
         ShowEndingPanel((whiteWon ? "White " : "Black ") + WinGameEndTextTemplate);
@@ -61,18 +63,41 @@ public class UIController : MonoBehaviour
         EndGamePanel.SetActive(true);
     }
 
+    public void HidePauseMenu()
+    {
+        PauseMenuPanel.SetActive(false);
+    }
+
+    public void LaunchPauseMenu()
+    {
+        PauseMenuPanel.SetActive(true);
+    }
+
     public void ResetUI()
     {
+        ChoiceMenuPanel.SetActive(false);
+        PauseMenuPanel.SetActive(false);
         EndGamePanel.SetActive(false);
+        GamePanel.SetActive(false);
         StartMenuPanel.SetActive(false);
-        GamePanel.SetActive(true);
         _sideMenus.ResetSideMenus();
     }
 
-    public void LaunchStartMenu()
+    public void LaunchChoiceMenu()
+    {
+        StartMenuPanel.SetActive(false);
+        EndGamePanel.SetActive(false);
+        GamePanel.SetActive(false);
+        PauseMenuPanel.SetActive(false);
+        ChoiceMenuPanel.SetActive(true);
+    }
+
+    internal void LaunchStartMenu()
     {
         StartMenuPanel.SetActive(true);
         EndGamePanel.SetActive(false);
         GamePanel.SetActive(false);
+        PauseMenuPanel.SetActive(false);
+        ChoiceMenuPanel.SetActive(false);
     }
 }

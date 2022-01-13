@@ -1,20 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class StartMenuController : MonoBehaviour
 {
     public GameObject GameManager;
-    public Button BlackStartsButton;
-    public Button WhiteStartsButton;
+    public Button StartGameButton;
+    public Button ExitButton;
 
 
     void Start()
     {
         GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
 
-        BlackStartsButton.onClick.AddListener(() => gameManagerScript.StartGame(false));
-        WhiteStartsButton.onClick.AddListener(() => gameManagerScript.StartGame(true));
+        StartGameButton.onClick.AddListener(() => gameManagerScript.PrepareGame());
+        ExitButton.onClick.AddListener(() => Application.Quit());
     }
 }

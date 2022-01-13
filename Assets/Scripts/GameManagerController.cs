@@ -9,6 +9,7 @@ public class GameManagerController : MonoBehaviour
 
     private bool _addingHexToBoard = false;
     private bool _gameOver = false;
+    private bool _gamePaused = false;
     private bool _isWhiteTurn = true;
     private bool _movingHexOnBoard = false;
     private PieceType _lastSelectedTileType;
@@ -26,20 +27,26 @@ public class GameManagerController : MonoBehaviour
 
         GameObject cameraGameobject = GameObject.FindWithTag("MainCamera");
         _camera = cameraGameobject.GetComponent<CameraController>();
-
-        SetTurn(true);
-        _ui.ChangeSideMenu(_isWhiteTurn);
     }
 
     void Update()
     {
-        if (_gameOver)
+        if (Input.GetKey("escape") && !_gameOver)
         {
-            if (_hexesInfoProvider.GameIsDrawn())
-                _ui.ShowGameDrawnEndingPanel();
-            else
-                _ui.ShowWinEndingPanel(_hexesInfoProvider.WhiteHexesWon());
-        }     
+            PauseGame();
+        }
+    }
+
+    public void PauseGame()
+    {
+        _ui.LaunchPauseMenu();
+        _gamePaused = true;
+    }
+
+    public void ResumeGame()
+    {
+        _ui.HidePauseMenu();
+        _gamePaused = false;
     }
 
     public void TileSelected(PieceType type, bool white)
@@ -77,7 +84,7 @@ public class GameManagerController : MonoBehaviour
 
     public void HexSelected(GameObject selectedHex)
     {
-        if (!_gameOver)
+        if (!_gameOver && !_gamePaused)
         {
             if (_hexesInfoProvider.IsItPropositionHex(selectedHex))
             {
@@ -99,7 +106,8 @@ public class GameManagerController : MonoBehaviour
     {
         if (_hexesMeneger.ConfirmAddedHexOnGameboard(selectedHex))
         {
-            _gameOver = _hexesInfoProvider.IsGameOver();
+            if (_hexesInfoProvider.IsGameOver())
+                GameOver();
             UpdateTileCounterLabel(_lastSelectedTileType, _isWhiteTurn);
             if (!_hexesInfoProvider.IsAnyHexLeftInHand())
             {
@@ -111,12 +119,21 @@ public class GameManagerController : MonoBehaviour
         }
     }
 
+    private void GameOver()
+    {
+        if (_hexesInfoProvider.GameIsDrawn())
+            _ui.ShowGameDrawnEndingPanel();
+        else
+            _ui.ShowWinEndingPanel(_hexesInfoProvider.WhiteHexesWon());
+    }
+
 
     private void ConfirmMovingHexOnGameboard(GameObject selectedHex)
     {
         if (_hexesMeneger.ConfirmMovingHexOnGameboard(selectedHex))
         {
-            _gameOver = _hexesInfoProvider.IsGameOver();
+            if (_hexesInfoProvider.IsGameOver())
+                GameOver();
             _movingHexOnBoard = false;
             ChangeTurn();
             _camera.UpdateCamera();
@@ -127,13 +144,23 @@ public class GameManagerController : MonoBehaviour
     {
         _gameOver = false;
         SetTurn(white);
-        _hexesMeneger.ResetHexesState();
-        _ui.ResetUI();
+        _ui.HideChoiceMenu();
         _ui.ChangeSideMenu(_isWhiteTurn);
     }
 
-    public void NextGame()
+    public void PrepareGame()
     {
+        _ui.LaunchChoiceMenu();
+    }
+
+    public void ResetGame()
+    {
+        _gamePaused = false;
+        _gameOver = false;
+        _movingHexOnBoard = false;
+        _addingHexToBoard = false;
+        _hexesMeneger.ResetHexesState();
+        _ui.ResetUI();
         _ui.LaunchStartMenu();
     }
 

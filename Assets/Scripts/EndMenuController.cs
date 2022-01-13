@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class EndMenuController : MonoBehaviour
 {
     public GameObject GameManager;
+    public GameObject EndGamePanel;
     public Button NextGameButton;
     public Button ExitButton;
 
@@ -14,7 +15,7 @@ public class EndMenuController : MonoBehaviour
     {
         GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
 
-        NextGameButton.onClick.AddListener(() => gameManagerScript.NextGame());
+        NextGameButton.onClick.AddListener(() => gameManagerScript.ResetGame());
         ExitButton.onClick.AddListener(() => Application.Quit());
     }
 }
