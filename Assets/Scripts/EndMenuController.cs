@@ -14,12 +14,7 @@ public class EndMenuController : MonoBehaviour
     {
         GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
 
-        NextGameButton.onClick.AddListener(() => gameManagerScript.StartGame());
+        NextGameButton.onClick.AddListener(() => gameManagerScript.NextGame());
         ExitButton.onClick.AddListener(() => Application.Quit());
-    }
-
-    void Update()
-    {
-        
     }
 }

@@ -111,13 +111,6 @@ public class GameManagerController : MonoBehaviour
         }
     }
 
-    public void StartGame()
-    {
-        _hexesMeneger.ResetHexesState();
-        _ui.ResetUI();
-        _ui.ChangeSideMenu(_isWhiteTurn);
-        _gameOver = false;
-    }
 
     private void ConfirmMovingHexOnGameboard(GameObject selectedHex)
     {
@@ -128,6 +121,20 @@ public class GameManagerController : MonoBehaviour
             ChangeTurn();
             _camera.UpdateCamera();
         }
+    }
+
+    public void StartGame(bool white)
+    {
+        _gameOver = false;
+        SetTurn(white);
+        _hexesMeneger.ResetHexesState();
+        _ui.ResetUI();
+        _ui.ChangeSideMenu(_isWhiteTurn);
+    }
+
+    public void NextGame()
+    {
+        _ui.LaunchStartMenu();
     }
 
     private void StartMovingHex(GameObject selectedHex)

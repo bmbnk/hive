@@ -13,6 +13,7 @@ public class UIController : MonoBehaviour
     public GameObject GameManager;
     public GameObject GamePanel;
     public GameObject EndGamePanel;
+    public GameObject StartMenuPanel;
     private SideMenusController _sideMenus;
 
     void Start()
@@ -63,7 +64,15 @@ public class UIController : MonoBehaviour
     public void ResetUI()
     {
         EndGamePanel.SetActive(false);
+        StartMenuPanel.SetActive(false);
         GamePanel.SetActive(true);
         _sideMenus.ResetSideMenus();
+    }
+
+    public void LaunchStartMenu()
+    {
+        StartMenuPanel.SetActive(true);
+        EndGamePanel.SetActive(false);
+        GamePanel.SetActive(false);
     }
 }
