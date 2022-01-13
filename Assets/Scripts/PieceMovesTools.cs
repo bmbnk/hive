@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class PieceMovesTools
 {
-    private const float Padding = 0.4f;
+    private const float Padding = 0.3f;
     private static List<(Vector3 Vector,
         (int, int) EvenRowNeighbourIdxsDelta,
         (int, int) OddRowNeighbourIdxsDelta)> _neighboursLocationParameters;
