@@ -3,8 +3,9 @@ using UnityEngine;
 public class GameManagerController : MonoBehaviour
 {
     private HexesManagerController _hexesMeneger;
-    private HexesInfoProvider _hexesInfoProvider;
     private UIController _ui;
+    private HexesInfoProvider _hexesInfoProvider;
+    private CameraController _camera;
 
     private bool _addingHexToBoard = false;
     private bool _gameOver = false;
@@ -12,17 +13,19 @@ public class GameManagerController : MonoBehaviour
     private bool _movingHexOnBoard = false;
     private PieceType _lastSelectedTileType;
 
-
     void Start()
     {
         GameObject hexesMenegerGameobject = GameObject.FindWithTag("HexesManager");
         _hexesMeneger = hexesMenegerGameobject.GetComponent<HexesManagerController>();
 
+        GameObject uiGameobject = GameObject.FindWithTag("UI");
+        _ui = uiGameobject.GetComponent<UIController>();
+
         GameObject hexesInfoProviderGameObject = GameObject.FindWithTag("HexesInfoProvider");
         _hexesInfoProvider = hexesInfoProviderGameObject.GetComponent<HexesInfoProvider>();
 
-        GameObject uiGameobject = GameObject.FindWithTag("UI");
-        _ui = uiGameobject.GetComponent<UIController>();
+        GameObject cameraGameobject = GameObject.FindWithTag("MainCamera");
+        _camera = cameraGameobject.GetComponent<CameraController>();
 
         _ui.EnablePlayerSideMenu(_isWhiteTurn);
         _ui.DisablePlayerSideMenu(!_isWhiteTurn);
@@ -103,6 +106,7 @@ public class GameManagerController : MonoBehaviour
             }
             _addingHexToBoard = false;
             ChangeTurn();
+            _camera.UpdatePosition();
         }
     }
 
@@ -113,6 +117,7 @@ public class GameManagerController : MonoBehaviour
             _gameOver = _hexesInfoProvider.IsGameOver();
             _movingHexOnBoard = false;
             ChangeTurn();
+            _camera.UpdatePosition();
         }
     }
 
