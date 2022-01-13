@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -303,5 +304,35 @@ public class HexesManagerController : MonoBehaviour
         });
 
         return propositions;
+    }
+
+    public void ResetHexesState()
+    {
+        ResetHexToAdd();
+        ResetHexToMove();
+        ResetHexes();
+        _hexesStore.blackHexesOnBoardIds.Clear();
+        _hexesStore.whiteHexesOnBoardIds.Clear();
+        _gameBoard.gameBoard = new int[GameBoardScript.GameBoardSize, GameBoardScript.GameBoardSize];
+    }
+
+
+    private void ResetHexes()
+    {
+        _hexesStore.whiteHexes.ForEach(hex =>
+        {
+            var hexScript = hex.GetComponent<HexWrapperController>();
+            hexScript.isOnGameboard = false;
+            hexScript.positionOnBoard = (-1, -1);
+            hex.SetActive(false);
+        });
+
+        _hexesStore.blackHexes.ForEach(hex =>
+        {
+            var hexScript = hex.GetComponent<HexWrapperController>();
+            hexScript.isOnGameboard = false;
+            hexScript.positionOnBoard = (-1, -1);
+            hex.SetActive(false);
+        });
     }
 }

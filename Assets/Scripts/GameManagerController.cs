@@ -27,8 +27,8 @@ public class GameManagerController : MonoBehaviour
         GameObject cameraGameobject = GameObject.FindWithTag("MainCamera");
         _camera = cameraGameobject.GetComponent<CameraController>();
 
-        _ui.EnablePlayerSideMenu(_isWhiteTurn);
-        _ui.DisablePlayerSideMenu(!_isWhiteTurn);
+        SetTurn(true);
+        _ui.ChangeSideMenu(_isWhiteTurn);
     }
 
     void Update()
@@ -72,7 +72,7 @@ public class GameManagerController : MonoBehaviour
     private void UpdateTileCounterLabel(PieceType type, bool white)
     {
         int count = _hexesInfoProvider.GetRemainingHexCount(type, white);
-        _ui.UpdateTileLayoutElement(type, white, count);
+        _ui.UpdateTileCounterLabel(type, white, count);
     }
 
     public void HexSelected(GameObject selectedHex)
@@ -111,6 +111,14 @@ public class GameManagerController : MonoBehaviour
         }
     }
 
+    public void StartGame()
+    {
+        _hexesMeneger.ResetHexesState();
+        _ui.ResetUI();
+        _ui.ChangeSideMenu(_isWhiteTurn);
+        _gameOver = false;
+    }
+
     private void ConfirmMovingHexOnGameboard(GameObject selectedHex)
     {
         if (_hexesMeneger.ConfirmMovingHexOnGameboard(selectedHex))
@@ -131,11 +139,14 @@ public class GameManagerController : MonoBehaviour
         }
     }
 
+    public void SetTurn(bool white)
+    {
+        _isWhiteTurn = white;
+    }
+
     private void ChangeTurn()
     {
         _isWhiteTurn = !_isWhiteTurn;
-
-        _ui.EnablePlayerSideMenu(_isWhiteTurn);
-        _ui.DisablePlayerSideMenu(!_isWhiteTurn);
+        _ui.ChangeSideMenu(_isWhiteTurn);
     }
 }

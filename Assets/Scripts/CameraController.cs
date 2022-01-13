@@ -77,8 +77,8 @@ public class CameraController : MonoBehaviour
     {
         foreach (var hexPositionVector in hexPositionVectors)
         {
-            Vector3 positionPlusDelta = hexPositionVector + new Vector3(1, 0, 1);
-            Vector3 positionMinusDelta = hexPositionVector + new Vector3(-1, 0, -1);
+            Vector3 positionPlusDelta = hexPositionVector + new Vector3(5, 0, 5);
+            Vector3 positionMinusDelta = hexPositionVector + new Vector3(-5, 0, -5);
             if (!IsPositionInCameraView(positionPlusDelta)
                 || !IsPositionInCameraView(positionMinusDelta))
                 return false;
