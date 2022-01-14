@@ -40,7 +40,7 @@ public class SideMenusController : MonoBehaviour
     private List<Button> _activeBlackButtons;
     private List<Button> _activeWhiteButtons;
 
-    // Start is called before the first frame update
+
     void Start()
     {
         GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
