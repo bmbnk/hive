@@ -32,7 +32,7 @@ public class MoveValidator : MonoBehaviour, IMoveValidator
 
     private bool IsBeeOnGameboardRuleBroken(PieceType type, bool white) //If it is fourth move of the player and the bee piece is not on the table than the rule is broken
     {
-        var hexesOnBoardIds = white ? _hexesStore.blackHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
+        var hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
 
         if (hexesOnBoardIds.Count > 2 && !_hexesInfoProvider.IsBeeOnBoard(white) && type != PieceType.BEE)
             return true;
