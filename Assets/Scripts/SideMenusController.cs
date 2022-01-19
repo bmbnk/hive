@@ -34,15 +34,19 @@ public class SideMenusController : MonoBehaviour
     public TextMeshProUGUI WhiteBeetlesLeftCounter;
     public TextMeshProUGUI WhiteBeesLeftCounter;
 
+    private RulesValidator _rulesValidator;
+
     private List<TextMeshProUGUI> _blackCounters;
     private List<TextMeshProUGUI> _whiteCounters;
 
     private List<Button> _activeBlackButtons;
     private List<Button> _activeWhiteButtons;
 
-
     void Start()
     {
+        GameObject moveValidatorGameObject = GameObject.FindWithTag("RulesValidator");
+        _rulesValidator = moveValidatorGameObject.GetComponent<RulesValidator>();
+
         GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
 
         BlackAntButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.ANT, false));
@@ -129,8 +133,18 @@ public class SideMenusController : MonoBehaviour
 
     public void EnablePlayerSideMenu(bool white)
     {
-        SetButtonsInteractable(white, true);
-        SetAlphaForSideMenu(white, 1.0f);
+        if (_rulesValidator.IsBeeOnGameboardRuleBroken(white))
+        {
+            var buttons = white ? _activeWhiteButtons : _activeBlackButtons;
+
+            var button = buttons.FindLast(button => IsButtonOfType(button, PieceType.BEE));
+            button.GetComponent<CanvasGroup>().alpha = 1.0f;
+            button.interactable = true;
+        } else
+        {
+            SetButtonsInteractable(white, true);
+            SetAlphaForSideMenu(white, 1.0f);
+        }
     }
 
     private void SetButtonsInteractable(bool white, bool interactable)
@@ -156,15 +170,11 @@ public class SideMenusController : MonoBehaviour
         });
     }
 
-    public void UpdateTileLayoutElement(PieceType type, bool white, int count)
+    public void UpdateCounterLabel(PieceType type, bool white, int count)
     {
         var counters = white ? _whiteCounters : _blackCounters;
         var counter = counters.FindLast(counter => IsCounterOfType(counter, type));
-        UpdateLabel(counter, count);
-        if (counter.text == "")
-        {
-            DeactivateButton(type, white);
-        }
+        counter.text = count > 0 ? count.ToString() : "";
     }
 
     private bool IsCounterOfType(TextMeshProUGUI counter, PieceType type)
@@ -172,20 +182,6 @@ public class SideMenusController : MonoBehaviour
         string counterTag = counter.tag;
         string counterTypeString = counterTag.Replace("Counter", "").ToUpper();
         return counterTypeString.Equals(type.ToString());
-    }
-
-    private void UpdateLabel(TextMeshProUGUI counter, int count)
-    {
-        counter.text = count > 0 ? count.ToString() : "";
-    }
-
-    private void DeactivateButton(PieceType type, bool white)
-    {
-        var buttons = white ? _activeWhiteButtons : _activeBlackButtons;
-        var button = buttons.FindLast(button => IsButtonOfType(button, type));
-        button.GetComponent<CanvasGroup>().alpha = AlphaValue;
-        button.interactable = false;
-        buttons.Remove(button);
     }
 
     private bool IsButtonOfType(Button button, PieceType type)

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveValidator : MonoBehaviour, IMoveValidator
+public class RulesValidator : MonoBehaviour
 {
     private HexesStoreScript _hexesStore;
     private HexesInfoProvider _hexesInfoProvider;
@@ -19,36 +19,33 @@ public class MoveValidator : MonoBehaviour, IMoveValidator
         _hexesInfoProvider = hexesInfoProviderGameObject.GetComponent<HexesInfoProvider>();
     }
 
-    public bool CanAdd(PieceType type, bool white)
-    {
-        return !IsBeeOnGameboardRuleBroken(type, white);
-    }
-
     public bool CanMove(GameObject hex)
     {
         var hexScript = hex.GetComponent<HexWrapperController>();
-        return _hexesInfoProvider.IsBeeOnBoard(hexScript.isWhite) && !IsOneHiveRuleBroken(hexScript);
+        return _hexesInfoProvider.IsBeeOnBoard(hexScript.isWhite) && !IsOneHiveRuleBroken(hex);
     }
 
-    private bool IsBeeOnGameboardRuleBroken(PieceType type, bool white) //If it is fourth move of the player and the bee piece is not on the table than the rule is broken
+    public bool IsBeeOnGameboardRuleBroken(bool white) //If it is fourth move of the player and the bee piece is not on the table than the rule is broken
     {
         var hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
 
-        if (hexesOnBoardIds.Count > 2 && !_hexesInfoProvider.IsBeeOnBoard(white) && type != PieceType.BEE)
+        if (hexesOnBoardIds.Count > 2 && !_hexesInfoProvider.IsBeeOnBoard(white))
             return true;
         return false;
     }
 
-    private bool IsOneHiveRuleBroken(HexWrapperController hexToMove)
+    public bool IsOneHiveRuleBroken(GameObject hexToMove)
     {
-        if (hexToMove.transform.position.y > 0)
+        var hexToMoveScript = hexToMove.GetComponent<HexWrapperController>();
+
+        if (hexToMoveScript.transform.position.y > 0)
             return false;
 
         int[,] gameBoardWithoutHex = (int[,])_gameBoard.gameBoard.Clone();
-        gameBoardWithoutHex[hexToMove.positionOnBoard.Item1, hexToMove.positionOnBoard.Item2] = 0;
+        gameBoardWithoutHex[hexToMoveScript.positionOnBoard.Item1, hexToMoveScript.positionOnBoard.Item2] = 0;
 
         // TODO: You can optimize it by choosing one neighbour from groups of neighbours that are connected, because if you can reached one, than you can reach all of them
-        List<(int, int)> neighboursPositions = PieceMovesTools.GetNeighbours(hexToMove.positionOnBoard, gameBoardWithoutHex);
+        List<(int, int)> neighboursPositions = PieceMovesTools.GetNeighbours(hexToMoveScript.positionOnBoard, gameBoardWithoutHex);
 
         (int, int) firstNeighbour = neighboursPositions[0];
         neighboursPositions.Remove(firstNeighbour);

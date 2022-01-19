@@ -9,7 +9,7 @@ public class HexesManagerController : MonoBehaviour
     private GameBoardScript _gameBoard;
     private HexesStoreScript _hexesStore;
     private HexesInfoProvider _hexesInfoProvider;
-    private IMoveValidator _moveValidator;
+    private RulesValidator _rulesValidator;
 
     void Start()
     {
@@ -27,8 +27,8 @@ public class HexesManagerController : MonoBehaviour
         GameObject hexesInfoProviderGameObject = GameObject.FindWithTag("HexesInfoProvider");
         _hexesInfoProvider = hexesInfoProviderGameObject.GetComponent<HexesInfoProvider>();
 
-        GameObject moveValidatorGameObject = GameObject.FindWithTag("MoveValidator");
-        _moveValidator = moveValidatorGameObject.GetComponent<IMoveValidator>();
+        GameObject moveValidatorGameObject = GameObject.FindWithTag("RulesValidator");
+        _rulesValidator = moveValidatorGameObject.GetComponent<RulesValidator>();
 
         _hexesStore.InitializeHexes();
     }
@@ -146,41 +146,38 @@ public class HexesManagerController : MonoBehaviour
 
     public bool PrepareHexToAddToBoard(PieceType type, bool white)
     {
-        if (_moveValidator.CanAdd(type, white))
+        if (_hexesStore.hexToAdd != null)
         {
-            if (_hexesStore.hexToAdd != null)
+            ResetHexToAdd();
+        }
+
+        var hexes = white ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
+        List<int> hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
+
+        GameObject hexToAdd = null;
+        foreach (var hex in hexes)
+        {
+            HexWrapperController hexScript = hex.GetComponent<HexWrapperController>();
+            if (hexScript.piece.GetComponent<IPieceController>().GetPieceType() == type
+                && !hexesOnBoardIds.Contains(hexScript.HexId))
             {
-                ResetHexToAdd();
+                hexToAdd = hex;
+                break;
             }
+        }
 
-            var hexes = white ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
-            List<int> hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
-
-            GameObject hexToAdd = null;
-            foreach (var hex in hexes)
+        if (hexToAdd != null)
+        {
+            List<(int, int)> availablePositions = GetAvailablePositionsToAddHex(white);
+            if (availablePositions.Count > 0)
             {
-                HexWrapperController hexScript = hex.GetComponent<HexWrapperController>();
-                if (hexScript.piece.GetComponent<IPieceController>().GetPieceType() == type
-                    && !hexesOnBoardIds.Contains(hexScript.HexId))
-                {
-                    hexToAdd = hex;
-                    break;
-                }
-            }
-
-            if (hexToAdd != null)
-            {
-                List<(int, int)> availablePositions = GetAvailablePositionsToAddHex(white);
-                if (availablePositions.Count > 0)
-                {
-                    List<GameObject> hexAddPropositions = CreateHexAddPositionsPropositions(availablePositions);
-                    SetHexToAdd(hexToAdd, hexAddPropositions);
-                    ResetHexToMove();
-
-                    if (_hexesInfoProvider.IsItFirstMove() && hexAddPropositions.Count == 1)
-                        ConfirmAddedHexOnGameboard(hexAddPropositions[0]);
-                    return true;
-                }
+                List<GameObject> hexAddPropositions = CreateHexAddPositionsPropositions(availablePositions);
+                SetHexToAdd(hexToAdd, hexAddPropositions);
+                ResetHexToMove();
+        
+                if (_hexesInfoProvider.IsItFirstMove() && hexAddPropositions.Count == 1)
+                    ConfirmAddedHexOnGameboard(hexAddPropositions[0]);
+                return true;
             }
         }
         return false;
@@ -215,7 +212,7 @@ public class HexesManagerController : MonoBehaviour
 
     public bool PrepareSelectedHexToMove(GameObject selectedHex)
     {
-        if (_moveValidator.CanMove(selectedHex))
+        if (_rulesValidator.CanMove(selectedHex))
         {
             var beetleScript = BeetlePiece.GetComponent<BeetlePieceController>();
             int hexId = selectedHex.GetComponent<HexWrapperController>().HexId;

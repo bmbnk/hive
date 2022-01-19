@@ -45,6 +45,7 @@ TagManager:
   - AntButton
   - GrasshopperButton
   - SideMenus
+  - RulesValidator
   layers:
   - Default
   - TransparentFX

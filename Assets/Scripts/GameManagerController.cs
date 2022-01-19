@@ -70,16 +70,16 @@ public class GameManagerController : MonoBehaviour
             {
                 ChangeTurn();
                 _addingHexToBoard = false;
-                UpdateTileCounterLabel(type, white);
+                UpdateSideMenu(type, white);
                 _camera.UpdateCamera();
             }
         }
     }
 
-    private void UpdateTileCounterLabel(PieceType type, bool white)
+    private void UpdateSideMenu(PieceType type, bool white)
     {
         int count = _hexesInfoProvider.GetRemainingHexCount(type, white);
-        _ui.UpdateTileCounterLabel(type, white, count);
+        _ui.UpdateCounterLabel(type, white, count);
     }
 
     public void HexSelected(GameObject selectedHex)
@@ -108,7 +108,7 @@ public class GameManagerController : MonoBehaviour
         {
             if (_hexesInfoProvider.IsGameOver())
                 GameOver();
-            UpdateTileCounterLabel(_lastSelectedTileType, _isWhiteTurn);
+            UpdateSideMenu(_lastSelectedTileType, _isWhiteTurn);
             if (!_hexesInfoProvider.IsAnyHexLeftInHand())
             {
                 _ui.HideSideMenus();

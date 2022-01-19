@@ -31,9 +31,9 @@ public class UIController : MonoBehaviour
         _sideMenus.DisablePlayerSideMenu(!white);
     }
 
-    public void UpdateTileCounterLabel(PieceType type, bool white, int count)
+    public void UpdateCounterLabel(PieceType type, bool white, int count)
     {
-        _sideMenus.UpdateTileLayoutElement(type, white, count);
+        _sideMenus.UpdateCounterLabel(type, white, count);
     }
 
     public void HideSideMenus()
