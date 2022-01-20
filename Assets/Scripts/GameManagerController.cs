@@ -1,23 +1,24 @@
+using System;
 using UnityEngine;
 
 public class GameManagerController : MonoBehaviour
 {
-    private HexesManagerController _hexesMeneger;
+    private HexesManagerController _hexesManager;
     private UIController _ui;
     private HexesInfoProvider _hexesInfoProvider;
     private CameraController _camera;
 
-    private bool _addingHexToBoard = false;
     private bool _gameOver = false;
     private bool _gamePaused = false;
     private bool _isWhiteTurn = true;
     private bool _movingHexOnBoard = false;
+    private bool _addingHexToBoard = false;
     private PieceType _lastSelectedTileType;
 
     void Start()
     {
-        GameObject hexesMenegerGameobject = GameObject.FindWithTag("HexesManager");
-        _hexesMeneger = hexesMenegerGameobject.GetComponent<HexesManagerController>();
+        GameObject hexesManagerGameobject = GameObject.FindWithTag("HexesManager");
+        _hexesManager = hexesManagerGameobject.GetComponent<HexesManagerController>();
 
         GameObject uiGameobject = GameObject.FindWithTag("UI");
         _ui = uiGameobject.GetComponent<UIController>();
@@ -62,7 +63,7 @@ public class GameManagerController : MonoBehaviour
     {
         bool isItFirstMove = _hexesInfoProvider.IsItFirstMove();
 
-        if (_hexesMeneger.PrepareHexToAddToBoard(type, white))
+        if (_hexesManager.PrepareHexToAddToBoard(type, white))
         {
             _movingHexOnBoard = false;
             _addingHexToBoard = true;
@@ -80,6 +81,14 @@ public class GameManagerController : MonoBehaviour
     {
         int count = _hexesInfoProvider.GetRemainingHexCount(type, white);
         _ui.UpdateCounterLabel(type, white, count);
+    }
+
+    public void GameBoardSelected()
+    {
+        if(_addingHexToBoard)
+            _hexesManager.ResetHexToAdd();
+        if(_movingHexOnBoard)
+            _hexesManager.ResetHexToMove();
     }
 
     public void HexSelected(GameObject selectedHex)
@@ -104,7 +113,7 @@ public class GameManagerController : MonoBehaviour
 
     private void ConfirmAddedHexOnGameboard(GameObject selectedHex)
     {
-        if (_hexesMeneger.ConfirmAddedHexOnGameboard(selectedHex))
+        if (_hexesManager.ConfirmAddedHexOnGameboard(selectedHex))
         {
             if (_hexesInfoProvider.IsGameOver())
                 GameOver();
@@ -130,7 +139,7 @@ public class GameManagerController : MonoBehaviour
 
     private void ConfirmMovingHexOnGameboard(GameObject selectedHex)
     {
-        if (_hexesMeneger.ConfirmMovingHexOnGameboard(selectedHex))
+        if (_hexesManager.ConfirmMovingHexOnGameboard(selectedHex))
         {
             if (_hexesInfoProvider.IsGameOver())
                 GameOver();
@@ -159,14 +168,14 @@ public class GameManagerController : MonoBehaviour
         _gameOver = false;
         _movingHexOnBoard = false;
         _addingHexToBoard = false;
-        _hexesMeneger.ResetHexesState();
+        _hexesManager.ResetHexesState();
         _ui.ResetUI();
         _ui.LaunchStartMenu();
     }
 
     private void StartMovingHex(GameObject selectedHex)
     {
-        if (_hexesMeneger.PrepareSelectedHexToMove(selectedHex))
+        if (_hexesManager.PrepareSelectedHexToMove(selectedHex))
         {
             _movingHexOnBoard = true;
             _addingHexToBoard = false;

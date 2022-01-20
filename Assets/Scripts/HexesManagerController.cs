@@ -62,7 +62,7 @@ public class HexesManagerController : MonoBehaviour
         return false;
     }
 
-    private void ResetHexToAdd()
+    public void ResetHexToAdd()
     {
         if (_hexesStore.hexPropositionsToAdd != null)
         {
@@ -121,7 +121,7 @@ public class HexesManagerController : MonoBehaviour
         return false;
     }
 
-    private void ResetHexToMove()
+    public void ResetHexToMove()
     {
         if (_hexesStore.hexPropositionsToMove != null)
         {
@@ -281,9 +281,9 @@ public class HexesManagerController : MonoBehaviour
         var hexPropositionColor = propositionScript.hex.GetComponent<Renderer>().material.color;
         Color color = new Color(hexPropositionColor.r, hexPropositionColor.g, hexPropositionColor.b, 0.2f);
         propositionScript.hex.GetComponent<Renderer>().material.color = color;
-        propositionScript.gameMeneger = gameManager;
+        propositionScript.gameManager = gameManager;
         propositionScript.positionOnBoard = position;
-        propositionScript.hex.GetComponent<HexController>().gameMeneger = gameManager;
+        propositionScript.hex.GetComponent<HexController>().gameManager = gameManager;
 
         return proposition;
     }

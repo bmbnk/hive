@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53f52988945664e25975a80f965f16af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameMeneger: {fileID: 0}
+  gameManager: {fileID: 0}
   hex: {fileID: 6568174140440670724}
   HexId: 0
   isOnGameboard: 0
@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b4ffc6dea3d547c9a220a83f055d54a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameMeneger: {fileID: 0}
+  gameManager: {fileID: 0}
   hexWrapper: {fileID: 2449543555522651668}
 --- !u!64 &6862438309984682664
 MeshCollider:
@@ -158,9 +158,9 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6568174140440670724}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 1
+  m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 2534964839176971238, guid: b8b87d6eba13b4a74b508d2e3ca195d5, type: 3}

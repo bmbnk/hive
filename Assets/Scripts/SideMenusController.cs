@@ -175,6 +175,23 @@ public class SideMenusController : MonoBehaviour
         var counters = white ? _whiteCounters : _blackCounters;
         var counter = counters.FindLast(counter => IsCounterOfType(counter, type));
         counter.text = count > 0 ? count.ToString() : "";
+        if (count > 0)
+        {
+            counter.text = count.ToString();
+        } else
+        {
+            counter.text = "";
+            DeactivateButton(type, white);
+        }
+    }
+
+    private void DeactivateButton(PieceType type, bool white)
+    {
+        var buttons = white ? _activeWhiteButtons : _activeBlackButtons;
+        var button = buttons.FindLast(button => IsButtonOfType(button, type));
+        button.GetComponent<CanvasGroup>().alpha = AlphaValue;
+        button.interactable = false;
+        buttons.Remove(button);
     }
 
     private bool IsCounterOfType(TextMeshProUGUI counter, PieceType type)

@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class HexController : MonoBehaviour
 {
-    public GameObject gameMeneger;
+    public GameObject gameManager;
     public GameObject hexWrapper;
 
 
     void OnMouseDown()
     {
-        gameMeneger.GetComponent<GameManagerController>().HexSelected(hexWrapper);
+        gameManager.GetComponent<GameManagerController>().HexSelected(hexWrapper);
     }
 }

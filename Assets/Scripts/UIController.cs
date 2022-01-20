@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class UIController : MonoBehaviour
 {
@@ -92,12 +94,34 @@ public class UIController : MonoBehaviour
         ChoiceMenuPanel.SetActive(true);
     }
 
-    internal void LaunchStartMenu()
+    public void LaunchStartMenu()
     {
         StartMenuPanel.SetActive(true);
         EndGamePanel.SetActive(false);
         GamePanel.SetActive(false);
         PauseMenuPanel.SetActive(false);
         ChoiceMenuPanel.SetActive(false);
+    }
+
+    public bool AreSideMenusPointed()
+    {
+        PointerEventData pointer = new PointerEventData(EventSystem.current);
+        pointer.position = Input.mousePosition;
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, results);
+
+        if (results.Count > 0)
+        {
+            foreach (var result in results)
+            {
+                if (result.gameObject.CompareTag("RightSideMenu")
+                    || result.gameObject.CompareTag("LeftSideMenu"))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

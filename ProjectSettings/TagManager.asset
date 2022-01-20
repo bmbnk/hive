@@ -46,6 +46,14 @@ TagManager:
   - GrasshopperButton
   - SideMenus
   - RulesValidator
+  - Canvas
+  - GamePanel
+  - PauseMenuPanel
+  - EndGamePanel
+  - ChoiceMenuPanel
+  - StartMenuPanel
+  - LeftSideMenu
+  - RightSideMenu
   layers:
   - Default
   - TransparentFX

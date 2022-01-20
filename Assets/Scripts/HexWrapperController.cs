@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class HexWrapperController : MonoBehaviour
 {
-    public GameObject gameMeneger;
+    public GameObject gameManager;
     public GameObject hex;
     public int HexId;
     public bool isOnGameboard = false;
