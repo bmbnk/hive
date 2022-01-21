@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,6 +8,7 @@ using UnityEngine.UI;
 public class SideMenusController : MonoBehaviour
 {
     public const float AlphaValue = 0.5f;
+    public const float HighlightedButtonScale = 1.5f;
 
     public GameObject GameManager;
     public GameObject GamePanel;
@@ -42,27 +45,103 @@ public class SideMenusController : MonoBehaviour
     private List<Button> _activeBlackButtons;
     private List<Button> _activeWhiteButtons;
 
+    private struct Tile
+    {
+        public Button button;
+        public TextMeshProUGUI counter;
+    }
+
+    private Tile _highlightedTile = new Tile();
+
     void Start()
     {
         GameObject moveValidatorGameObject = GameObject.FindWithTag("RulesValidator");
         _rulesValidator = moveValidatorGameObject.GetComponent<RulesValidator>();
 
-        GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
+        BlackAntButton.onClick.AddListener(() => OnTileSelected(PieceType.ANT, false));
+        BlackGrasshopperButton.onClick.AddListener(() => OnTileSelected(PieceType.GRASSHOPPER, false));
+        BlackSpiderButton.onClick.AddListener(() => OnTileSelected(PieceType.SPIDER, false));
+        BlackBeetleButton.onClick.AddListener(() => OnTileSelected(PieceType.BEETLE, false));
+        BlackBeeButton.onClick.AddListener(() => OnTileSelected(PieceType.BEE, false));
 
-        BlackAntButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.ANT, false));
-        BlackGrasshopperButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.GRASSHOPPER, false));
-        BlackSpiderButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.SPIDER, false));
-        BlackBeetleButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.BEETLE, false));
-        BlackBeeButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.BEE, false));
-
-        WhiteAntButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.ANT, true));
-        WhiteGrasshopperButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.GRASSHOPPER, true));
-        WhiteSpiderButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.SPIDER, true));
-        WhiteBeetleButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.BEETLE, true));
-        WhiteBeeButton.onClick.AddListener(() => gameManagerScript.TileSelected(PieceType.BEE, true));
+        WhiteAntButton.onClick.AddListener(() => OnTileSelected(PieceType.ANT, true));
+        WhiteGrasshopperButton.onClick.AddListener(() => OnTileSelected(PieceType.GRASSHOPPER, true));
+        WhiteSpiderButton.onClick.AddListener(() => OnTileSelected(PieceType.SPIDER, true));
+        WhiteBeetleButton.onClick.AddListener(() => OnTileSelected(PieceType.BEETLE, true));
+        WhiteBeeButton.onClick.AddListener(() => OnTileSelected(PieceType.BEE, true));
 
         ResetButtons();
         ResetCounters();
+    }
+
+    private void OnTileSelected(PieceType type, bool white) {
+        GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
+        DehighlightTile();
+        HighlightTile(type, white);
+        gameManagerScript.OnTileSelected(type, white);
+    }
+
+    public void DehighlightTile()
+    {
+        if (!_highlightedTile.Equals(default(Tile)))
+        {
+            Vector2 targetScale = _highlightedTile
+                .button
+                .transform
+                .localScale / HighlightedButtonScale;
+
+            _highlightedTile
+                .button
+                .transform.localScale = targetScale;
+
+            _highlightedTile.counter.fontSize = _highlightedTile.counter.fontSize / HighlightedButtonScale;
+
+            //_highlightedTile.counter.fontStyle = FontStyles.Normal;
+            _highlightedTile = new Tile();
+        }
+    }
+
+    private void HighlightTile(PieceType type, bool white)
+    {
+        var button = GetButton(type, white);
+        var counter = GetCounter(type, white);
+
+        Vector2 targetScale = button.transform.localScale * HighlightedButtonScale;
+        button.transform.localScale = targetScale;
+
+        //counter.fontStyle = FontStyles.Bold;
+        counter.fontSize = counter.fontSize * HighlightedButtonScale;
+
+        _highlightedTile.button = button;
+        _highlightedTile.counter = counter;
+    }
+
+    private Button GetButton(PieceType type, bool white)
+    {
+        var buttons = white ? _activeWhiteButtons : _activeBlackButtons;
+        var button = buttons.FindLast(button => IsButtonOfType(button, type));
+        return button;
+    }
+
+    private bool IsButtonOfType(Button button, PieceType type)
+    {
+        string buttonTag = button.tag;
+        string buttonTypeString = buttonTag.Replace("Button", "").ToUpper();
+        return buttonTypeString.Equals(type.ToString());
+    }
+
+    private TextMeshProUGUI GetCounter(PieceType type, bool white)
+    {
+        var counters = white ? _whiteCounters : _blackCounters;
+        var counter = counters.FindLast(counter => IsCounterOfType(counter, type));
+        return counter;
+    }
+
+    private bool IsCounterOfType(TextMeshProUGUI counter, PieceType type)
+    {
+        string counterTag = counter.tag;
+        string counterTypeString = counterTag.Replace("Counter", "").ToUpper();
+        return counterTypeString.Equals(type.ToString());
     }
 
     private void ResetButtons()
@@ -127,6 +206,7 @@ public class SideMenusController : MonoBehaviour
 
     public void DisablePlayerSideMenu(bool white)
     {
+        DehighlightTile();
         SetButtonsInteractable(white, false);
         SetAlphaForSideMenu(white, AlphaValue);
     }
@@ -135,9 +215,7 @@ public class SideMenusController : MonoBehaviour
     {
         if (_rulesValidator.IsBeeOnGameboardRuleBroken(white))
         {
-            var buttons = white ? _activeWhiteButtons : _activeBlackButtons;
-
-            var button = buttons.FindLast(button => IsButtonOfType(button, PieceType.BEE));
+            var button = GetButton(PieceType.BEE, white);
             button.GetComponent<CanvasGroup>().alpha = 1.0f;
             button.interactable = true;
         } else
@@ -172,8 +250,7 @@ public class SideMenusController : MonoBehaviour
 
     public void UpdateCounterLabel(PieceType type, bool white, int count)
     {
-        var counters = white ? _whiteCounters : _blackCounters;
-        var counter = counters.FindLast(counter => IsCounterOfType(counter, type));
+        var counter = GetCounter(type, white);
         counter.text = count > 0 ? count.ToString() : "";
         if (count > 0)
         {
@@ -187,24 +264,11 @@ public class SideMenusController : MonoBehaviour
 
     private void DeactivateButton(PieceType type, bool white)
     {
-        var buttons = white ? _activeWhiteButtons : _activeBlackButtons;
-        var button = buttons.FindLast(button => IsButtonOfType(button, type));
+        var button = GetButton(type, white);
         button.GetComponent<CanvasGroup>().alpha = AlphaValue;
         button.interactable = false;
+
+        var buttons = white ? _activeWhiteButtons : _activeBlackButtons;
         buttons.Remove(button);
-    }
-
-    private bool IsCounterOfType(TextMeshProUGUI counter, PieceType type)
-    {
-        string counterTag = counter.tag;
-        string counterTypeString = counterTag.Replace("Counter", "").ToUpper();
-        return counterTypeString.Equals(type.ToString());
-    }
-
-    private bool IsButtonOfType(Button button, PieceType type)
-    {
-        string buttonTag = button.tag;
-        string buttonTypeString = buttonTag.Replace("Button", "").ToUpper();
-        return buttonTypeString.Equals(type.ToString());
     }
 }

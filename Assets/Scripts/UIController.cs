@@ -14,6 +14,8 @@ public class UIController : MonoBehaviour
     public GameObject StartMenuPanel;
     public GameObject ChoiceMenuPanel;
     public GameObject GamePanel;
+
+
     public GameObject PauseMenuPanel;
     public GameObject EndGamePanel;
     private SideMenusController _sideMenus;
@@ -22,6 +24,16 @@ public class UIController : MonoBehaviour
     {
         GameObject sideMenusGameobject = GameObject.FindWithTag("SideMenus");
         _sideMenus = sideMenusGameobject.GetComponent<SideMenusController>();
+    }
+
+    public void OnGameBoardClicked()
+    {
+        _sideMenus.DehighlightTile();
+    }
+
+    public void OnHexSelected()
+    {
+        _sideMenus.DehighlightTile();
     }
 
     public void ChangeSideMenu(bool white)
@@ -103,7 +115,7 @@ public class UIController : MonoBehaviour
         ChoiceMenuPanel.SetActive(false);
     }
 
-    public bool AreSideMenusPointed()
+    public bool AreUIElementsPointed()
     {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         pointer.position = Input.mousePosition;
@@ -116,7 +128,11 @@ public class UIController : MonoBehaviour
             foreach (var result in results)
             {
                 if (result.gameObject.CompareTag("RightSideMenu")
-                    || result.gameObject.CompareTag("LeftSideMenu"))
+                    || result.gameObject.CompareTag("LeftSideMenu")
+                    || result.gameObject.CompareTag("PauseMenuPanel")
+                    || result.gameObject.CompareTag("EndGamePanel")
+                    || result.gameObject.CompareTag("StartMenuPanel")
+                    || result.gameObject.CompareTag("ChoiceMenuPanel"))
                 {
                     return true;
                 }

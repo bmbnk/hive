@@ -50,7 +50,7 @@ public class GameManagerController : MonoBehaviour
         _gamePaused = false;
     }
 
-    public void TileSelected(PieceType type, bool white)
+    public void OnTileSelected(PieceType type, bool white)
     {
         if (white == _isWhiteTurn)
         {
@@ -94,7 +94,7 @@ public class GameManagerController : MonoBehaviour
             _hexesManager.ResetHexToMove();
     }
 
-    public void HexSelected(GameObject selectedHex)
+    public void OnHexSelected(GameObject selectedHex)
     {
         if (!_gameOver && !_gamePaused)
         {

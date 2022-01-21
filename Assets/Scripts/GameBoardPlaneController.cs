@@ -13,8 +13,9 @@ public class GameBoardPlaneController : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (!_ui.AreSideMenusPointed())
+        if (!_ui.AreUIElementsPointed())
         {
+            _ui.OnGameBoardClicked();
             gameMeneger.GetComponent<GameManagerController>().GameBoardSelected();
         }
     }

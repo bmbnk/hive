@@ -4,10 +4,17 @@ public class HexController : MonoBehaviour
 {
     public GameObject gameManager;
     public GameObject hexWrapper;
+    private UIController _ui;
 
+    void Start()
+    {
+        GameObject uiGameobject = GameObject.FindWithTag("UI");
+        _ui = uiGameobject.GetComponent<UIController>();
+    }
 
     void OnMouseDown()
     {
-        gameManager.GetComponent<GameManagerController>().HexSelected(hexWrapper);
+        _ui.OnHexSelected();
+        gameManager.GetComponent<GameManagerController>().OnHexSelected(hexWrapper);
     }
 }
