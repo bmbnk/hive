@@ -74,6 +74,9 @@ public class GameManagerController : MonoBehaviour
                 UpdateSideMenu(type, white);
                 _camera.UpdateCamera();
             }
+        } else
+        {
+            _hexesManager.ResetHexToAdd();
         }
     }
 
@@ -179,6 +182,9 @@ public class GameManagerController : MonoBehaviour
         {
             _movingHexOnBoard = true;
             _addingHexToBoard = false;
+        } else
+        {
+            _hexesManager.ResetHexToMove();
         }
     }
 
