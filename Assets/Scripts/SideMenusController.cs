@@ -96,7 +96,6 @@ public class SideMenusController : MonoBehaviour
 
             _highlightedTile.counter.fontSize = _highlightedTile.counter.fontSize / HighlightedButtonScale;
 
-            //_highlightedTile.counter.fontStyle = FontStyles.Normal;
             _highlightedTile = new Tile();
         }
     }
@@ -109,7 +108,6 @@ public class SideMenusController : MonoBehaviour
         Vector2 targetScale = button.transform.localScale * HighlightedButtonScale;
         button.transform.localScale = targetScale;
 
-        //counter.fontStyle = FontStyles.Bold;
         counter.fontSize = counter.fontSize * HighlightedButtonScale;
 
         _highlightedTile.button = button;
