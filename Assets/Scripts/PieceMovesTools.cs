@@ -1,5 +1,4 @@
-﻿ using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -7,6 +6,7 @@ public static class PieceMovesTools
 {
     private const float Padding = 0.0f;
     private const float HexHeight = 0.7f;
+    private const float SelectedHexPositionHeight = 0.3f;
     private const float HexHalfDistanceBetweenSides = 1.3f;
 
     private static List<(Vector3 Vector,
@@ -231,6 +231,11 @@ public static class PieceMovesTools
     {
         Vector3 hexesHeightVector = hexesNumber * new Vector3(0, HexHeight, 0);
         return hexesHeightVector;
+    }
+
+    public static Vector3 GetHexSelectionVector()
+    {
+        return new Vector3(0, SelectedHexPositionHeight, 0);
     }
 
     public static List<(int, int)> GetFreePositionsAroundPosition((int, int) position, int[,] gameBoard)

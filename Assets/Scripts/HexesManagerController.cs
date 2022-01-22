@@ -87,6 +87,8 @@ public class HexesManagerController : MonoBehaviour
         {
             HexWrapperController hexToMoveScript = GetHexToMoveScript();
 
+            ResetHexToMove();
+
             (int, int) currentHexToMovePosition = hexToMoveScript.positionOnBoard;
 
             if (hexToMoveScript.piece.GetComponent<IPieceController>().GetPieceType() == PieceType.BEETLE)
@@ -115,7 +117,6 @@ public class HexesManagerController : MonoBehaviour
 
             hexToMoveScript.transform.position = selectedHexScript.transform.position;
 
-            ResetHexToMove();
             return true;
         }
         return false;
@@ -130,13 +131,27 @@ public class HexesManagerController : MonoBehaviour
                 Destroy(_hexesStore.hexPropositionsToMove[i]);
             }
         }
+        DehighlightHexToMove();
         SetHexToMove(null, null);
+    }
+
+    private void DehighlightHexToMove()
+    {
+        if (_hexesStore.hexToMove != null)
+            _hexesStore.hexToMove.GetComponent<HexWrapperController>().transform.position -= PieceMovesTools.GetHexSelectionVector();
     }
 
     private void SetHexToMove(GameObject selectedHex, List<GameObject> hexPropositionsToMove)
     {
         _hexesStore.hexToMove = selectedHex;
         _hexesStore.hexPropositionsToMove = hexPropositionsToMove;
+        HighlightHexToMove();
+    }
+
+    private void HighlightHexToMove()
+    {
+        if (_hexesStore.hexToMove != null)
+            _hexesStore.hexToMove.GetComponent<HexWrapperController>().transform.position += PieceMovesTools.GetHexSelectionVector();
     }
 
     private HexWrapperController GetHexThatIsAddedScript()
