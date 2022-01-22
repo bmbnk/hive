@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public const int MinFieldOfView = 80;
+    private const int MinFieldOfView = 80;
+    private const float ZoomSpeed = 0.05f;
+    private const float MovingTime = 2f;
 
     public GameObject Hex;
 
     private HexesStoreScript _hexesStore;
     private Vector3 _offset;
-
+    private float _targetFieldOfView;
 
     void Start()
     {
@@ -18,6 +20,15 @@ public class CameraController : MonoBehaviour
         _hexesStore = hexesStoreGameObject.GetComponent<HexesStoreScript>();
 
         _offset = transform.position - Hex.transform.position;
+        _targetFieldOfView = Camera.main.fieldOfView;
+    }
+
+    void Update()
+    {
+        if (!Mathf.Approximately(Camera.main.fieldOfView, _targetFieldOfView))
+        {
+            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, _targetFieldOfView, ZoomSpeed);
+        }
     }
 
     public void UpdateCamera()
@@ -32,7 +43,10 @@ public class CameraController : MonoBehaviour
     private void UpdatePosition(List<Vector3> hexPositionVectors)
     {
         Vector3 nextPosition = GetCenterOfMass(hexPositionVectors);
-        transform.position = nextPosition + _offset;
+        iTween.MoveTo(gameObject, iTween.Hash(
+                "position", nextPosition + _offset,
+                "time", MovingTime,
+                "easytype", iTween.EaseType.linear));
     }
 
     private List<Vector3> GetHexesOnBoard(bool white)
@@ -60,6 +74,7 @@ public class CameraController : MonoBehaviour
 
     private void UpdateZoom(List<Vector3> hexPositionVectors)
     {
+        float startFieldOfView = Camera.main.fieldOfView;
         if (AreAllHexesWithMarginVisible(hexPositionVectors))
         {
             while (AreAllHexesWithMarginVisible(hexPositionVectors) && Camera.main.fieldOfView > MinFieldOfView)
@@ -71,6 +86,9 @@ public class CameraController : MonoBehaviour
             while (!AreAllHexesWithMarginVisible(hexPositionVectors))
                 Camera.main.fieldOfView = Camera.main.fieldOfView + 1;
         }
+
+        _targetFieldOfView = Camera.main.fieldOfView;
+        Camera.main.fieldOfView = startFieldOfView;
     }
 
     private bool AreAllHexesWithMarginVisible(List<Vector3> hexPositionVectors)
