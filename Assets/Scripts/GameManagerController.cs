@@ -200,7 +200,10 @@ public class GameManagerController : MonoBehaviour
 
     private void ChangeTurn()
     {
-        _isWhiteTurn = !_isWhiteTurn;
-        _ui.ChangeSideMenu(_isWhiteTurn);
+        if (_rulesValidator.CanMakeMove(!_isWhiteTurn))
+        {
+            _isWhiteTurn = !_isWhiteTurn;
+            _ui.ChangeSideMenu(_isWhiteTurn);
+        }
     }
 }

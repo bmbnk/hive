@@ -160,20 +160,7 @@ public class HexesManagerController : MonoBehaviour
         if (_hexesStore.hexToAdd != null)
             ResetHexToAdd();
 
-        var hexes = white ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
-        List<int> hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
-
-        GameObject hexToAdd = null;
-        foreach (var hex in hexes)
-        {
-            HexWrapperController hexScript = hex.GetComponent<HexWrapperController>();
-            if (hexScript.piece.GetComponent<IPieceController>().GetPieceType() == type
-                && !hexesOnBoardIds.Contains(hexScript.HexId))
-            {
-                hexToAdd = hex;
-                break;
-            }
-        }
+        GameObject hexToAdd = ProposeHexToAdd(type, white);
 
         if (hexToAdd != null)
         {
@@ -192,7 +179,27 @@ public class HexesManagerController : MonoBehaviour
         return false;
     }
 
-    private List<(int, int)> GetAvailablePositionsToAddHex(bool white)
+    private GameObject ProposeHexToAdd(PieceType type, bool white)
+    {
+        GameObject hexToAddProposition = null;
+
+        var hexes = white ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
+        List<int> hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
+
+        foreach (var hex in hexes)
+        {
+            HexWrapperController hexScript = hex.GetComponent<HexWrapperController>();
+            if (hexScript.piece.GetComponent<IPieceController>().GetPieceType() == type
+                && !hexesOnBoardIds.Contains(hexScript.HexId))
+            {
+                hexToAddProposition = hex;
+                break;
+            }
+        }
+        return hexToAddProposition;
+    }
+
+    public List<(int, int)> GetAvailablePositionsToAddHex(bool white)
     {
         List<GameObject> hexes = white ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
         List<int> hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;

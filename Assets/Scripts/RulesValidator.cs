@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class RulesValidator : MonoBehaviour
@@ -18,6 +20,68 @@ public class RulesValidator : MonoBehaviour
 
         GameObject hexesInfoProviderGameObject = GameObject.FindWithTag("HexesInfoProvider");
         _hexesInfoProvider = hexesInfoProviderGameObject.GetComponent<HexesInfoProvider>();
+    }
+
+    public bool CanMakeMove(bool white)
+    {
+        return CanMove(white) || CanAdd(white);
+    }
+
+    private bool CanMove(bool white)
+    {
+        var hexes = white ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
+
+        foreach (var hex in hexes)
+        {
+            var hexScript = hex.GetComponent<HexWrapperController>();
+            if (hexScript.isOnGameboard && CanMoveHex(hex))
+            {
+                List<(int, int)> availableMovePositions = hexScript
+                .piece
+                .GetComponent<IPieceController>()
+                .GetPieceSpecificPositions(hexScript.positionOnBoard, _gameBoard.gameBoard);
+                if (availableMovePositions.Count > 0)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private bool CanAdd(bool white)
+    {
+        if (ArePositionsToAddFound(white))
+        {
+            foreach (var type in Enum.GetValues(typeof(PieceType)).Cast<PieceType>())
+            {
+                if (IsHexToAddFound(type, white))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private bool IsHexToAddFound(PieceType type, bool white)
+    {
+        var hexes = white ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
+        int hexToAddPropositionIdx = hexes.FindIndex(hex =>
+        {
+            var hexScript = hex.GetComponent<HexWrapperController>();
+            return !hexScript.isOnGameboard && hexScript.piece.GetComponent<IPieceController>().GetPieceType() == type;
+        });
+        return hexToAddPropositionIdx != -1;
+    }
+
+    private bool ArePositionsToAddFound(bool white)
+    {
+        if (!_hexesInfoProvider.FirstMovesWereMade())
+            return true;
+
+        var hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
+        List<(int, int)> availablePositions = PieceMovesTools.GetPositionsToAddHex(hexesOnBoardIds, _gameBoard.gameBoard);
+        if (availablePositions.Count > 0)
+            return true;
+
+        return false;
     }
 
     public bool CanMoveHex(GameObject hex)
