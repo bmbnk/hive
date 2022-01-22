@@ -7,6 +7,7 @@ public class GameManagerController : MonoBehaviour
     private UIController _ui;
     private HexesInfoProvider _hexesInfoProvider;
     private CameraController _camera;
+    private RulesValidator _rulesValidator;
 
     private bool _gameOver = false;
     private bool _gamePaused = false;
@@ -17,6 +18,9 @@ public class GameManagerController : MonoBehaviour
 
     void Start()
     {
+        GameObject moveValidatorGameObject = GameObject.FindWithTag("RulesValidator");
+        _rulesValidator = moveValidatorGameObject.GetComponent<RulesValidator>();
+
         GameObject hexesManagerGameobject = GameObject.FindWithTag("HexesManager");
         _hexesManager = hexesManagerGameobject.GetComponent<HexesManagerController>();
 
@@ -107,7 +111,8 @@ public class GameManagerController : MonoBehaviour
                 {
                     ConfirmMovingHexOnGameboard(selectedHex);
                 }
-            } else if (_hexesInfoProvider.IsItCurrentPlayerHex(selectedHex, _isWhiteTurn))
+            } else if (_hexesInfoProvider.IsItCurrentPlayerHex(selectedHex, _isWhiteTurn)
+                && _rulesValidator.CanMoveHex(selectedHex))
             {
                 StartMovingHex(selectedHex);
             }

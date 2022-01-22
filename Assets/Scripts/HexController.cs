@@ -14,7 +14,7 @@ public class HexController : MonoBehaviour
 
     void OnMouseDown()
     {
-        _ui.OnHexSelected();
+        _ui.OnHexSelected(); 
         gameManager.GetComponent<GameManagerController>().OnHexSelected(hexWrapper);
     }
 }

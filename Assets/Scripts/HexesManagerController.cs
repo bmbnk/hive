@@ -9,7 +9,6 @@ public class HexesManagerController : MonoBehaviour
     private GameBoardScript _gameBoard;
     private HexesStoreScript _hexesStore;
     private HexesInfoProvider _hexesInfoProvider;
-    private RulesValidator _rulesValidator;
 
     void Start()
     {
@@ -26,9 +25,6 @@ public class HexesManagerController : MonoBehaviour
 
         GameObject hexesInfoProviderGameObject = GameObject.FindWithTag("HexesInfoProvider");
         _hexesInfoProvider = hexesInfoProviderGameObject.GetComponent<HexesInfoProvider>();
-
-        GameObject moveValidatorGameObject = GameObject.FindWithTag("RulesValidator");
-        _rulesValidator = moveValidatorGameObject.GetComponent<RulesValidator>();
 
         _hexesStore.InitializeHexes();
     }
@@ -162,9 +158,7 @@ public class HexesManagerController : MonoBehaviour
     public bool PrepareHexToAddToBoard(PieceType type, bool white)
     {
         if (_hexesStore.hexToAdd != null)
-        {
             ResetHexToAdd();
-        }
 
         var hexes = white ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
         List<int> hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
@@ -227,34 +221,24 @@ public class HexesManagerController : MonoBehaviour
 
     public bool PrepareSelectedHexToMove(GameObject selectedHex)
     {
-        if (_rulesValidator.CanMove(selectedHex))
+        var selectedHexScript = selectedHex.GetComponent<HexWrapperController>();
+
+        if (selectedHexScript.HexId != 0)
         {
-            var beetleScript = BeetlePiece.GetComponent<BeetlePieceController>();
-            int hexId = selectedHex.GetComponent<HexWrapperController>().HexId;
-            if (!beetleScript.IsHexUnderneathBeetle(hexId))
+            if (_hexesStore.hexToMove != null)
+                ResetHexToMove();
+
+            List<(int, int)> availableMovePositions = selectedHexScript
+                .piece
+                .GetComponent<IPieceController>()
+                .GetPieceSpecificPositions(selectedHexScript.positionOnBoard, _gameBoard.gameBoard);
+
+            if (availableMovePositions.Count > 0)
             {
-                if (_hexesStore.hexToMove != null)
-                    ResetHexToMove();
-
-                if (_hexesInfoProvider.FirstMovesWereMade())
-                {
-                    var selectedHexScript = selectedHex.GetComponent<HexWrapperController>();
-                    if (selectedHexScript.HexId != 0)
-                    {
-                        List<(int, int)> availableMovePositions = selectedHexScript
-                            .piece
-                            .GetComponent<IPieceController>()
-                            .GetPieceSpecificPositions(selectedHexScript.positionOnBoard, _gameBoard.gameBoard);
-
-                        if (availableMovePositions.Count > 0)
-                        {
-                            List<GameObject> hexMovePropositions = CreateHexMovePositionsPropositions(selectedHex, availableMovePositions);
-                            SetHexToMove(selectedHex, hexMovePropositions);
-                            ResetHexToAdd();
-                            return true;
-                        }
-                    }
-                }
+                List<GameObject> hexMovePropositions = CreateHexMovePositionsPropositions(selectedHex, availableMovePositions);
+                SetHexToMove(selectedHex, hexMovePropositions);
+                ResetHexToAdd();
+                return true;
             }
         }
         return false;
@@ -272,11 +256,7 @@ public class HexesManagerController : MonoBehaviour
             if (hexOnPositionId != 0)
             {
                 var beetleScript = BeetlePiece.GetComponent<BeetlePieceController>();
-                int hexesOnPositionNumber = 1;
-
-                int hexUnderHexOnPositionId = beetleScript.GetIdOfFirstHexUnderneathBeetle(hexOnPositionId);
-                if (hexUnderHexOnPositionId != -1)
-                    hexesOnPositionNumber += beetleScript.HexesUnderBeetleNumber(hexOnPositionId);
+                int hexesOnPositionNumber = 1 + beetleScript.HexesUnderBeetleNumber(hexOnPositionId);
 
                 Vector3 verticalVector = PieceMovesTools.GetVerticalVector(hexesOnPositionNumber);
                 positionVector += verticalVector;

@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class RulesValidator : MonoBehaviour
 {
+    public GameObject BeetlePiece;
     private HexesStoreScript _hexesStore;
     private HexesInfoProvider _hexesInfoProvider;
     private GameBoardScript _gameBoard;
@@ -19,10 +20,13 @@ public class RulesValidator : MonoBehaviour
         _hexesInfoProvider = hexesInfoProviderGameObject.GetComponent<HexesInfoProvider>();
     }
 
-    public bool CanMove(GameObject hex)
+    public bool CanMoveHex(GameObject hex)
     {
         var hexScript = hex.GetComponent<HexWrapperController>();
-        return _hexesInfoProvider.IsBeeOnBoard(hexScript.isWhite) && !IsOneHiveRuleBroken(hex);
+        var beetleScript = BeetlePiece.GetComponent<BeetlePieceController>();
+        return !beetleScript.IsHexUnderneathBeetle(hexScript.HexId)
+            && _hexesInfoProvider.IsBeeOnBoard(hexScript.isWhite)
+            && !IsOneHiveRuleBroken(hex);
     }
 
     public bool IsBeeOnGameboardRuleBroken(bool white) //If it is fourth move of the player and the bee piece is not on the table than the rule is broken
