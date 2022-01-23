@@ -5061,6 +5061,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 044865c0aa70b448c983a4319ffe0b11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BeetlePiece: {fileID: 319325111}
 --- !u!4 &910275096
 Transform:
   m_ObjectHideFlags: 0

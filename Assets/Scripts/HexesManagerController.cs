@@ -157,8 +157,8 @@ public class HexesManagerController : MonoBehaviour
 
     public bool PrepareHexToAddToBoard(PieceType type, bool white)
     {
-        if (_hexesStore.hexToAdd != null)
-            ResetHexToAdd();
+        ResetHexToAdd();
+        ResetHexToMove();
 
         GameObject hexToAdd = ProposeHexToAdd(type, white);
 
@@ -169,9 +169,8 @@ public class HexesManagerController : MonoBehaviour
             {
                 List<GameObject> hexAddPropositions = CreateHexAddPositionsPropositions(availablePositions);
                 SetHexToAdd(hexToAdd, hexAddPropositions);
-                ResetHexToMove();
         
-                if (_hexesInfoProvider.IsItFirstMove() && hexAddPropositions.Count == 1)
+                if (_hexesInfoProvider.IsItFirstMove())
                     ConfirmAddedHexOnGameboard(hexAddPropositions[0]);
                 return true;
             }
@@ -232,8 +231,8 @@ public class HexesManagerController : MonoBehaviour
 
         if (selectedHexScript.HexId != 0)
         {
-            if (_hexesStore.hexToMove != null)
-                ResetHexToMove();
+            ResetHexToMove();
+            ResetHexToAdd();
 
             List<(int, int)> availableMovePositions = selectedHexScript
                 .piece
@@ -244,7 +243,6 @@ public class HexesManagerController : MonoBehaviour
             {
                 List<GameObject> hexMovePropositions = CreateHexMovePositionsPropositions(selectedHex, availableMovePositions);
                 SetHexToMove(selectedHex, hexMovePropositions);
-                ResetHexToAdd();
                 return true;
             }
         }

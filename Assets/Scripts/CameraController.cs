@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    private float _startFieldOfView;
+    private Vector3 _startPosition; 
+
     private const int MinFieldOfView = 80;
     private const float ZoomSpeed = 0.05f;
     private const float MovingTime = 2f;
@@ -19,8 +22,11 @@ public class CameraController : MonoBehaviour
         GameObject hexesStoreGameObject = GameObject.FindWithTag("HexesStore");
         _hexesStore = hexesStoreGameObject.GetComponent<HexesStoreScript>();
 
+
+        _startPosition = transform.position;
         _offset = transform.position - Hex.transform.position;
-        _targetFieldOfView = Camera.main.fieldOfView;
+        _startFieldOfView = Camera.main.fieldOfView;
+        _targetFieldOfView = _startFieldOfView;
     }
 
     void Update()
@@ -29,6 +35,13 @@ public class CameraController : MonoBehaviour
         {
             Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, _targetFieldOfView, ZoomSpeed);
         }
+    }
+
+    public void ResetCamera()
+    {
+        Camera.main.fieldOfView = _startFieldOfView;
+        transform.position = _startPosition;
+        _targetFieldOfView = _startFieldOfView;
     }
 
     public void UpdateCamera()
