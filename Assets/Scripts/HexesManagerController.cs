@@ -42,7 +42,6 @@ public class HexesManagerController : MonoBehaviour
             HexWrapperController hexToAddScript = GetHexThatIsAddedScript();
             List<int> hexesOnBoardIds = hexToAddScript.isWhite ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
 
-            hexToAddScript.isOnGameboard = true;
             hexesOnBoardIds.Add(hexToAddScript.HexId);
 
             hexToAddScript.transform.position = selectedHexScript.transform.position;

@@ -177,26 +177,26 @@ public static class PieceMovesTools
         return (-1, -1);
     }
 
-    public static (int, int) GetNextPositionAroundHex((int, int) hexToMove, (int, int) hex, bool clockwise = true)
+    public static (int, int) GetNextPositionAroundHex((int, int) startPosition, (int, int) relativePosition, bool clockwise = true)
     {
-        (int, int) relativePosition = (hexToMove.Item1 - hex.Item1, hexToMove.Item2 - hex.Item2);
+        (int, int) offset = (startPosition.Item1 - relativePosition.Item1, startPosition.Item2 - relativePosition.Item2);
 
         for (int i = 0; i < _neighboursLocationParameters.Count; i++)
         {
-            (int, int) positionOffset = hex.Item1 % 2 == 1 ?
+            (int, int) positionOffset = relativePosition.Item1 % 2 == 1 ?
                 _neighboursLocationParameters[i].EvenRowNeighbourIdxsDelta : _neighboursLocationParameters[i].OddRowNeighbourIdxsDelta;
-            if (positionOffset == relativePosition)
+            if (positionOffset == offset)
             {
                 (int, int) nextPositionOffset;
 
                 int nextPositionOffsetIdx = clockwise ? (i + 1) % _neighboursLocationParameters.Count
                     : (i + _neighboursLocationParameters.Count - 1) % _neighboursLocationParameters.Count;
 
-                nextPositionOffset = hex.Item1 % 2 == 1 ?
+                nextPositionOffset = relativePosition.Item1 % 2 == 1 ?
                 _neighboursLocationParameters[nextPositionOffsetIdx].EvenRowNeighbourIdxsDelta
                     : _neighboursLocationParameters[nextPositionOffsetIdx].OddRowNeighbourIdxsDelta;
 
-                (int, int) nextPosition = (hex.Item1 + nextPositionOffset.Item1, hex.Item2 + nextPositionOffset.Item2);
+                (int, int) nextPosition = (relativePosition.Item1 + nextPositionOffset.Item1, relativePosition.Item2 + nextPositionOffset.Item2);
                 return nextPosition;
             }
         }
