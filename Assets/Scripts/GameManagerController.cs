@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class GameManagerController : MonoBehaviour
@@ -139,9 +138,9 @@ public class GameManagerController : MonoBehaviour
     private void GameOver()
     {
         if (_hexesInfoProvider.GameIsDrawn())
-            _ui.ShowGameDrawnEndingPanel();
+            _ui.LaunchGameDrawnEndingPanel();
         else
-            _ui.ShowWinEndingPanel(_hexesInfoProvider.WhiteHexesWon());
+            _ui.LaunchWinEndingPanel(_hexesInfoProvider.WhiteHexesWon());
     }
 
 
@@ -162,6 +161,7 @@ public class GameManagerController : MonoBehaviour
         _gameOver = false;
         SetTurn(white);
         _ui.HideChoiceMenu();
+        _ui.LaunchSideMenus();
         _ui.ChangeSideMenu(_isWhiteTurn);
     }
 
