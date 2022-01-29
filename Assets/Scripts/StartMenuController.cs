@@ -5,6 +5,7 @@ public class StartMenuController : MonoBehaviour
 {
     public GameObject GameManager;
     public Button StartGameButton;
+    public Button JoinGameButton;
     public Button ExitButton;
 
 
