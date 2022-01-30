@@ -26,8 +26,6 @@ namespace Hive
 
             GameObject hexesInfoProviderGameObject = GameObject.FindWithTag("HexesInfoProvider");
             _hexesInfoProvider = hexesInfoProviderGameObject.GetComponent<HexesInfoProvider>();
-
-            _hexesStore.InitializeHexes();
         }
 
         private HexWrapperController GetHexToMoveScript()
@@ -241,7 +239,7 @@ namespace Hive
 
                 if (availableMovePositions.Count > 0)
                 {
-                    List<GameObject> hexMovePropositions = CreateHexMovePositionsPropositions(selectedHex, availableMovePositions);
+                    List<GameObject> hexMovePropositions = CreateHexMovePositionsPropositions(availableMovePositions);
                     SetHexToMove(selectedHex, hexMovePropositions);
                     return true;
                 }
@@ -249,7 +247,7 @@ namespace Hive
             return false;
         }
 
-        private List<GameObject> CreateHexMovePositionsPropositions(GameObject hexToMove, List<(int, int)> positions)
+        private List<GameObject> CreateHexMovePositionsPropositions(List<(int, int)> positions)
         {
             List<GameObject> propositions = new List<GameObject>();
             (int, int) centerPosition = (GameBoardScript.CenterPositionX, GameBoardScript.CenterPositionY);

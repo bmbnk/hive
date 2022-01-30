@@ -41,12 +41,13 @@ namespace Hive
         public List<GameObject> whiteHexes;
         public List<GameObject> blackHexes;
 
-        void Setup()
+        void Awake()
         {
-            //InitializeHexes();
+            InitializeHexes();
         }
 
-        public void InitializeHexes()
+
+        private void InitializeHexes()
         {
             WhiteHex1.GetComponent<HexWrapperController>().HexId = 1;
             WhiteHex2.GetComponent<HexWrapperController>().HexId = 2;
