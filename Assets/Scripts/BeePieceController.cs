@@ -1,26 +1,29 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class BeePieceController : MonoBehaviour, IPieceController
+namespace Hive
 {
-    public PieceType GetPieceType() => PieceType.BEE;
-
-
-    public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] gameBoard)
+    public class BeePieceController : MonoBehaviour, IPieceController
     {
-        List<(int, int)> positions = PieceMovesTools.GetPositionsNextToNeighboursAroundPosition(hexPosition, gameBoard);
+        public PieceType GetPieceType() => PieceType.BEE;
 
-        List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(hexPosition, gameBoard);
-        List<(int, int)> notAllowedPositions = PieceMovesTools.GetNotAllowedPositionsAroundPosition(neighbours, hexPosition);
 
-        notAllowedPositions.ForEach(notAllowedPosition =>
+        public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] gameBoard)
         {
-            if (positions.Contains(notAllowedPosition))
-            {
-                positions.Remove(notAllowedPosition);
-            }
-        });
+            List<(int, int)> positions = PieceMovesTools.GetPositionsNextToNeighboursAroundPosition(hexPosition, gameBoard);
 
-        return positions;
+            List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(hexPosition, gameBoard);
+            List<(int, int)> notAllowedPositions = PieceMovesTools.GetNotAllowedPositionsAroundPosition(neighbours, hexPosition);
+
+            notAllowedPositions.ForEach(notAllowedPosition =>
+            {
+                if (positions.Contains(notAllowedPosition))
+                {
+                    positions.Remove(notAllowedPosition);
+                }
+            });
+
+            return positions;
+        }
     }
 }

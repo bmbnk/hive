@@ -1,21 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PauseMenuController : MonoBehaviour
+namespace Hive
 {
-    public GameObject GameManager;
-    public GameObject PauseMenuPanel;
-    public Button CancelButton;
-    public Button QuitButton;
-
-
-    void Start()
+    public class PauseMenuController : MonoBehaviour
     {
-        GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
+        public GameObject GameManager;
+        public GameObject PauseMenuPanel;
+        public Button CancelButton;
+        public Button QuitButton;
 
-        CancelButton.onClick.AddListener(() => gameManagerScript.ResumeGame());
-        QuitButton.onClick.AddListener(() => gameManagerScript.ResetGame());
+
+        void Start()
+        {
+            GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
+
+            CancelButton.onClick.AddListener(() => gameManagerScript.ResumeGame());
+            QuitButton.onClick.AddListener(() => gameManagerScript.ResetGame());
+        }
     }
 }

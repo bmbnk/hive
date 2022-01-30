@@ -1,20 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ChoiceMenuController : MonoBehaviour
+namespace Hive
 {
-    public GameObject GameManager;
-    public Button BlackStartsButton;
-    public Button WhiteStartsButton;
-
-
-    void Start()
+    public class ChoiceMenuController : MonoBehaviour
     {
-        GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
+        public GameObject GameManager;
+        public Button BlackStartsButton;
+        public Button WhiteStartsButton;
 
-        BlackStartsButton.onClick.AddListener(() => gameManagerScript.StartGame(false));
-        WhiteStartsButton.onClick.AddListener(() => gameManagerScript.StartGame(true));
+
+        void Start()
+        {
+            GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
+
+            BlackStartsButton.onClick.AddListener(() => gameManagerScript.StartGame(false));
+            WhiteStartsButton.onClick.AddListener(() => gameManagerScript.StartGame(true));
+        }
     }
 }

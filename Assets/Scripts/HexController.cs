@@ -1,20 +1,23 @@
 using UnityEngine;
 
-public class HexController : MonoBehaviour
+namespace Hive
 {
-    public GameObject gameManager;
-    public GameObject hexWrapper;
-    private UIController _ui;
-
-    void Start()
+    public class HexController : MonoBehaviour
     {
-        GameObject uiGameobject = GameObject.FindWithTag("UI");
-        _ui = uiGameobject.GetComponent<UIController>();
-    }
+        public GameObject gameManager;
+        public GameObject hexWrapper;
+        private UIController _ui;
 
-    void OnMouseDown()
-    {
-        _ui.OnHexSelected(); 
-        gameManager.GetComponent<GameManagerController>().OnHexSelected(hexWrapper);
+        void Start()
+        {
+            GameObject uiGameobject = GameObject.FindWithTag("UI");
+            _ui = uiGameobject.GetComponent<UIController>();
+        }
+
+        void OnMouseDown()
+        {
+            _ui.OnHexSelected();
+            gameManager.GetComponent<GameManagerController>().OnHexSelected(hexWrapper);
+        }
     }
 }

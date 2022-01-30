@@ -1,22 +1,25 @@
 using UnityEngine;
 
-public class GameBoardPlaneController : MonoBehaviour
+namespace Hive
 {
-    public GameObject gameMeneger;
-    private UIController _ui;
-
-    void Start()
+    public class GameBoardPlaneController : MonoBehaviour
     {
-        GameObject uiGameobject = GameObject.FindWithTag("UI");
-        _ui = uiGameobject.GetComponent<UIController>();
-    }
+        public GameObject gameMeneger;
+        private UIController _ui;
 
-    void OnMouseDown()
-    {
-        if (!_ui.AreUIElementsPointed())
+        void Start()
         {
-            _ui.OnGameBoardClicked();
-            gameMeneger.GetComponent<GameManagerController>().GameBoardSelected();
+            GameObject uiGameobject = GameObject.FindWithTag("UI");
+            _ui = uiGameobject.GetComponent<UIController>();
+        }
+
+        void OnMouseDown()
+        {
+            if (!_ui.AreUIElementsPointed())
+            {
+                _ui.OnGameBoardClicked();
+                gameMeneger.GetComponent<GameManagerController>().GameBoardSelected();
+            }
         }
     }
 }

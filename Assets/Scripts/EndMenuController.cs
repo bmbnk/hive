@@ -1,21 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EndMenuController : MonoBehaviour
+namespace Hive
 {
-    public GameObject GameManager;
-    public GameObject EndGamePanel;
-    public Button NextGameButton;
-    public Button ExitButton;
-
-
-    void Start()
+    public class EndMenuController : MonoBehaviour
     {
-        GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
+        public GameObject GameManager;
+        public GameObject EndGamePanel;
+        public Button NextGameButton;
+        public Button ExitButton;
 
-        NextGameButton.onClick.AddListener(() => gameManagerScript.ResetGame());
-        ExitButton.onClick.AddListener(() => Application.Quit());
+
+        void Start()
+        {
+            GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
+
+            NextGameButton.onClick.AddListener(() => gameManagerScript.ResetGame());
+            ExitButton.onClick.AddListener(() => Application.Quit());
+        }
     }
 }

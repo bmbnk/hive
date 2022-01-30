@@ -1,19 +1,22 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StartMenuController : MonoBehaviour
+namespace Hive
 {
-    public GameObject GameManager;
-    public Button StartGameButton;
-    public Button JoinGameButton;
-    public Button ExitButton;
-
-
-    void Start()
+    public class StartMenuController : MonoBehaviour
     {
-        GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
+        public GameObject GameManager;
+        public Button StartGameButton;
+        public Button JoinGameButton;
+        public Button ExitButton;
 
-        StartGameButton.onClick.AddListener(() => gameManagerScript.PrepareGame());
-        ExitButton.onClick.AddListener(() => Application.Quit());
+
+        void Start()
+        {
+            GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
+
+            StartGameButton.onClick.AddListener(() => gameManagerScript.PrepareGame());
+            ExitButton.onClick.AddListener(() => Application.Quit());
+        }
     }
 }

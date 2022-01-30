@@ -1,210 +1,217 @@
 using UnityEngine;
 
-public class GameManagerController : MonoBehaviour
+namespace Hive
 {
-    private HexesManagerController _hexesManager;
-    private UIController _ui;
-    private HexesInfoProvider _hexesInfoProvider;
-    private CameraController _camera;
-    private RulesValidator _rulesValidator;
-
-    private bool _gameOver = false;
-    private bool _gamePaused = false;
-    private bool _isWhiteTurn = true;
-    private bool _movingHexOnBoard = false;
-    private bool _addingHexToBoard = false;
-    private PieceType _lastSelectedTileType;
-
-    void Start()
+    public class GameManagerController : MonoBehaviour
     {
-        GameObject moveValidatorGameObject = GameObject.FindWithTag("RulesValidator");
-        _rulesValidator = moveValidatorGameObject.GetComponent<RulesValidator>();
+        private HexesManagerController _hexesManager;
+        private UIController _ui;
+        private HexesInfoProvider _hexesInfoProvider;
+        private CameraController _camera;
+        private RulesValidator _rulesValidator;
 
-        GameObject hexesManagerGameobject = GameObject.FindWithTag("HexesManager");
-        _hexesManager = hexesManagerGameobject.GetComponent<HexesManagerController>();
+        private bool _gameOver = false;
+        private bool _gamePaused = false;
+        private bool _isWhiteTurn = true;
+        private bool _movingHexOnBoard = false;
+        private bool _addingHexToBoard = false;
+        private PieceType _lastSelectedTileType;
 
-        GameObject uiGameobject = GameObject.FindWithTag("UI");
-        _ui = uiGameobject.GetComponent<UIController>();
-
-        GameObject hexesInfoProviderGameObject = GameObject.FindWithTag("HexesInfoProvider");
-        _hexesInfoProvider = hexesInfoProviderGameObject.GetComponent<HexesInfoProvider>();
-
-        GameObject cameraGameobject = GameObject.FindWithTag("MainCamera");
-        _camera = cameraGameobject.GetComponent<CameraController>();
-    }
-
-    void Update()
-    {
-        if (Input.GetKey("escape") && !_gameOver)
+        void Start()
         {
-            PauseGame();
+            GameObject moveValidatorGameObject = GameObject.FindWithTag("RulesValidator");
+            _rulesValidator = moveValidatorGameObject.GetComponent<RulesValidator>();
+
+            GameObject hexesManagerGameobject = GameObject.FindWithTag("HexesManager");
+            _hexesManager = hexesManagerGameobject.GetComponent<HexesManagerController>();
+
+            GameObject uiGameobject = GameObject.FindWithTag("UI");
+            _ui = uiGameobject.GetComponent<UIController>();
+
+            GameObject hexesInfoProviderGameObject = GameObject.FindWithTag("HexesInfoProvider");
+            _hexesInfoProvider = hexesInfoProviderGameObject.GetComponent<HexesInfoProvider>();
+
+            GameObject cameraGameobject = GameObject.FindWithTag("MainCamera");
+            _camera = cameraGameobject.GetComponent<CameraController>();
         }
-    }
 
-    public void PauseGame()
-    {
-        _ui.LaunchPauseMenu();
-        _gamePaused = true;
-    }
-
-    public void ResumeGame()
-    {
-        _ui.HidePauseMenu();
-        _gamePaused = false;
-    }
-
-    public void OnTileSelected(PieceType type, bool white)
-    {
-        if (white == _isWhiteTurn)
+        void Update()
         {
-            _lastSelectedTileType = type;
-            StartAddingHex(type, white);
-        }
-    }
-
-    private void StartAddingHex(PieceType type, bool white)
-    {
-        bool isItFirstMove = _hexesInfoProvider.IsItFirstMove();
-
-        if (_hexesManager.PrepareHexToAddToBoard(type, white))
-        {
-            _movingHexOnBoard = false;
-            _addingHexToBoard = true;
-            if (isItFirstMove)
+            if (Input.GetKey("escape") && !_gameOver)
             {
-                ChangeTurn();
+                PauseGame();
+            }
+        }
+
+        public void PauseGame()
+        {
+            _ui.LaunchPauseMenu();
+            _gamePaused = true;
+        }
+
+        public void ResumeGame()
+        {
+            _ui.HidePauseMenu();
+            _gamePaused = false;
+        }
+
+        public void OnTileSelected(PieceType type, bool white)
+        {
+            if (white == _isWhiteTurn)
+            {
+                _lastSelectedTileType = type;
+                StartAddingHex(type, white);
+            }
+        }
+
+        private void StartAddingHex(PieceType type, bool white)
+        {
+            bool isItFirstMove = _hexesInfoProvider.IsItFirstMove();
+
+            if (_hexesManager.PrepareHexToAddToBoard(type, white))
+            {
+                _movingHexOnBoard = false;
+                _addingHexToBoard = true;
+                if (isItFirstMove)
+                {
+                    ChangeTurn();
+                    _addingHexToBoard = false;
+                    UpdateSideMenu(type, white);
+                    _camera.UpdateCamera();
+                }
+            }
+            else
+            {
+                _hexesManager.ResetHexToAdd();
+            }
+        }
+
+        private void UpdateSideMenu(PieceType type, bool white)
+        {
+            int count = _hexesInfoProvider.GetRemainingHexCount(type, white);
+            _ui.UpdateCounterLabel(type, white, count);
+        }
+
+        public void GameBoardSelected()
+        {
+            if (_addingHexToBoard)
+                _hexesManager.ResetHexToAdd();
+            if (_movingHexOnBoard)
+                _hexesManager.ResetHexToMove();
+        }
+
+        public void OnHexSelected(GameObject selectedHex)
+        {
+            if (!_gameOver && !_gamePaused)
+            {
+                if (_hexesInfoProvider.IsItPropositionHex(selectedHex))
+                {
+                    if (_addingHexToBoard)
+                    {
+                        ConfirmAddedHexOnGameboard(selectedHex);
+                    }
+                    else if (_movingHexOnBoard)
+                    {
+                        ConfirmMovingHexOnGameboard(selectedHex);
+                    }
+                }
+                else if (_hexesInfoProvider.IsItCurrentPlayerHex(selectedHex, _isWhiteTurn)
+                  && _rulesValidator.CanMoveHex(selectedHex))
+                {
+                    StartMovingHex(selectedHex);
+                }
+            }
+        }
+
+        private void ConfirmAddedHexOnGameboard(GameObject selectedHex)
+        {
+            if (_hexesManager.ConfirmAddedHexOnGameboard(selectedHex))
+            {
+                if (_hexesInfoProvider.IsGameOver())
+                    GameOver();
+                UpdateSideMenu(_lastSelectedTileType, _isWhiteTurn);
+                if (!_hexesInfoProvider.IsAnyHexLeftInHand())
+                {
+                    _ui.HideSideMenus();
+                }
                 _addingHexToBoard = false;
-                UpdateSideMenu(type, white);
+                ChangeTurn();
                 _camera.UpdateCamera();
             }
-        } else
-        {
-            _hexesManager.ResetHexToAdd();
         }
-    }
 
-    private void UpdateSideMenu(PieceType type, bool white)
-    {
-        int count = _hexesInfoProvider.GetRemainingHexCount(type, white);
-        _ui.UpdateCounterLabel(type, white, count);
-    }
-
-    public void GameBoardSelected()
-    {
-        if(_addingHexToBoard)
-            _hexesManager.ResetHexToAdd();
-        if(_movingHexOnBoard)
-            _hexesManager.ResetHexToMove();
-    }
-
-    public void OnHexSelected(GameObject selectedHex)
-    {
-        if (!_gameOver && !_gamePaused)
+        private void GameOver()
         {
-            if (_hexesInfoProvider.IsItPropositionHex(selectedHex))
+            if (_hexesInfoProvider.GameIsDrawn())
+                _ui.LaunchGameDrawnEndingPanel();
+            else
+                _ui.LaunchWinEndingPanel(_hexesInfoProvider.WhiteHexesWon());
+        }
+
+
+        private void ConfirmMovingHexOnGameboard(GameObject selectedHex)
+        {
+            if (_hexesManager.ConfirmMovingHexOnGameboard(selectedHex))
             {
-                if (_addingHexToBoard)
-                {
-                    ConfirmAddedHexOnGameboard(selectedHex);
-                } else if (_movingHexOnBoard)
-                {
-                    ConfirmMovingHexOnGameboard(selectedHex);
-                }
-            } else if (_hexesInfoProvider.IsItCurrentPlayerHex(selectedHex, _isWhiteTurn)
-                && _rulesValidator.CanMoveHex(selectedHex))
-            {
-                StartMovingHex(selectedHex);
+                if (_hexesInfoProvider.IsGameOver())
+                    GameOver();
+                _movingHexOnBoard = false;
+                ChangeTurn();
+                _camera.UpdateCamera();
             }
         }
-    }
 
-    private void ConfirmAddedHexOnGameboard(GameObject selectedHex)
-    {
-        if (_hexesManager.ConfirmAddedHexOnGameboard(selectedHex))
+        public void StartGame(bool white)
         {
-            if (_hexesInfoProvider.IsGameOver())
-                GameOver();
-            UpdateSideMenu(_lastSelectedTileType, _isWhiteTurn);
-            if (!_hexesInfoProvider.IsAnyHexLeftInHand())
-            {
-                _ui.HideSideMenus();
-            }
-            _addingHexToBoard = false;
-            ChangeTurn();
-            _camera.UpdateCamera();
-        }
-    }
-
-    private void GameOver()
-    {
-        if (_hexesInfoProvider.GameIsDrawn())
-            _ui.LaunchGameDrawnEndingPanel();
-        else
-            _ui.LaunchWinEndingPanel(_hexesInfoProvider.WhiteHexesWon());
-    }
-
-
-    private void ConfirmMovingHexOnGameboard(GameObject selectedHex)
-    {
-        if (_hexesManager.ConfirmMovingHexOnGameboard(selectedHex))
-        {
-            if (_hexesInfoProvider.IsGameOver())
-                GameOver();
-            _movingHexOnBoard = false;
-            ChangeTurn();
-            _camera.UpdateCamera();
-        }
-    }
-
-    public void StartGame(bool white)
-    {
-        _gameOver = false;
-        SetTurn(white);
-        _ui.HideChoiceMenu();
-        _ui.LaunchSideMenus();
-        _ui.ChangeSideMenu(_isWhiteTurn);
-    }
-
-    public void PrepareGame()
-    {
-        _ui.LaunchChoiceMenu();
-    }
-
-    public void ResetGame()
-    {
-        _gamePaused = false;
-        _gameOver = false;
-        _movingHexOnBoard = false;
-        _addingHexToBoard = false;
-        _hexesManager.ResetHexesState();
-        _camera.ResetCamera();
-        _ui.ResetUI();
-        _ui.LaunchStartMenu();
-    }
-
-    private void StartMovingHex(GameObject selectedHex)
-    {
-        if (_hexesManager.PrepareSelectedHexToMove(selectedHex))
-        {
-            _movingHexOnBoard = true;
-            _addingHexToBoard = false;
-        } else
-        {
-            _hexesManager.ResetHexToMove();
-        }
-    }
-
-    public void SetTurn(bool white)
-    {
-        _isWhiteTurn = white;
-    }
-
-    private void ChangeTurn()
-    {
-        if (_rulesValidator.CanMakeMove(!_isWhiteTurn))
-        {
-            _isWhiteTurn = !_isWhiteTurn;
+            _gameOver = false;
+            SetTurn(white);
+            _ui.HideChoiceMenu();
+            _ui.LaunchSideMenus();
             _ui.ChangeSideMenu(_isWhiteTurn);
+        }
+
+        public void PrepareGame()
+        {
+            _ui.LaunchChoiceMenu();
+        }
+
+        public void ResetGame()
+        {
+            _gamePaused = false;
+            _gameOver = false;
+            _movingHexOnBoard = false;
+            _addingHexToBoard = false;
+            _hexesManager.ResetHexesState();
+            _camera.ResetCamera();
+            _ui.ResetUI();
+            _ui.LaunchStartMenu();
+        }
+
+        private void StartMovingHex(GameObject selectedHex)
+        {
+            if (_hexesManager.PrepareSelectedHexToMove(selectedHex))
+            {
+                _movingHexOnBoard = true;
+                _addingHexToBoard = false;
+            }
+            else
+            {
+                _hexesManager.ResetHexToMove();
+            }
+        }
+
+        public void SetTurn(bool white)
+        {
+            _isWhiteTurn = white;
+        }
+
+        private void ChangeTurn()
+        {
+            if (_rulesValidator.CanMakeMove(!_isWhiteTurn))
+            {
+                _isWhiteTurn = !_isWhiteTurn;
+                _ui.ChangeSideMenu(_isWhiteTurn);
+            }
         }
     }
 }

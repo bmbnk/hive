@@ -2,84 +2,88 @@
 using System.Linq;
 using UnityEngine;
 
-public class AntPieceController : MonoBehaviour, IPieceController
+namespace Hive
 {
-    public PieceType GetPieceType() => PieceType.ANT;
-
-
-    public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] originalGameBoard)
+    public class AntPieceController : MonoBehaviour, IPieceController
     {
-        int[,] gameBoard = GetGameBoardWithoutHex(originalGameBoard, hexPosition);
+        public PieceType GetPieceType() => PieceType.ANT;
 
-        List<(int, int)> positions = new List<(int, int)>();
-        positions.Add(hexPosition);
 
-        bool nextPositionFound = true;
-        (int, int) lastPivotNeighbour;
-        List<(int, int)> notAllowedPositions;
-
-        List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(positions.Last(), gameBoard, false);
-        lastPivotNeighbour = neighbours[0];
-
-        while (nextPositionFound)
+        public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] originalGameBoard)
         {
-            nextPositionFound = false;
+            int[,] gameBoard = GetGameBoardWithoutHex(originalGameBoard, hexPosition);
 
-            neighbours = PieceMovesTools.GetNeighbours(positions.Last(), gameBoard, false);
-            notAllowedPositions = PieceMovesTools.GetNotAllowedPositionsAroundPosition(neighbours, positions.Last());
-            (int, int) nextPosition = PieceMovesTools.GetNextFreePositionAroundHex(positions.Last(), lastPivotNeighbour, gameBoard);
-            if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
-            {
-                positions.Add(nextPosition);
-                nextPositionFound = true;
-            } else
-            {
-                int lastPivotNeighbourIdx = neighbours.FindIndex(neighbour => neighbour == lastPivotNeighbour);
+            List<(int, int)> positions = new List<(int, int)>();
+            positions.Add(hexPosition);
 
-                for (int i = 1; i < neighbours.Count; i++)
+            bool nextPositionFound = true;
+            (int, int) lastPivotNeighbour;
+            List<(int, int)> notAllowedPositions;
+
+            List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(positions.Last(), gameBoard, false);
+            lastPivotNeighbour = neighbours[0];
+
+            while (nextPositionFound)
+            {
+                nextPositionFound = false;
+
+                neighbours = PieceMovesTools.GetNeighbours(positions.Last(), gameBoard, false);
+                notAllowedPositions = PieceMovesTools.GetNotAllowedPositionsAroundPosition(neighbours, positions.Last());
+                (int, int) nextPosition = PieceMovesTools.GetNextFreePositionAroundHex(positions.Last(), lastPivotNeighbour, gameBoard);
+                if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
                 {
-                    (int, int) nextNeighbour = neighbours[(lastPivotNeighbourIdx + i) % neighbours.Count];
-                    nextPosition = PieceMovesTools.GetNextFreePositionAroundHex(positions.Last(), nextNeighbour, gameBoard);
-                    if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
+                    positions.Add(nextPosition);
+                    nextPositionFound = true;
+                }
+                else
+                {
+                    int lastPivotNeighbourIdx = neighbours.FindIndex(neighbour => neighbour == lastPivotNeighbour);
+
+                    for (int i = 1; i < neighbours.Count; i++)
                     {
-                        positions.Add(nextPosition);
-                        lastPivotNeighbour = nextNeighbour;
-                        nextPositionFound = true;
-                        break;
+                        (int, int) nextNeighbour = neighbours[(lastPivotNeighbourIdx + i) % neighbours.Count];
+                        nextPosition = PieceMovesTools.GetNextFreePositionAroundHex(positions.Last(), nextNeighbour, gameBoard);
+                        if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
+                        {
+                            positions.Add(nextPosition);
+                            lastPivotNeighbour = nextNeighbour;
+                            nextPositionFound = true;
+                            break;
+                        }
                     }
+                }
+
+                if (positions.Count > 3 && PieceEnteredLoop(positions))
+                {
+                    for (int i = 0; i < 2; i++)
+                        positions.RemoveAt(positions.Count - 1);
+                    break;
                 }
             }
 
-            if(positions.Count > 3 && PieceEnteredLoop(positions))
-            {
-                for (int i = 0; i < 2; i++)
-                    positions.RemoveAt(positions.Count - 1);
-                break;
-            }
+            positions.Remove(hexPosition);
+
+            return positions;
         }
 
-        positions.Remove(hexPosition);
-
-        return positions;
-    }
-
-    private int[,] GetGameBoardWithoutHex(int[,] originalGameBoard, (int, int) hexPosition)
-    {
-        int[,] gameBoard = (int[,])originalGameBoard.Clone();
-        gameBoard[hexPosition.Item1, hexPosition.Item2] = 0;
-        return gameBoard;
-    }
-
-    private bool PieceEnteredLoop(List<(int, int)> positions)
-    {
-        if(positions.Count > 3)
+        private int[,] GetGameBoardWithoutHex(int[,] originalGameBoard, (int, int) hexPosition)
         {
-            for (int i = 0; i < positions.Count - 3; i++)
-            {
-                if (positions[i] == positions[positions.Count - 2] && positions[i + 1] == positions[positions.Count - 1])
-                    return true;
-            }
+            int[,] gameBoard = (int[,])originalGameBoard.Clone();
+            gameBoard[hexPosition.Item1, hexPosition.Item2] = 0;
+            return gameBoard;
         }
-        return false;
+
+        private bool PieceEnteredLoop(List<(int, int)> positions)
+        {
+            if (positions.Count > 3)
+            {
+                for (int i = 0; i < positions.Count - 3; i++)
+                {
+                    if (positions[i] == positions[positions.Count - 2] && positions[i + 1] == positions[positions.Count - 1])
+                        return true;
+                }
+            }
+            return false;
+        }
     }
 }

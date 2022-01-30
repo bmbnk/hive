@@ -1,4 +1,7 @@
-public enum PieceType
+namespace Hive
 {
-    BEE, BEETLE, SPIDER, GRASSHOPPER, ANT
+    public enum PieceType
+    {
+        BEE, BEETLE, SPIDER, GRASSHOPPER, ANT
+    }
 }

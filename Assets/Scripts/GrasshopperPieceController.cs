@@ -1,26 +1,29 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class GrasshopperPieceController : MonoBehaviour, IPieceController
+namespace Hive
 {
-    public PieceType GetPieceType() => PieceType.GRASSHOPPER;
-
-
-    public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] gameBoard)
+    public class GrasshopperPieceController : MonoBehaviour, IPieceController
     {
-        List<(int, int)> positions = new List<(int, int)>();
-        List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(hexPosition, gameBoard);
+        public PieceType GetPieceType() => PieceType.GRASSHOPPER;
 
-        neighbours.ForEach(neighbour =>
+
+        public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] gameBoard)
         {
-            if (gameBoard[neighbour.Item1, neighbour.Item2] != 0)
-            {
-                (int, int) position = PieceMovesTools.GetFirstFreePositionInDirectionOfNeighbour(hexPosition, neighbour, gameBoard);
-                if (position != (-1, -1))
-                    positions.Add(position);
-            }
-        });
+            List<(int, int)> positions = new List<(int, int)>();
+            List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(hexPosition, gameBoard);
 
-        return positions;
+            neighbours.ForEach(neighbour =>
+            {
+                if (gameBoard[neighbour.Item1, neighbour.Item2] != 0)
+                {
+                    (int, int) position = PieceMovesTools.GetFirstFreePositionInDirectionOfNeighbour(hexPosition, neighbour, gameBoard);
+                    if (position != (-1, -1))
+                        positions.Add(position);
+                }
+            });
+
+            return positions;
+        }
     }
 }
