@@ -182,9 +182,9 @@ namespace Hive
             _movingHexOnBoard = false;
             _addingHexToBoard = false;
             _hexesManager.ResetHexesState();
-            _camera.ResetCamera();
             _ui.ResetUI();
             _ui.LaunchStartMenu();
+            _camera.ResetCamera();
         }
 
         private void StartMovingHex(GameObject selectedHex)

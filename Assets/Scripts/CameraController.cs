@@ -6,26 +6,23 @@ namespace Hive
     public class CameraController : MonoBehaviour
     {
         private float _startFieldOfView;
+        private float _targetFieldOfView;
         private Vector3 _startPosition;
 
         private const int MinFieldOfView = 80;
         private const float ZoomSpeed = 0.05f;
         private const float MovingTime = 2f;
 
-        public GameObject Hex;
-
         private HexesStoreScript _hexesStore;
-        private Vector3 _offset;
-        private float _targetFieldOfView;
+
+        private bool _isCameraMoving = false;
 
         void Start()
         {
             GameObject hexesStoreGameObject = GameObject.FindWithTag("HexesStore");
             _hexesStore = hexesStoreGameObject.GetComponent<HexesStoreScript>();
 
-
             _startPosition = transform.position;
-            _offset = transform.position - Hex.transform.position;
             _startFieldOfView = Camera.main.fieldOfView;
             _targetFieldOfView = _startFieldOfView;
         }
@@ -40,6 +37,7 @@ namespace Hive
 
         public void ResetCamera()
         {
+            iTween.StopByName("CameraPositionUpdate");
             Camera.main.fieldOfView = _startFieldOfView;
             transform.position = _startPosition;
             _targetFieldOfView = _startFieldOfView;
@@ -52,15 +50,6 @@ namespace Hive
             hexPositionVectors.AddRange(GetHexesOnBoard(false));
             UpdatePosition(hexPositionVectors);
             UpdateZoom(hexPositionVectors);
-        }
-
-        private void UpdatePosition(List<Vector3> hexPositionVectors)
-        {
-            Vector3 nextPosition = GetCenterOfMass(hexPositionVectors);
-            iTween.MoveTo(gameObject, iTween.Hash(
-                    "position", nextPosition + _offset,
-                    "time", MovingTime,
-                    "easytype", iTween.EaseType.linear));
         }
 
         private List<Vector3> GetHexesOnBoard(bool white)
@@ -76,6 +65,23 @@ namespace Hive
             });
 
             return hexesOnBoardPositionsVectors;
+        }
+
+        private void UpdatePosition(List<Vector3> hexPositionVectors)
+        {
+            Vector3 hexesCenterPosition = GetCenterOfMass(hexPositionVectors);
+            _isCameraMoving = true;
+            iTween.MoveTo(gameObject, iTween.Hash(
+                    "name", "CameraPositionUpdate",
+                    "position", _startPosition + hexesCenterPosition,
+                    "time", MovingTime,
+                    "easytype", iTween.EaseType.linear,
+                    "oncomplete", "UnsetCameraMoving"));
+        }
+
+        private void UnsetCameraMoving()
+        {
+            _isCameraMoving = false;
         }
 
         private Vector3 GetCenterOfMass(List<Vector3> positionsVectors)
