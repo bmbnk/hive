@@ -7,7 +7,6 @@ namespace Hive
     {
         public GameObject GameManager;
         public Button StartGameButton;
-        public Button JoinGameButton;
         public Button ExitButton;
 
 
