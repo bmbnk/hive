@@ -11,14 +11,31 @@ namespace Hive
         public const string DrawnGameEndTextTemplate = "DRAW";
         public const float AlphaValue = 0.5f;
 
-        public GameObject GameManager;
-        public GameObject StartMenuPanel;
-        public GameObject ChoiceMenuPanel;
-        public GameObject GamePanel;
+        [SerializeField]
+        private GameObject _gameManager;
+
+        [SerializeField]
+        private GameObject _startMenuPanel;
+
+        [SerializeField]
+        private GameObject _colorChoiceMenuPanel;
+
+        [SerializeField]
+        private GameObject _roomChoicePanel;
+
+        [SerializeField]
+        private GameObject _enterNamePanel;
+
+        [SerializeField]
+        private GameObject _gamePanel;
+
+        [SerializeField]
+        private GameObject _pauseMenuPanel;
+
+        [SerializeField]
+        private GameObject _endGamePanel;
 
 
-        public GameObject PauseMenuPanel;
-        public GameObject EndGamePanel;
         private SideMenusController _sideMenus;
 
         void Start()
@@ -53,45 +70,51 @@ namespace Hive
             return false;
         }
 
-        public void ChangeSideMenu(bool white)
+        public void ChangeSideMenu()
         {
-            if (GamePanel.activeSelf)
+            if (_gamePanel.activeSelf)
             {
-                _sideMenus.EnablePlayerSideMenu(white);
-                _sideMenus.DisablePlayerSideMenu(!white);
+                bool whiteTurn = _gameManager.GetComponent<GameManagerController>().IsWhiteTurn();
+                _sideMenus.EnablePlayerSideMenu(whiteTurn);
+                _sideMenus.DisablePlayerSideMenu(!whiteTurn);
             }
 
         }
 
+        public void ExitApplication()
+        {
+            Application.Quit();
+        }
+
         public void HideChoiceMenu()
         {
-            ChoiceMenuPanel.SetActive(false);
+            _colorChoiceMenuPanel.SetActive(false);
         }
 
         public void HidePauseMenu()
         {
-            PauseMenuPanel.SetActive(false);
+            _pauseMenuPanel.SetActive(false);
         }
 
         public void HideSideMenus()
         {
-            GamePanel.SetActive(false);
+            _gamePanel.SetActive(false);
         }
 
         public void LaunchChoiceMenu()
         {
-            StartMenuPanel.SetActive(false);
-            EndGamePanel.SetActive(false);
-            GamePanel.SetActive(false);
-            PauseMenuPanel.SetActive(false);
-            ChoiceMenuPanel.SetActive(true);
+            _startMenuPanel.SetActive(false);
+            _endGamePanel.SetActive(false);
+            _gamePanel.SetActive(false);
+            _pauseMenuPanel.SetActive(false);
+            _colorChoiceMenuPanel.SetActive(true);
         }
 
         private void LaunchEndingPanel(string endText)
         {
-            EndGamePanel.GetComponentInChildren<TextMeshProUGUI>().SetText(endText);
-            GamePanel.SetActive(false);
-            EndGamePanel.SetActive(true);
+            _endGamePanel.GetComponentInChildren<TextMeshProUGUI>().SetText(endText);
+            _gamePanel.SetActive(false);
+            _endGamePanel.SetActive(true);
         }
 
         public void LaunchGameDrawnEndingPanel()
@@ -99,23 +122,31 @@ namespace Hive
             LaunchEndingPanel(DrawnGameEndTextTemplate);
         }
 
+        public void LaunchNameMenu()
+        {
+            _startMenuPanel.SetActive(false);
+            _colorChoiceMenuPanel.SetActive(false);
+            _roomChoicePanel.SetActive(false);
+            _enterNamePanel.SetActive(true);
+        }
+
         public void LaunchPauseMenu()
         {
-            PauseMenuPanel.SetActive(true);
+            _pauseMenuPanel.SetActive(true);
         }
 
         public void LaunchSideMenus()
         {
-            GamePanel.SetActive(true);
+            _gamePanel.SetActive(true);
         }
 
         public void LaunchStartMenu()
         {
-            StartMenuPanel.SetActive(true);
-            EndGamePanel.SetActive(false);
-            GamePanel.SetActive(false);
-            PauseMenuPanel.SetActive(false);
-            ChoiceMenuPanel.SetActive(false);
+            _startMenuPanel.SetActive(true);
+            _endGamePanel.SetActive(false);
+            _gamePanel.SetActive(false);
+            _pauseMenuPanel.SetActive(false);
+            _colorChoiceMenuPanel.SetActive(false);
         }
 
         public void LaunchWinEndingPanel(bool whiteWon)
@@ -135,11 +166,11 @@ namespace Hive
 
         public void ResetUI()
         {
-            ChoiceMenuPanel.SetActive(false);
-            PauseMenuPanel.SetActive(false);
-            EndGamePanel.SetActive(false);
-            GamePanel.SetActive(false);
-            StartMenuPanel.SetActive(false);
+            _colorChoiceMenuPanel.SetActive(false);
+            _pauseMenuPanel.SetActive(false);
+            _endGamePanel.SetActive(false);
+            _gamePanel.SetActive(false);
+            _startMenuPanel.SetActive(false);
             _sideMenus.ResetSideMenus();
         }
 

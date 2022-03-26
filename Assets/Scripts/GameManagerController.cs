@@ -51,7 +51,6 @@ namespace Hive
 
         public void ResumeGame()
         {
-            _ui.HidePauseMenu();
             _gamePaused = false;
         }
 
@@ -161,18 +160,9 @@ namespace Hive
             }
         }
 
-        public void StartGame(bool white)
+        public bool IsWhiteTurn()
         {
-            _gameOver = false;
-            SetTurn(white);
-            _ui.HideChoiceMenu();
-            _ui.LaunchSideMenus();
-            _ui.ChangeSideMenu(_isWhiteTurn);
-        }
-
-        public void PrepareGame()
-        {
-            _ui.LaunchChoiceMenu();
+            return _isWhiteTurn;
         }
 
         public void ResetGame()
@@ -182,9 +172,6 @@ namespace Hive
             _movingHexOnBoard = false;
             _addingHexToBoard = false;
             _hexesManager.ResetHexesState();
-            _ui.ResetUI();
-            _ui.LaunchStartMenu();
-            _camera.ResetCamera();
         }
 
         private void StartMovingHex(GameObject selectedHex)
@@ -210,7 +197,7 @@ namespace Hive
             if (_rulesValidator.CanMakeMove(!_isWhiteTurn))
             {
                 _isWhiteTurn = !_isWhiteTurn;
-                _ui.ChangeSideMenu(_isWhiteTurn);
+                _ui.ChangeSideMenu();
             }
         }
     }

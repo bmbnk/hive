@@ -15,7 +15,6 @@ namespace Hive
 
         private HexesStoreScript _hexesStore;
 
-        private bool _isCameraMoving = false;
 
         void Start()
         {
@@ -70,18 +69,11 @@ namespace Hive
         private void UpdatePosition(List<Vector3> hexPositionVectors)
         {
             Vector3 hexesCenterPosition = GetCenterOfMass(hexPositionVectors);
-            _isCameraMoving = true;
             iTween.MoveTo(gameObject, iTween.Hash(
                     "name", "CameraPositionUpdate",
                     "position", _startPosition + hexesCenterPosition,
                     "time", MovingTime,
-                    "easytype", iTween.EaseType.linear,
-                    "oncomplete", "UnsetCameraMoving"));
-        }
-
-        private void UnsetCameraMoving()
-        {
-            _isCameraMoving = false;
+                    "easytype", iTween.EaseType.linear));
         }
 
         private Vector3 GetCenterOfMass(List<Vector3> positionsVectors)
