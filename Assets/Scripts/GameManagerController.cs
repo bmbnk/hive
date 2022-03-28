@@ -170,11 +170,6 @@ namespace Hive
             _ui.ChangeSideMenu(_isWhiteTurn);
         }
 
-        public void PrepareGame()
-        {
-            _ui.LaunchChoiceMenu();
-        }
-
         public void ResetGame()
         {
             _gamePaused = false;

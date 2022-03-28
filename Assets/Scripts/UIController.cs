@@ -12,14 +12,16 @@ namespace Hive
         public const float AlphaValue = 0.5f;
 
         public GameObject GameManager;
-        public GameObject StartMenuPanel;
+
         public GameObject ChoiceMenuPanel;
-        public GameObject GamePanel;
-
-
-        public GameObject PauseMenuPanel;
         public GameObject EndGamePanel;
+        public GameObject GamePanel;
+        public GameObject PauseMenuPanel;
+        public GameObject PlayModeMenuPanel;
+        public GameObject StartMenuPanel;
+
         private SideMenusController _sideMenus;
+
 
         void Start()
         {
@@ -63,6 +65,16 @@ namespace Hive
 
         }
 
+        private void DeactivatePanels()
+        {
+            ChoiceMenuPanel.SetActive(false);
+            EndGamePanel.SetActive(false);
+            GamePanel.SetActive(false);
+            PauseMenuPanel.SetActive(false);
+            PlayModeMenuPanel.SetActive(false);
+            StartMenuPanel.SetActive(false);
+        }
+
         public void HideChoiceMenu()
         {
             ChoiceMenuPanel.SetActive(false);
@@ -78,12 +90,9 @@ namespace Hive
             GamePanel.SetActive(false);
         }
 
-        public void LaunchChoiceMenu()
+        public void LaunchColorChoiceMenu()
         {
-            StartMenuPanel.SetActive(false);
-            EndGamePanel.SetActive(false);
-            GamePanel.SetActive(false);
-            PauseMenuPanel.SetActive(false);
+            DeactivatePanels();
             ChoiceMenuPanel.SetActive(true);
         }
 
@@ -101,7 +110,14 @@ namespace Hive
 
         public void LaunchPauseMenu()
         {
+            DeactivatePanels();
             PauseMenuPanel.SetActive(true);
+        }
+
+        public void LaunchPlayModeMenu()
+        {
+            DeactivatePanels();
+            PlayModeMenuPanel.SetActive(true);
         }
 
         public void LaunchSideMenus()
@@ -111,11 +127,8 @@ namespace Hive
 
         public void LaunchStartMenu()
         {
+            DeactivatePanels();
             StartMenuPanel.SetActive(true);
-            EndGamePanel.SetActive(false);
-            GamePanel.SetActive(false);
-            PauseMenuPanel.SetActive(false);
-            ChoiceMenuPanel.SetActive(false);
         }
 
         public void LaunchWinEndingPanel(bool whiteWon)
@@ -135,11 +148,7 @@ namespace Hive
 
         public void ResetUI()
         {
-            ChoiceMenuPanel.SetActive(false);
-            PauseMenuPanel.SetActive(false);
-            EndGamePanel.SetActive(false);
-            GamePanel.SetActive(false);
-            StartMenuPanel.SetActive(false);
+            DeactivatePanels();
             _sideMenus.ResetSideMenus();
         }
 

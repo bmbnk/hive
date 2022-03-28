@@ -5,17 +5,22 @@ namespace Hive
 {
     public class StartMenuController : MonoBehaviour
     {
-        public GameObject GameManager;
-        public Button StartGameButton;
-        public Button ExitButton;
+        [SerializeField]
+        private GameObject _ui;
+
+        [SerializeField]
+        private Button _startGameButton;
+
+        [SerializeField]
+        private Button _exitButton;
 
 
         void Start()
         {
-            GameManagerController gameManagerScript = GameManager.GetComponent<GameManagerController>();
+            UIController uIController = _ui.GetComponent<UIController>();
 
-            StartGameButton.onClick.AddListener(() => gameManagerScript.PrepareGame());
-            ExitButton.onClick.AddListener(() => Application.Quit());
+            _startGameButton.onClick.AddListener(() => uIController.LaunchPlayModeMenu());
+            _exitButton.onClick.AddListener(() => Application.Quit());
         }
     }
 }
