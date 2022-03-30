@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace Hive
 
         public GameObject GameManager;
 
-        public GameObject ChoiceMenuPanel;
+        public GameObject ColorChoiceMenuPanel;
         public GameObject EndGamePanel;
         public GameObject GamePanel;
         public GameObject PauseMenuPanel;
@@ -67,7 +68,7 @@ namespace Hive
 
         private void DeactivatePanels()
         {
-            ChoiceMenuPanel.SetActive(false);
+            ColorChoiceMenuPanel.SetActive(false);
             EndGamePanel.SetActive(false);
             GamePanel.SetActive(false);
             PauseMenuPanel.SetActive(false);
@@ -75,14 +76,19 @@ namespace Hive
             StartMenuPanel.SetActive(false);
         }
 
-        public void HideChoiceMenu()
+        public void HideColorChoiceMenu()
         {
-            ChoiceMenuPanel.SetActive(false);
+            ColorChoiceMenuPanel.SetActive(false);
         }
 
         public void HidePauseMenu()
         {
             PauseMenuPanel.SetActive(false);
+        }
+
+        public void HidePlayModeMenu()
+        {
+            PlayModeMenuPanel.SetActive(false);
         }
 
         public void HideSideMenus()
@@ -93,7 +99,7 @@ namespace Hive
         public void LaunchColorChoiceMenu()
         {
             DeactivatePanels();
-            ChoiceMenuPanel.SetActive(true);
+            ColorChoiceMenuPanel.SetActive(true);
         }
 
         private void LaunchEndingPanel(string endText)
@@ -156,5 +162,6 @@ namespace Hive
         {
             _sideMenus.UpdateCounterLabel(type, white, count);
         }
+
     }
 }

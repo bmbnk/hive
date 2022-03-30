@@ -50,10 +50,10 @@ TagManager:
   - GamePanel
   - PauseMenuPanel
   - EndGamePanel
-  - ChoiceMenuPanel
   - StartMenuPanel
   - LeftSideMenu
   - RightSideMenu
+  - ColorChoiceMenuPanel
   layers:
   - Default
   - TransparentFX

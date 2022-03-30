@@ -51,18 +51,18 @@ namespace Hive
 
         private bool CanAdd(bool white)
         {
-            if (ArePositionsToAddFound(white))
+            if (AnyPositionToAddExists(white))
             {
                 foreach (var type in Enum.GetValues(typeof(PieceType)).Cast<PieceType>())
                 {
-                    if (IsHexToAddFound(type, white))
+                    if (AnyHexToAddExists(type, white))
                         return true;
                 }
             }
             return false;
         }
 
-        private bool IsHexToAddFound(PieceType type, bool white)
+        private bool AnyHexToAddExists(PieceType type, bool white)
         {
             var hexes = white ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
             int hexToAddPropositionIdx = hexes.FindIndex(hex =>
@@ -73,7 +73,7 @@ namespace Hive
             return hexToAddPropositionIdx != -1;
         }
 
-        private bool ArePositionsToAddFound(bool white)
+        private bool AnyPositionToAddExists(bool white)
         {
             if (!_hexesInfoProvider.FirstMovesWereMade())
                 return true;

@@ -15,7 +15,11 @@ namespace Hive
         private bool _isWhiteTurn = true;
         private bool _movingHexOnBoard = false;
         private bool _addingHexToBoard = false;
+        private bool _isPlayer1White;
         private PieceType _lastSelectedTileType;
+
+        private IPlayer _player1;
+        private IPlayer _player2;
 
         void Start()
         {
@@ -49,41 +53,31 @@ namespace Hive
             _gamePaused = true;
         }
 
-        public void ResumeGame()
+        public void ConfirmMove(PieceType pieceType, bool addingPiece)
         {
-            _ui.HidePauseMenu();
-            _gamePaused = false;
+            if (_hexesInfoProvider.IsGameOver())
+                GameOver();
+            if (addingPiece)
+                UpdateSideMenu(pieceType, _isWhiteTurn);
+            if (!_hexesInfoProvider.IsAnyHexLeftInHand())
+            {
+                _ui.HideSideMenus();
+            }
+            _camera.UpdateCamera();
+            ChangeTurn();
         }
 
         public void OnTileSelected(PieceType type, bool white)
         {
-            if (white == _isWhiteTurn)
-            {
-                _lastSelectedTileType = type;
-                StartAddingHex(type, white);
-            }
+            IPlayer currentPlayer = GetCurrentPlayer();
+            if (_isWhiteTurn == white && currentPlayer.GetType() == typeof(HumanPlayer))
+                ((HumanPlayer)currentPlayer).OnTileSelected(type, white);
         }
 
-        private void StartAddingHex(PieceType type, bool white)
+        public void ResumeGame()
         {
-            bool isItFirstMove = _hexesInfoProvider.IsItFirstMove();
-
-            if (_hexesManager.PrepareHexToAddToBoard(type, white))
-            {
-                _movingHexOnBoard = false;
-                _addingHexToBoard = true;
-                if (isItFirstMove)
-                {
-                    ChangeTurn();
-                    _addingHexToBoard = false;
-                    UpdateSideMenu(type, white);
-                    _camera.UpdateCamera();
-                }
-            }
-            else
-            {
-                _hexesManager.ResetHexToAdd();
-            }
+            _ui.HidePauseMenu();
+            _gamePaused = false;
         }
 
         private void UpdateSideMenu(PieceType type, bool white)
@@ -94,50 +88,9 @@ namespace Hive
 
         public void GameBoardSelected()
         {
-            if (_addingHexToBoard)
-                _hexesManager.ResetHexToAdd();
-            if (_movingHexOnBoard)
-                _hexesManager.ResetHexToMove();
-        }
-
-        public void OnHexSelected(GameObject selectedHex)
-        {
-            if (!_gameOver && !_gamePaused)
-            {
-                if (_hexesInfoProvider.IsItPropositionHex(selectedHex))
-                {
-                    if (_addingHexToBoard)
-                    {
-                        ConfirmAddedHexOnGameboard(selectedHex);
-                    }
-                    else if (_movingHexOnBoard)
-                    {
-                        ConfirmMovingHexOnGameboard(selectedHex);
-                    }
-                }
-                else if (_hexesInfoProvider.IsItCurrentPlayerHex(selectedHex, _isWhiteTurn)
-                  && _rulesValidator.CanMoveHex(selectedHex))
-                {
-                    StartMovingHex(selectedHex);
-                }
-            }
-        }
-
-        private void ConfirmAddedHexOnGameboard(GameObject selectedHex)
-        {
-            if (_hexesManager.ConfirmAddedHexOnGameboard(selectedHex))
-            {
-                if (_hexesInfoProvider.IsGameOver())
-                    GameOver();
-                UpdateSideMenu(_lastSelectedTileType, _isWhiteTurn);
-                if (!_hexesInfoProvider.IsAnyHexLeftInHand())
-                {
-                    _ui.HideSideMenus();
-                }
-                _addingHexToBoard = false;
-                ChangeTurn();
-                _camera.UpdateCamera();
-            }
+            IPlayer currentPlayer = GetCurrentPlayer();
+            if (currentPlayer.GetType() == typeof(HumanPlayer))
+                ((HumanPlayer)currentPlayer).GameBoardSelected();
         }
 
         private void GameOver()
@@ -148,26 +101,38 @@ namespace Hive
                 _ui.LaunchWinEndingPanel(_hexesInfoProvider.WhiteHexesWon());
         }
 
-
-        private void ConfirmMovingHexOnGameboard(GameObject selectedHex)
+        public void OnHexSelected(GameObject selectedHex)
         {
-            if (_hexesManager.ConfirmMovingHexOnGameboard(selectedHex))
-            {
-                if (_hexesInfoProvider.IsGameOver())
-                    GameOver();
-                _movingHexOnBoard = false;
-                ChangeTurn();
-                _camera.UpdateCamera();
-            }
+            IPlayer currentPlayer = GetCurrentPlayer();
+            if (currentPlayer.GetType() == typeof(HumanPlayer)
+                && !_gameOver
+                && !_gamePaused)
+                ((HumanPlayer)currentPlayer).OnHexSelected(selectedHex);
         }
 
-        public void StartGame(bool white)
+
+
+        public void StartGame(bool againstComputer)
         {
+            _isPlayer1White = Random.Range(0f, 1f) > 0.5;
+            if (againstComputer)
+            {
+                _player1 = Random.Range(0f, 1f) > 0.5 ? new HumanPlayer(_isPlayer1White) : new AIPlayer(_isPlayer1White);
+                _player2 = _player1.GetType() == typeof(HumanPlayer) ? new AIPlayer(!_isPlayer1White) : new HumanPlayer(!_isPlayer1White);
+            } else
+            {
+                _player1 = new HumanPlayer(_isPlayer1White);
+                _player2 = new HumanPlayer(!_isPlayer1White);
+            }
+
             _gameOver = false;
-            SetTurn(white);
-            _ui.HideChoiceMenu();
+            SetTurn(_player1.IsWhite());
+            _ui.HideColorChoiceMenu();
+            _ui.HidePlayModeMenu();
             _ui.LaunchSideMenus();
             _ui.ChangeSideMenu(_isWhiteTurn);
+
+            _player1.RequestMove();
         }
 
         public void ResetGame()
@@ -182,22 +147,14 @@ namespace Hive
             _camera.ResetCamera();
         }
 
-        private void StartMovingHex(GameObject selectedHex)
-        {
-            if (_hexesManager.PrepareSelectedHexToMove(selectedHex))
-            {
-                _movingHexOnBoard = true;
-                _addingHexToBoard = false;
-            }
-            else
-            {
-                _hexesManager.ResetHexToMove();
-            }
-        }
-
         public void SetTurn(bool white)
         {
             _isWhiteTurn = white;
+        }
+
+        private IPlayer GetCurrentPlayer()
+        {
+            return _isWhiteTurn == _isPlayer1White ? _player1 : _player2;
         }
 
         private void ChangeTurn()
@@ -206,6 +163,7 @@ namespace Hive
             {
                 _isWhiteTurn = !_isWhiteTurn;
                 _ui.ChangeSideMenu(_isWhiteTurn);
+                GetCurrentPlayer().RequestMove();
             }
         }
     }

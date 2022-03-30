@@ -25,12 +25,14 @@ namespace Hive
 
             _computerButton.onClick.AddListener(() =>
             {
-                uIController.LaunchColorChoiceMenu();
+                gameManagerScript.StartGame(true);
+                //uIController.LaunchColorChoiceMenu();
             });
 
             _friendButton.onClick.AddListener(() =>
             {
-                uIController.LaunchColorChoiceMenu();
+                gameManagerScript.StartGame(false);
+                //uIController.LaunchColorChoiceMenu();
             });
         }
     }

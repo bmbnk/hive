@@ -2718,8 +2718,8 @@ GameObject:
   - component: {fileID: 453180795}
   - component: {fileID: 453180794}
   m_Layer: 5
-  m_Name: ChoiceMenuPanel
-  m_TagString: ChoiceMenuPanel
+  m_Name: ColorChoiceMenuPanel
+  m_TagString: ColorChoiceMenuPanel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6727,7 +6727,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameManager: {fileID: 1385564543}
-  ChoiceMenuPanel: {fileID: 453180792}
+  ColorChoiceMenuPanel: {fileID: 453180792}
   EndGamePanel: {fileID: 1330847684}
   GamePanel: {fileID: 845596536}
   PauseMenuPanel: {fileID: 641760148}
