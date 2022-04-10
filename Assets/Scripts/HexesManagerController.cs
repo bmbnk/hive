@@ -265,11 +265,12 @@ namespace Hive
         private List<GameObject> CreateHexMovePositionsPropositions(List<(int, int)> positions)
         {
             List<GameObject> propositions = new List<GameObject>();
-            (int, int) centerPosition = (GameBoardScript.CenterPositionX, GameBoardScript.CenterPositionY);
+            //(int, int) centerPosition = (GameBoardScript.CenterPositionX, GameBoardScript.CenterPositionY);
+            (int, int) referencePosition = _gameBoard.GetFirstHexOnBoardPosition();
 
             positions.ForEach(position =>
             {
-                Vector3 positionVector = PieceMovesTools.GetVectorFromStartToEnd(centerPosition, position);
+                Vector3 positionVector = PieceMovesTools.GetVectorFromStartToEnd(referencePosition, position);
                 //int hexOnPositionId = _gameBoard.gameBoard[position.Item1, position.Item2];
                 int hexOnPositionId = _gameBoard.GetHexIdByPosition(position);
                 if (hexOnPositionId != 0)
@@ -305,11 +306,12 @@ namespace Hive
         private List<GameObject> CreateHexAddPositionsPropositions(List<(int, int)> positions)
         {
             List<GameObject> propositions = new List<GameObject>();
-            (int, int) centerPosition = (GameBoardScript.CenterPositionX, GameBoardScript.CenterPositionY);
+            //(int, int) centerPosition = (GameBoardScript.CenterPositionX, GameBoardScript.CenterPositionY);
+            (int, int) referencePosition = _gameBoard.GetFirstHexOnBoardPosition();
 
             positions.ForEach(position =>
             {
-                Vector3 positionVector = PieceMovesTools.GetVectorFromStartToEnd(centerPosition, position);
+                Vector3 positionVector = PieceMovesTools.GetVectorFromStartToEnd(referencePosition, position);
                 GameObject proposition = CreateProposition(position, positionVector);
                 propositions.Add(proposition);
             });

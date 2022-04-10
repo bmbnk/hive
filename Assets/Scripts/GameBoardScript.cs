@@ -8,6 +8,8 @@ namespace Hive
         public const int GameBoardSize = 25 ;
         public const int CenterPositionX = GameBoardSize / 2;
         public const int CenterPositionY = GameBoardSize / 2;
+        private int _firstHexOnBoardId = 0;
+        private bool _firstHexAdded = false;
         private int[,] _gameBoard = new int[GameBoardSize, GameBoardSize];
 
         // think about board representation:
@@ -40,6 +42,11 @@ namespace Hive
             {
                 _gameBoard[position.Item1, position.Item2] = hexId;
                 CenterHive();
+                if (!_firstHexAdded)
+                {
+                    _firstHexOnBoardId = hexId;
+                    _firstHexAdded = true;
+                }
                 return true;
             }
             return false;
@@ -64,6 +71,13 @@ namespace Hive
                 return true;
             }
             return false;
+        }
+
+        public (int, int) GetFirstHexOnBoardPosition()
+        {
+            if (_firstHexAdded)
+                return GetPositionByHexId(_firstHexOnBoardId);
+            return (CenterPositionY, CenterPositionX);
         }
 
         public (int, int) GetPositionByHexId(int hexId)
@@ -96,8 +110,8 @@ namespace Hive
 
             massCenter = (massCenter.Item1 / hexesCounter, massCenter.Item2 / hexesCounter);
 
-            int rowOffset = massCenter.Item1 - CenterPositionY;
-            int colOffset = massCenter.Item2 - CenterPositionX - (massCenter.Item2 % 2);
+            int rowOffset = massCenter.Item1 - CenterPositionY - (massCenter.Item1 % 2);
+            int colOffset = massCenter.Item2 - CenterPositionX;
 
             if (rowOffset != 0 || colOffset != 0)
             {
