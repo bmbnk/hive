@@ -4,8 +4,8 @@ namespace Hive
 {
     public class HumanPlayer : IPlayer
     {
-        private bool _myTurn = false;
         private bool _isWhite;
+        private bool _myTurn = false;
         public bool IsWhite() => _isWhite;
 
         private HexesManagerController _hexesManager;
@@ -13,8 +13,9 @@ namespace Hive
         private RulesValidator _rulesValidator;
         private GameManagerController _gameManager;
 
-        private bool _movingHexOnBoard = false;
         private bool _addingHexToBoard = false;
+        private bool _movingHexOnBoard = false;
+
         private PieceType _lastSelectedTileType;
 
 
@@ -22,8 +23,8 @@ namespace Hive
         {
             _isWhite = isWhite;
 
-            GameObject moveValidatorGameObject = GameObject.FindWithTag("RulesValidator");
-            _rulesValidator = moveValidatorGameObject.GetComponent<RulesValidator>();
+            GameObject gameManagerGameObject = GameObject.FindWithTag("GameManager");
+            _gameManager = gameManagerGameObject.GetComponent<GameManagerController>();
 
             GameObject hexesManagerGameobject = GameObject.FindWithTag("HexesManager");
             _hexesManager = hexesManagerGameobject.GetComponent<HexesManagerController>();
@@ -31,9 +32,8 @@ namespace Hive
             GameObject hexesInfoProviderGameObject = GameObject.FindWithTag("HexesInfoProvider");
             _hexesInfoProvider = hexesInfoProviderGameObject.GetComponent<HexesInfoProvider>();
 
-            GameObject gameManagerGameObject = GameObject.FindWithTag("GameManager");
-            _gameManager = gameManagerGameObject.GetComponent<GameManagerController>();
-
+            GameObject moveValidatorGameObject = GameObject.FindWithTag("RulesValidator");
+            _rulesValidator = moveValidatorGameObject.GetComponent<RulesValidator>();
         }
 
         public void RequestMove()

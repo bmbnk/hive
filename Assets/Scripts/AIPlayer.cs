@@ -12,9 +12,16 @@ namespace Hive
         {
             _isWhite = isWhite;
         }
+
         public void RequestMove()
         {
             _myTurn = true;
+            MakeMove();
+        }
+
+        public void MakeMove()
+        {
+
         }
     }
 }
