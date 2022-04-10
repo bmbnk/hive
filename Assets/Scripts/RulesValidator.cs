@@ -41,7 +41,7 @@ namespace Hive
                     List<(int, int)> availableMovePositions = hexScript
                     .piece
                     .GetComponent<IPieceController>()
-                    .GetPieceSpecificPositions(hexScript.positionOnBoard, _gameBoard.gameBoard);
+                    .GetPieceSpecificPositions(_gameBoard.GetPositionByHexId(hexScript.HexId), _gameBoard.GetGameBoard());
                     if (availableMovePositions.Count > 0)
                         return true;
                 }
@@ -79,7 +79,7 @@ namespace Hive
                 return true;
 
             var hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
-            List<(int, int)> availablePositions = PieceMovesTools.GetPositionsToAddHex(hexesOnBoardIds, _gameBoard.gameBoard);
+            List<(int, int)> availablePositions = PieceMovesTools.GetPositionsToAddHex(hexesOnBoardIds, _gameBoard.GetGameBoard());
             if (availablePositions.Count > 0)
                 return true;
 
@@ -111,11 +111,14 @@ namespace Hive
             if (hexToMoveScript.transform.position.y > 0)
                 return false;
 
-            int[,] gameBoardWithoutHex = (int[,])_gameBoard.gameBoard.Clone();
-            gameBoardWithoutHex[hexToMoveScript.positionOnBoard.Item1, hexToMoveScript.positionOnBoard.Item2] = 0;
+            //int[,] gameBoardWithoutHex = (int[,])_gameBoard.gameBoard.Clone();
+            int[,] gameBoardWithoutHex = _gameBoard.GetGameBoard();
+
+            (int, int) hexPositionOnBoard = _gameBoard.GetPositionByHexId(hexToMoveScript.HexId);
+            gameBoardWithoutHex[hexPositionOnBoard.Item1, hexPositionOnBoard.Item2] = 0;
 
             // TODO: You can optimize it by choosing one neighbour from groups of neighbours that are connected, because if you can reached one, than you can reach all of them
-            List<(int, int)> neighboursPositions = PieceMovesTools.GetNeighbours(hexToMoveScript.positionOnBoard, gameBoardWithoutHex);
+            List<(int, int)> neighboursPositions = PieceMovesTools.GetNeighbours(hexPositionOnBoard, gameBoardWithoutHex);
 
             (int, int) firstNeighbour = neighboursPositions[0];
             neighboursPositions.Remove(firstNeighbour);
