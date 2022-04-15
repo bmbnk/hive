@@ -1,16 +1,21 @@
 using UnityEngine;
 using System;
+using System.Linq;
 
 namespace Hive
 {
     public class GameBoardScript : MonoBehaviour
     {
-        public const int GameBoardSize = 25 ;
+        public const int GameBoardSize = 30 ;
         public const int CenterPositionX = GameBoardSize / 2;
         public const int CenterPositionY = GameBoardSize / 2;
+        public const int BeetlesPerPlayer = 2;
+        public const int GameBoardHeight = 2 * BeetlesPerPlayer + 1;
         private int _firstHexOnBoardId = 0;
         private bool _firstHexAdded = false;
-        private int[,] _gameBoard = new int[GameBoardSize, GameBoardSize];
+        private int[,,] _gameBoard = new int[GameBoardSize, GameBoardSize, GameBoardHeight];
+
+        // height zero is the heighest 
 
         // think about board representation:
         // - when giving the board representation to AI it could be benefitial
@@ -26,9 +31,20 @@ namespace Hive
         // removed
 
 
-        public int[,] GetGameBoard()
+        public int[,] GetGameBoard2D()
         {
-            return (int[,])_gameBoard.Clone();
+            int[,] gameBoard2D = new int[GameBoardSize, GameBoardSize];
+
+            for (int row = 0; row < GameBoardSize; row++)
+                for (int col = 0; col < GameBoardSize; col++)
+                    gameBoard2D[row, col] = _gameBoard[row, col, 0];
+
+            return gameBoard2D; 
+        }
+
+        public int[,,] GetGameBoard3D()
+        {
+            return (int[,,])_gameBoard.Clone();
         }
 
         public void ClearGameBoard()
@@ -36,62 +52,120 @@ namespace Hive
             Array.Clear(_gameBoard, 0, _gameBoard.Length);
         }
 
-        public bool AddElement(int hexId, (int, int) position)
+        public void AddElement(int hexId, (int, int) position)
         {
-            if (_gameBoard[position.Item1, position.Item2] == 0)
+            AddElementToArray(hexId, position);
+            CenterHive();
+            if (!_firstHexAdded)
             {
-                _gameBoard[position.Item1, position.Item2] = hexId;
-                CenterHive();
-                if (!_firstHexAdded)
-                {
-                    _firstHexOnBoardId = hexId;
-                    _firstHexAdded = true;
-                }
-                return true;
+                _firstHexOnBoardId = hexId;
+                _firstHexAdded = true;
             }
-            return false;
+        }
+
+        private void AddElementToArray(int hexId, (int, int) position)
+        {
+            int[] positionStack = Enumerable.Range(0, _gameBoard.GetLength(2))
+                .Select(h => _gameBoard[position.Item1, position.Item2, h])
+                .ToArray();
+
+            _gameBoard[position.Item1, position.Item2, 0] = hexId;
+
+            for (int i = 1; i < GameBoardHeight; i++)
+            {
+                _gameBoard[position.Item1, position.Item2, i] = positionStack[i - 1];
+            }
         }
 
         public void RemoveElement(int hexId)
         {
-            (int, int) hexPosition = GetPositionByHexId(hexId);
-            _gameBoard[hexPosition.Item1, hexPosition.Item2] = 0;
+            (int, int) hexPosition = Get2DTopPositionByHexId(hexId);
+            RemoveElementFromArray(hexPosition);
         }
 
-        public bool MoveElement(int hexId, (int, int) targetPosition)
+        private void RemoveElementFromArray((int, int) position)
         {
-            (int, int) currentPosition = GetPositionByHexId(hexId);
-            if (currentPosition != targetPosition
-                && currentPosition != (-1, -1)
-                && GetHexIdByPosition(targetPosition) == 0)
+            if (position != (-1, -1))
             {
-                _gameBoard[currentPosition.Item1, currentPosition.Item2] = 0;
-                _gameBoard[targetPosition.Item1, targetPosition.Item2] = hexId;
-                CenterHive();
-                return true;
+                int[] positionStack = Enumerable.Range(1, _gameBoard.GetLength(2)-1)
+                    .Select(h => _gameBoard[position.Item1, position.Item2, h])
+                    .ToArray();
+
+                for (int i = 0; i < GameBoardHeight - 1; i++)
+                {
+                    _gameBoard[position.Item1, position.Item2, i] = positionStack[i];
+                }
+
+                _gameBoard[position.Item1, position.Item2, GameBoardHeight-1] = 0;
             }
-            return false;
+        }
+
+        public void MoveElement(int hexId, (int, int) targetPosition)
+        {
+            (int, int) currentPosition = Get2DTopPositionByHexId(hexId);
+            if (currentPosition != targetPosition && currentPosition != (-1, -1))
+            {
+                RemoveElement(hexId);
+                AddElement(hexId, targetPosition);
+                CenterHive();
+            }
+        }
+
+        public int NumberOfHexesUnderHex(int hexId)
+        {
+            (int, int, int) hexPosition = GetPositionByHexId(hexId);
+            int height = _gameBoard.GetLength(2);
+            int[] positionStack = Enumerable.Range(hexPosition.Item3 + 1, _gameBoard.GetLength(2)-(hexPosition.Item3+1))
+                .Select(h => _gameBoard[hexPosition.Item1, hexPosition.Item2, h])
+                .ToArray();
+
+            int hexesCounter = 0;
+
+            foreach (var id in positionStack)
+            {
+                if (id == 0)
+                    break;
+                hexesCounter++;
+            }
+
+            return hexesCounter;
         }
 
         public (int, int) GetFirstHexOnBoardPosition()
         {
             if (_firstHexAdded)
-                return GetPositionByHexId(_firstHexOnBoardId);
+                return Get2DPositionByHexId(_firstHexOnBoardId);
             return (CenterPositionY, CenterPositionX);
         }
 
-        public (int, int) GetPositionByHexId(int hexId)
+        public (int, int) Get2DTopPositionByHexId(int hexId)
         {
             for (int i = 0; i < GameBoardSize; i++)
                 for (int j = 0; j < GameBoardSize; j++)
-                    if (_gameBoard[i, j] == hexId)
+                    if (_gameBoard[i, j, 0] == hexId)
                         return (i, j);
             return (-1, -1);
         }
 
-        public int GetHexIdByPosition((int, int) position)
+        public (int, int) Get2DPositionByHexId(int hexId)
         {
-            return _gameBoard[position.Item1, position.Item2];
+            var position3D = GetPositionByHexId(_firstHexOnBoardId);
+            return (position3D.Item1, position3D.Item2);
+        }
+
+        public (int, int, int) GetPositionByHexId(int hexId)
+        {
+            for (int row = 0; row < GameBoardSize; row++)
+                for (int col = 0; col < GameBoardSize; col++)
+                    for (int height = 0; height < GameBoardHeight; height++)
+                        if (_gameBoard[row, col, height] == hexId)
+                            return (row, col, height);
+            return (-1, -1, -1);
+        }
+
+        public int GetTopHexIdByPosition((int, int) position)
+        {
+            return _gameBoard[position.Item1, position.Item2, 0];
         }
 
         private void CenterHive()
@@ -101,7 +175,7 @@ namespace Hive
 
             for (int i = 0; i < GameBoardSize; i++)
                 for (int j = 0; j < GameBoardSize; j++)
-                    if (_gameBoard[i, j] != 0)
+                    if (_gameBoard[i, j, 0] != 0)
                     {
                         massCenter = (massCenter.Item1 + i,
                             massCenter.Item2 + j);
@@ -110,24 +184,24 @@ namespace Hive
 
             massCenter = (massCenter.Item1 / hexesCounter, massCenter.Item2 / hexesCounter);
 
-            int rowOffset = massCenter.Item1 - CenterPositionY - (massCenter.Item1 % 2);
+            int rowOffset = massCenter.Item1 - CenterPositionY - ((massCenter.Item1 - CenterPositionY) % 2);
             int colOffset = massCenter.Item2 - CenterPositionX;
 
             if (rowOffset != 0 || colOffset != 0)
             {
-                int[,] centeredGameBoard = new int[GameBoardSize, GameBoardSize];
+                int[,,] centeredGameBoard = new int[GameBoardSize, GameBoardSize, GameBoardHeight];
 
                 //TODO: Check if some hexes are lost when cutting board
 
-                for (int i = 0; i < GameBoardSize; i++)
-                    for (int j = 0; j < GameBoardSize; j++)
-                        centeredGameBoard[i, j] =
-                            _gameBoard[(GameBoardSize + i + rowOffset) % GameBoardSize,
-                            (GameBoardSize + j + colOffset) % GameBoardSize];
+                for (int row = 0; row < GameBoardSize; row++)
+                    for (int col = 0; col < GameBoardSize; col++)
+                        for (int height = 0; height < GameBoardHeight; height++)
+                            centeredGameBoard[row, col, height] =
+                                _gameBoard[(GameBoardSize + row + rowOffset) % GameBoardSize,
+                                (GameBoardSize + col + colOffset) % GameBoardSize, height];
 
                 _gameBoard = centeredGameBoard;
             }
         }
-
     }
 }

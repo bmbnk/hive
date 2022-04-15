@@ -94,7 +94,7 @@ namespace Hive
             if (IsBeeOnBoard(white))
             {
                 int beeHexId = GetFirstFoundPiece(white, PieceType.BEE).GetComponent<HexWrapperController>().HexId;
-                if (PieceMovesTools.GetNeighbours(_gameBoard.GetPositionByHexId(beeHexId), _gameBoard.GetGameBoard()).Count == 6)
+                if (PieceMovesTools.GetNeighbours(_gameBoard.Get2DPositionByHexId(beeHexId), _gameBoard.GetGameBoard2D()).Count == 6)
                     return true;
             }
             return false;

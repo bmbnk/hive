@@ -9,9 +9,12 @@ namespace Hive
         public PieceType GetPieceType() => PieceType.ANT;
 
 
-        public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] originalGameBoard)
+        public List<(int, int)> GetPieceSpecificPositions((int, int, int) hexPosition3D, int[,,] originalGameBoard3D)
         {
-            int[,] gameBoard = GetGameBoardWithoutHex(originalGameBoard, hexPosition);
+            int[,] originalGameBoard2D = PieceMovesTools.GetGameBoard2Dfrom3D(originalGameBoard3D);
+
+            (int, int) hexPosition = (hexPosition3D.Item1, hexPosition3D.Item2);
+            int[,] gameBoard = GetGameBoardWithoutHex(originalGameBoard2D, hexPosition);
 
             List<(int, int)> positions = new List<(int, int)>();
             positions.Add(hexPosition);

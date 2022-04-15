@@ -110,8 +110,8 @@ namespace Hive
             if (_hexesManager.ConfirmAddedHexOnGameboard(selectedHex))
             {
                 _addingHexToBoard = false;
-                _gameManager.ConfirmMove(_lastSelectedTileType, true);
                 _myTurn = false;
+                _gameManager.ConfirmMove(_lastSelectedTileType, true);
             }
         }
 
@@ -133,8 +133,8 @@ namespace Hive
             if (_hexesManager.ConfirmMovingHexOnGameboard(selectedHex))
             {
                 _movingHexOnBoard = false;
-                _gameManager.ConfirmMove(_lastSelectedTileType, false);
                 _myTurn = false;
+                _gameManager.ConfirmMove(_lastSelectedTileType, false);
             }
         }
     }

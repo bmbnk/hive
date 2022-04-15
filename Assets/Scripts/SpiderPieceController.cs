@@ -9,12 +9,15 @@ namespace Hive
         public PieceType GetPieceType() => PieceType.SPIDER;
 
 
-        public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] originalGameBoard)
+        public List<(int, int)> GetPieceSpecificPositions((int, int, int) hexPosition3D, int[,,] originalGameBoard3D)
         {
             //TODO: Check in the manual for this game, but you should probably check also path
             //from different neighbours that you will meet on this 3 steps road
 
-            int[,] gameBoard = GetGameBoardWithoutHex(originalGameBoard, hexPosition);
+            int[,] originalGameBoard2D = PieceMovesTools.GetGameBoard2Dfrom3D(originalGameBoard3D);
+
+            (int, int) hexPosition = (hexPosition3D.Item1, hexPosition3D.Item2);
+            int[,] gameBoard = GetGameBoardWithoutHex(originalGameBoard2D, hexPosition);
             return getMovePositions(gameBoard, hexPosition);
         }
 

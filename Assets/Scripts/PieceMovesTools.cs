@@ -353,5 +353,19 @@ namespace Hive
 
             return activeHexIds;
         }
+
+        public static int[,] GetGameBoard2Dfrom3D(int[,,] gameBoard3D)
+        {
+            int height = gameBoard3D.GetLength(0);
+            int width = gameBoard3D.GetLength(1);
+
+            int[,] gameBoard2D = new int[height, width];
+
+            for (int row = 0; row < height; row++)
+                for (int col = 0; col < width; col++)
+                    gameBoard2D[row, col] = gameBoard3D[row, col, 0];
+
+            return gameBoard2D;
+        }
     }
 }

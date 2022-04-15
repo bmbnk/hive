@@ -3,7 +3,6 @@ namespace Hive
 {
     public class AIPlayer : IPlayer
     {
-        private bool _myTurn = false;
         private bool _isWhite;
         public bool IsWhite() => _isWhite;
 
@@ -15,7 +14,6 @@ namespace Hive
 
         public void RequestMove()
         {
-            _myTurn = true;
             MakeMove();
         }
 

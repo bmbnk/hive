@@ -8,8 +8,11 @@ namespace Hive
         public PieceType GetPieceType() => PieceType.GRASSHOPPER;
 
 
-        public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] gameBoard)
+        public List<(int, int)> GetPieceSpecificPositions((int, int, int) hexPosition3D, int[,,] gameBoard3D)
         {
+            (int, int) hexPosition = (hexPosition3D.Item1, hexPosition3D.Item2);
+            int[,] gameBoard = PieceMovesTools.GetGameBoard2Dfrom3D(gameBoard3D);
+
             List<(int, int)> positions = new List<(int, int)>();
             List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(hexPosition, gameBoard);
 

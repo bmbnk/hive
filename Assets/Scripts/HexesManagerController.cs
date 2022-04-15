@@ -41,22 +41,15 @@ namespace Hive
             {
                 HexWrapperController hexToAddScript = GetHexThatIsAddedScript();
 
-                //hexToAddScript.positionOnBoard = propositionHexScript.positionOnBoard;
-                if (_gameBoard.AddElement(hexToAddScript.HexId, propositionHexScript.positionOnBoard))
-                {
-                    List<int> hexesOnBoardIds = hexToAddScript.isWhite ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
-                    hexesOnBoardIds.Add(hexToAddScript.HexId);
-                    hexToAddScript.transform.position = propositionHexScript.transform.position;
-                    hexToAddScript.isOnGameboard = true;
-                    _hexesStore.hexToAdd.SetActive(true);
-                    //(int, int) addedHexPosition = hexToAddScript.positionOnBoard;
-                    //_gameBoard.gameBoard[addedHexPosition.Item1, addedHexPosition.Item2] = hexToAddScript.HexId;
+                _gameBoard.AddElement(hexToAddScript.HexId, propositionHexScript.positionOnBoard);
+                List<int> hexesOnBoardIds = hexToAddScript.isWhite ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
+                hexesOnBoardIds.Add(hexToAddScript.HexId);
+                hexToAddScript.transform.position = propositionHexScript.transform.position;
+                hexToAddScript.isOnGameboard = true;
+                _hexesStore.hexToAdd.SetActive(true);
 
-                    ResetHexToAdd();
-                    return true;
-                }
-
-
+                ResetHexToAdd();
+                return true;
             }
             return false;
         }
@@ -89,41 +82,43 @@ namespace Hive
                 ResetHexToMove();
 
                 //(int, int) currentHexToMovePosition = hexToMoveScript.positionOnBoard;
-                (int, int) currentHexToMovePosition = _gameBoard.GetPositionByHexId(hexToMoveScript.HexId);
+                //(int, int) currentHexToMovePosition = _gameBoard.Get2DTopPositionByHexId(hexToMoveScript.HexId);
 
-                if (hexToMoveScript.piece.GetComponent<IPieceController>().GetPieceType() == PieceType.BEETLE)
-                {
-                    var beetlePieceScript = BeetlePiece.GetComponent<BeetlePieceController>();
+                //if (hexToMoveScript.piece.GetComponent<IPieceController>().GetPieceType() == PieceType.BEETLE)
+                //{
+                //    var beetlePieceScript = BeetlePiece.GetComponent<BeetlePieceController>();
 
-                    (int, int) startingPosition = _gameBoard.GetPositionByHexId(hexToMoveScript.HexId);
-                    (int, int) targetPosition = propositionHexScript.positionOnBoard;
-                    int targetPositionHexId = _gameBoard.GetHexIdByPosition(targetPosition);
-                    _gameBoard.RemoveElement(targetPositionHexId);
+                //    (int, int) startingPosition = _gameBoard.Get2DTopPositionByHexId(hexToMoveScript.HexId);
+                //    (int, int) targetPosition = propositionHexScript.positionOnBoard;
+                //    int targetPositionHexId = _gameBoard.GetTopHexIdByPosition(targetPosition);
+                //    _gameBoard.RemoveElement(targetPositionHexId);
 
-                    if (_gameBoard.MoveElement(hexToMoveScript.HexId, propositionHexScript.positionOnBoard))
-                    {
-                        int hexUnderneathId = beetlePieceScript.GetIdOfFirstHexUnderneathBeetle(hexToMoveScript.HexId);
-                        //_gameBoard.gameBoard[currentHexToMovePosition.Item1, currentHexToMovePosition.Item2] = hexUnderneathId != -1 ? hexUnderneathId : 0;
-                        _gameBoard.AddElement(hexUnderneathId != -1 ? hexUnderneathId : 0, startingPosition);
+                //    if (_gameBoard.MoveElement(hexToMoveScript.HexId, propositionHexScript.positionOnBoard))
+                //    {
+                //        int hexUnderneathId = beetlePieceScript.GetIdOfFirstHexUnderneathBeetle(hexToMoveScript.HexId);
+                //        //_gameBoard.gameBoard[currentHexToMovePosition.Item1, currentHexToMovePosition.Item2] = hexUnderneathId != -1 ? hexUnderneathId : 0;
+                //        _gameBoard.AddElement(hexUnderneathId != -1 ? hexUnderneathId : 0, startingPosition);
 
-                        beetlePieceScript.RemoveHexUnderneathBeetle(hexToMoveScript.HexId);
-                        if (targetPositionHexId != 0)
-                            beetlePieceScript.SetHexUnderneathBeetle(hexToMoveScript.HexId, targetPositionHexId);
-                    }
-                    else
-                    {
-                        _gameBoard.AddElement(targetPositionHexId, targetPosition);
-                        return false;
-                    }
-                }
-                else
-                {
-                    //_gameBoard.gameBoard[currentHexToMovePosition.Item1, currentHexToMovePosition. Item2] = 0;
-                    //hexToMoveScript.positionOnBoard = propositionHexScript.positionOnBoard;
-                    //(int, int) movedHexPosition = hexToMoveScript.positionOnBoard;
-                    //_gameBoard.gameBoard[movedHexPosition.Item1, movedHexPosition.Item2] = hexToMoveScript.HexId;
-                    _gameBoard.MoveElement(hexToMoveScript.HexId, propositionHexScript.positionOnBoard);
-                }
+                //        beetlePieceScript.RemoveHexUnderneathBeetle(hexToMoveScript.HexId);
+                //        if (targetPositionHexId != 0)
+                //            beetlePieceScript.SetHexUnderneathBeetle(hexToMoveScript.HexId, targetPositionHexId);
+                //    }
+                //    else
+                //    {
+                //        _gameBoard.AddElement(targetPositionHexId, targetPosition);
+                //        return false;
+                //    }
+                //}
+                //else
+                //{
+                //    //_gameBoard.gameBoard[currentHexToMovePosition.Item1, currentHexToMovePosition. Item2] = 0;
+                //    //hexToMoveScript.positionOnBoard = propositionHexScript.positionOnBoard;
+                //    //(int, int) movedHexPosition = hexToMoveScript.positionOnBoard;
+                //    //_gameBoard.gameBoard[movedHexPosition.Item1, movedHexPosition.Item2] = hexToMoveScript.HexId;
+                //    _gameBoard.MoveElement(hexToMoveScript.HexId, propositionHexScript.positionOnBoard);
+                //}
+
+                _gameBoard.MoveElement(hexToMoveScript.HexId, propositionHexScript.positionOnBoard);
 
                 hexToMoveScript.transform.position = propositionHexScript.transform.position;
                 return true;
@@ -220,14 +215,14 @@ namespace Hive
             List<(int, int)> availablePositions;
             if (_hexesInfoProvider.FirstMovesWereMade())
             {
-                availablePositions = PieceMovesTools.GetPositionsToAddHex(hexesOnBoardIds, _gameBoard.GetGameBoard());
+                availablePositions = PieceMovesTools.GetPositionsToAddHex(hexesOnBoardIds, _gameBoard.GetGameBoard2D());
             }
             else if (opponentHexesOnBoardIds.Count == 1)
             {
                 List<GameObject> opponentHexes = white ? _hexesStore.blackHexes : _hexesStore.whiteHexes;
                 var opponentHex = opponentHexes.FindLast(hex => hex.GetComponent<HexWrapperController>().HexId == opponentHexesOnBoardIds[0]);
-                (int, int) opponentHexPosition = _gameBoard.GetPositionByHexId(opponentHex.GetComponent<HexWrapperController>().HexId);
-                availablePositions = PieceMovesTools.GetFreePositionsAroundPosition(opponentHexPosition, _gameBoard.GetGameBoard());
+                (int, int) opponentHexPosition = _gameBoard.Get2DTopPositionByHexId(opponentHex.GetComponent<HexWrapperController>().HexId);
+                availablePositions = PieceMovesTools.GetFreePositionsAroundPosition(opponentHexPosition, _gameBoard.GetGameBoard2D());
             }
             else
             {
@@ -250,7 +245,7 @@ namespace Hive
                 List<(int, int)> availableMovePositions = selectedHexScript
                     .piece
                     .GetComponent<IPieceController>()
-                    .GetPieceSpecificPositions(_gameBoard.GetPositionByHexId(selectedHexScript.HexId), _gameBoard.GetGameBoard());
+                    .GetPieceSpecificPositions(_gameBoard.GetPositionByHexId(selectedHexScript.HexId), _gameBoard.GetGameBoard3D());
 
                 if (availableMovePositions.Count > 0)
                 {
@@ -272,11 +267,11 @@ namespace Hive
             {
                 Vector3 positionVector = PieceMovesTools.GetVectorFromStartToEnd(referencePosition, position);
                 //int hexOnPositionId = _gameBoard.gameBoard[position.Item1, position.Item2];
-                int hexOnPositionId = _gameBoard.GetHexIdByPosition(position);
+                int hexOnPositionId = _gameBoard.GetTopHexIdByPosition(position);
                 if (hexOnPositionId != 0)
                 {
                     var beetleScript = BeetlePiece.GetComponent<BeetlePieceController>();
-                    int hexesOnPositionNumber = 1 + beetleScript.HexesUnderBeetleNumber(hexOnPositionId);
+                    int hexesOnPositionNumber = 1 + _gameBoard.NumberOfHexesUnderHex(hexOnPositionId);
 
                     Vector3 verticalVector = PieceMovesTools.GetVerticalVector(hexesOnPositionNumber);
                     positionVector += verticalVector;

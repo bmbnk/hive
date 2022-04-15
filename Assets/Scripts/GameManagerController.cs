@@ -13,10 +13,8 @@ namespace Hive
         private bool _gameOver = false;
         private bool _gamePaused = false;
         private bool _isWhiteTurn = true;
-        private bool _movingHexOnBoard = false;
-        private bool _addingHexToBoard = false;
         private bool _isPlayer1White;
-        private PieceType _lastSelectedTileType;
+        //private PieceType _lastSelectedTileType;
 
         private IPlayer _player1;
         private IPlayer _player2;
@@ -110,8 +108,6 @@ namespace Hive
                 ((HumanPlayer)currentPlayer).OnHexSelected(selectedHex);
         }
 
-
-
         public void StartGame(bool againstComputer)
         {
             _isPlayer1White = Random.Range(0f, 1f) > 0.5;
@@ -139,8 +135,6 @@ namespace Hive
         {
             _gamePaused = false;
             _gameOver = false;
-            _movingHexOnBoard = false;
-            _addingHexToBoard = false;
             _hexesManager.ResetHexesState();
             _ui.ResetUI();
             _ui.LaunchStartMenu();
@@ -163,8 +157,8 @@ namespace Hive
             {
                 _isWhiteTurn = !_isWhiteTurn;
                 _ui.ChangeSideMenu(_isWhiteTurn);
-                GetCurrentPlayer().RequestMove();
             }
+            GetCurrentPlayer().RequestMove();
         }
     }
 }

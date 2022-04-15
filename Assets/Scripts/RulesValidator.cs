@@ -41,7 +41,7 @@ namespace Hive
                     List<(int, int)> availableMovePositions = hexScript
                     .piece
                     .GetComponent<IPieceController>()
-                    .GetPieceSpecificPositions(_gameBoard.GetPositionByHexId(hexScript.HexId), _gameBoard.GetGameBoard());
+                    .GetPieceSpecificPositions(_gameBoard.GetPositionByHexId(hexScript.HexId), _gameBoard.GetGameBoard3D());
                     if (availableMovePositions.Count > 0)
                         return true;
                 }
@@ -79,7 +79,7 @@ namespace Hive
                 return true;
 
             var hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
-            List<(int, int)> availablePositions = PieceMovesTools.GetPositionsToAddHex(hexesOnBoardIds, _gameBoard.GetGameBoard());
+            List<(int, int)> availablePositions = PieceMovesTools.GetPositionsToAddHex(hexesOnBoardIds, _gameBoard.GetGameBoard2D());
             if (availablePositions.Count > 0)
                 return true;
 
@@ -89,8 +89,14 @@ namespace Hive
         public bool CanMoveHex(GameObject hex)
         {
             var hexScript = hex.GetComponent<HexWrapperController>();
-            var beetleScript = BeetlePiece.GetComponent<BeetlePieceController>();
-            return !beetleScript.IsHexUnderneathBeetle(hexScript.HexId)
+            //var beetleScript = BeetlePiece.GetComponent<BeetlePieceController>();
+
+            _gameBoard.NumberOfHexesUnderHex(hexScript.HexId);
+
+            var position = _gameBoard.GetPositionByHexId(hexScript.HexId);
+
+            //return !beetleScript.IsHexUnderneathBeetle(hexScript.HexId)
+            return !(position.Item3 > 0)
                 && _hexesInfoProvider.IsBeeOnBoard(hexScript.isWhite)
                 && !IsOneHiveRuleBroken(hex);
         }
@@ -112,9 +118,9 @@ namespace Hive
                 return false;
 
             //int[,] gameBoardWithoutHex = (int[,])_gameBoard.gameBoard.Clone();
-            int[,] gameBoardWithoutHex = _gameBoard.GetGameBoard();
+            int[,] gameBoardWithoutHex = _gameBoard.GetGameBoard2D();
 
-            (int, int) hexPositionOnBoard = _gameBoard.GetPositionByHexId(hexToMoveScript.HexId);
+            (int, int) hexPositionOnBoard = _gameBoard.Get2DTopPositionByHexId(hexToMoveScript.HexId);
             gameBoardWithoutHex[hexPositionOnBoard.Item1, hexPositionOnBoard.Item2] = 0;
 
             // TODO: You can optimize it by choosing one neighbour from groups of neighbours that are connected, because if you can reached one, than you can reach all of them

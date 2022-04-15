@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Hive
@@ -6,19 +7,16 @@ namespace Hive
     public class BeetlePieceController : MonoBehaviour, IPieceController
     {
         public PieceType GetPieceType() => PieceType.BEETLE;
-        private Dictionary<int, int> _beetleIdToHexUnderneathId;
 
 
-        void Start()
+        public List<(int, int)> GetPieceSpecificPositions((int, int, int) hexPosition3D, int[,,] gameBoard3D)
         {
-            _beetleIdToHexUnderneathId = new Dictionary<int, int>();
-        }
+            (int, int) hexPosition = (hexPosition3D.Item1, hexPosition3D.Item2);
+            int[,] gameBoard = PieceMovesTools.GetGameBoard2Dfrom3D(gameBoard3D);
 
-        public List<(int, int)> GetPieceSpecificPositions((int, int) hexPosition, int[,] gameBoard)
-        {
             List<(int, int)> positions;
 
-            if (HexesOnPositionNumber(hexPosition, gameBoard) > 1)
+            if (HexesOnPositionNumber(hexPosition, gameBoard3D) > 1)
             {
                 positions = PieceMovesTools.GetPositionsAroundPosition(hexPosition);
             }
@@ -32,14 +30,14 @@ namespace Hive
 
             for (int i = positions.Count - 1; i >= 0; i--)
             {
-                int heightOfLowerStackNextToPosition = HexesOnPositionNumber(PieceMovesTools.GetNextPositionAroundHex(positions[i], hexPosition, true), gameBoard);
-                int heightOfSecondStackNextToPosition = HexesOnPositionNumber(PieceMovesTools.GetNextPositionAroundHex(positions[i], hexPosition, false), gameBoard);
+                int heightOfLowerStackNextToPosition = HexesOnPositionNumber(PieceMovesTools.GetNextPositionAroundHex(positions[i], hexPosition, true), gameBoard3D);
+                int heightOfSecondStackNextToPosition = HexesOnPositionNumber(PieceMovesTools.GetNextPositionAroundHex(positions[i], hexPosition, false), gameBoard3D);
 
                 if (heightOfSecondStackNextToPosition < heightOfLowerStackNextToPosition)
                     heightOfLowerStackNextToPosition = heightOfSecondStackNextToPosition;
 
-                int heightOfPositionStack = HexesOnPositionNumber(positions[i], gameBoard);
-                int heightOfCurrentPositionStack = HexesUnderBeetleNumber(gameBoard[hexPosition.Item1, hexPosition.Item2]);
+                int heightOfPositionStack = HexesOnPositionNumber(positions[i], gameBoard3D);
+                int heightOfCurrentPositionStack = NumberOfHexesUnderHex(hexPosition3D, gameBoard3D);
 
                 if (heightOfPositionStack < heightOfLowerStackNextToPosition && heightOfCurrentPositionStack < heightOfLowerStackNextToPosition)
                     positions.Remove(positions[i]);
@@ -48,52 +46,29 @@ namespace Hive
             return positions;
         }
 
-        private int HexesOnPositionNumber((int, int) position, int[,] gameBoard)
+        private int HexesOnPositionNumber((int, int) position, int[,,] gameBoard3D)
         {
-            int hexId = gameBoard[position.Item1, position.Item2];
-            if (hexId > 0)
-            {
-                int hexesUnderHexNumber = HexesUnderBeetleNumber(hexId);
-                return hexesUnderHexNumber + 1;
-            }
+            if (gameBoard3D[position.Item1, position.Item2, 0] != 0)
+                return NumberOfHexesUnderHex((position.Item1, position.Item2, 0), gameBoard3D) + 1;
             return 0;
         }
 
-        public int HexesUnderBeetleNumber(int beetleId)
+        private int NumberOfHexesUnderHex((int, int, int) position, int[,,] gameBoard3D)
         {
-            int hexesUnderBeetleCounter = 0;
+            int[] positionStack = Enumerable.Range(position.Item3 + 1, gameBoard3D.GetLength(2)- (position.Item3 + 1))
+                .Select(h => gameBoard3D[position.Item1, position.Item2, h])
+                .ToArray();
 
-            int hexUnderneathId = GetIdOfFirstHexUnderneathBeetle(beetleId);
-            while (hexUnderneathId != -1)
+            int hexesCounter = 0;
+
+            foreach (var id in positionStack)
             {
-                hexesUnderBeetleCounter++;
-                hexUnderneathId = GetIdOfFirstHexUnderneathBeetle(hexUnderneathId);
+                if (id == 0)
+                    break;
+                hexesCounter++;
             }
-            return hexesUnderBeetleCounter;
-        }
 
-        public int GetIdOfFirstHexUnderneathBeetle(int beetleId)
-        {
-            if (_beetleIdToHexUnderneathId.ContainsKey(beetleId))
-                return _beetleIdToHexUnderneathId[beetleId];
-            return -1;
+            return hexesCounter;
         }
-
-        public bool IsHexUnderneathBeetle(int hexId)
-        {
-            return _beetleIdToHexUnderneathId.ContainsValue(hexId);
-        }
-
-        public void RemoveHexUnderneathBeetle(int beetleId)
-        {
-            if (_beetleIdToHexUnderneathId.ContainsKey(beetleId))
-                _beetleIdToHexUnderneathId.Remove(beetleId);
-        }
-
-        public void SetHexUnderneathBeetle(int beetleId, int hexUnderneathId)
-        {
-            _beetleIdToHexUnderneathId[beetleId] = hexUnderneathId;
-        }
-
     }
 }
