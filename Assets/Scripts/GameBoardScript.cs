@@ -149,7 +149,7 @@ namespace Hive
 
         public (int, int) Get2DPositionByHexId(int hexId)
         {
-            var position3D = GetPositionByHexId(_firstHexOnBoardId);
+            var position3D = GetPositionByHexId(hexId);
             return (position3D.Item1, position3D.Item2);
         }
 
