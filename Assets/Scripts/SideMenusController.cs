@@ -55,8 +55,8 @@ namespace Hive
 
         void Start()
         {
-            GameObject moveValidatorGameObject = GameObject.FindWithTag("RulesValidator");
-            _rulesValidator = moveValidatorGameObject.GetComponent<RulesValidator>();
+            GameObject rulesValidatorGameObject = GameObject.FindWithTag("RulesValidator");
+            _rulesValidator = rulesValidatorGameObject.GetComponent<RulesValidator>();
 
             BlackAntButton.onClick.AddListener(() => OnTileSelected(PieceType.ANT, false));
             BlackGrasshopperButton.onClick.AddListener(() => OnTileSelected(PieceType.GRASSHOPPER, false));
@@ -212,7 +212,7 @@ namespace Hive
 
         public void EnablePlayerSideMenu(bool white)
         {
-            if (_rulesValidator.IsBeeOnGameboardRuleBroken(white))
+            if (_rulesValidator.IsBeeOnBoardRuleBroken(white))
             {
                 var button = GetButton(PieceType.BEE, white);
                 button.GetComponent<CanvasGroup>().alpha = 1.0f;

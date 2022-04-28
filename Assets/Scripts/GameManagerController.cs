@@ -4,23 +4,24 @@ namespace Hive
 {
     public class GameManagerController : MonoBehaviour
     {
-        private HexesManagerController _hexesManager;
-        private UIController _ui;
-        private HexesInfoProvider _hexesInfoProvider;
         private CameraController _camera;
+        private GameEngineScript _gameEngine;
+        private HexesInfoProvider _hexesInfoProvider;
+        private HexesManagerController _hexesManager;
         private RulesValidator _rulesValidator;
+        private UIController _ui;
 
-        private bool _gameOver = false;
         private bool _gamePaused = false;
-        private bool _isWhiteTurn = true;
         private bool _isPlayer1White;
-        //private PieceType _lastSelectedTileType;
 
         private IPlayer _player1;
         private IPlayer _player2;
 
         void Start()
         {
+            GameObject gameEngineGameObject = GameObject.FindWithTag("GameEngine");
+            _gameEngine = gameEngineGameObject.GetComponent<GameEngineScript>();
+
             GameObject moveValidatorGameObject = GameObject.FindWithTag("RulesValidator");
             _rulesValidator = moveValidatorGameObject.GetComponent<RulesValidator>();
 
@@ -39,7 +40,9 @@ namespace Hive
 
         void Update()
         {
-            if (Input.GetKey("escape") && !_gameOver)
+            if (Input.GetKey("escape")
+                && (_gameEngine.GameState == GameState.InProgress
+                || _gameEngine.GameState == GameState.NotStarted))
             {
                 PauseGame();
             }
@@ -51,24 +54,25 @@ namespace Hive
             _gamePaused = true;
         }
 
-        public void ConfirmMove(PieceType pieceType, bool addingPiece)
+        public void ConfirmMove(PieceType pieceType, bool white, bool addingPiece)
         {
-            if (_hexesInfoProvider.IsGameOver())
+            if (_rulesValidator.IsGameOver())
                 GameOver();
             if (addingPiece)
-                UpdateSideMenu(pieceType, _isWhiteTurn);
+                UpdateSideMenu(pieceType, white);
             if (!_hexesInfoProvider.IsAnyHexLeftInHand())
             {
                 _ui.HideSideMenus();
             }
             _camera.UpdateCamera();
-            ChangeTurn();
+            _ui.ChangeSideMenu(_gameEngine.IsWhiteTurn);
+            GetCurrentPlayer().RequestMove();
         }
 
         public void OnTileSelected(PieceType type, bool white)
         {
             IPlayer currentPlayer = GetCurrentPlayer();
-            if (_isWhiteTurn == white && currentPlayer.GetType() == typeof(HumanPlayer))
+            if (_gameEngine.IsWhiteTurn == white && currentPlayer.GetType() == typeof(HumanPlayer))
                 ((HumanPlayer)currentPlayer).OnTileSelected(type, white);
         }
 
@@ -93,17 +97,18 @@ namespace Hive
 
         private void GameOver()
         {
-            if (_hexesInfoProvider.GameIsDrawn())
+            if (_rulesValidator.GameIsDrawn())
                 _ui.LaunchGameDrawnEndingPanel();
             else
-                _ui.LaunchWinEndingPanel(_hexesInfoProvider.WhiteHexesWon());
+                _ui.LaunchWinEndingPanel(_rulesValidator.WhiteHexesWon());
         }
 
         public void OnHexSelected(GameObject selectedHex)
         {
             IPlayer currentPlayer = GetCurrentPlayer();
+            var gameState = _gameEngine.GameState;
             if (currentPlayer.GetType() == typeof(HumanPlayer)
-                && !_gameOver
+                && (gameState == GameState.InProgress || gameState == GameState.NotStarted)
                 && !_gamePaused)
                 ((HumanPlayer)currentPlayer).OnHexSelected(selectedHex);
         }
@@ -121,12 +126,13 @@ namespace Hive
                 _player2 = new HumanPlayer(!_isPlayer1White);
             }
 
-            _gameOver = false;
-            SetTurn(_player1.IsWhite());
+            _gameEngine.Reset();
+            _gameEngine.SetWhiteStarts(_player1.IsWhite());
+
             _ui.HideColorChoiceMenu();
             _ui.HidePlayModeMenu();
             _ui.LaunchSideMenus();
-            _ui.ChangeSideMenu(_isWhiteTurn);
+            _ui.ChangeSideMenu(_gameEngine.IsWhiteTurn);
 
             _player1.RequestMove();
         }
@@ -134,31 +140,16 @@ namespace Hive
         public void ResetGame()
         {
             _gamePaused = false;
-            _gameOver = false;
             _hexesManager.ResetHexesState();
             _ui.ResetUI();
             _ui.LaunchStartMenu();
             _camera.ResetCamera();
-        }
-
-        public void SetTurn(bool white)
-        {
-            _isWhiteTurn = white;
+            _gameEngine.Reset();
         }
 
         private IPlayer GetCurrentPlayer()
         {
-            return _isWhiteTurn == _isPlayer1White ? _player1 : _player2;
-        }
-
-        private void ChangeTurn()
-        {
-            if (_rulesValidator.CanMakeMove(!_isWhiteTurn))
-            {
-                _isWhiteTurn = !_isWhiteTurn;
-                _ui.ChangeSideMenu(_isWhiteTurn);
-            }
-            GetCurrentPlayer().RequestMove();
+            return _gameEngine.IsWhiteTurn == _isPlayer1White ? _player1 : _player2;
         }
     }
 }

@@ -10,7 +10,6 @@ namespace Hive
 
         private HexesManagerController _hexesManager;
         private HexesInfoProvider _hexesInfoProvider;
-        private RulesValidator _rulesValidator;
         private GameManagerController _gameManager;
 
         private bool _addingHexToBoard = false;
@@ -31,9 +30,6 @@ namespace Hive
 
             GameObject hexesInfoProviderGameObject = GameObject.FindWithTag("HexesInfoProvider");
             _hexesInfoProvider = hexesInfoProviderGameObject.GetComponent<HexesInfoProvider>();
-
-            GameObject moveValidatorGameObject = GameObject.FindWithTag("RulesValidator");
-            _rulesValidator = moveValidatorGameObject.GetComponent<RulesValidator>();
         }
 
         public void RequestMove()
@@ -46,22 +42,22 @@ namespace Hive
             if (_myTurn && white == _isWhite)
             {
                 _lastSelectedTileType = type;
-                StartAddingHex(type, white);
+                StartAddingHex(type);
             }
         }
 
-        private void StartAddingHex(PieceType type, bool white)
+        private void StartAddingHex(PieceType type)
         {
             bool isItFirstMove = _hexesInfoProvider.IsItFirstMove();
 
-            if (_hexesManager.PrepareHexToAddToBoard(type, white))
+            if (_hexesManager.PrepareHexToAddToBoard(type, _isWhite))
             {
                 _movingHexOnBoard = false;
                 _addingHexToBoard = true;
                 if (isItFirstMove)
                 {
                     _addingHexToBoard = false;
-                    _gameManager.ConfirmMove(type, true);
+                    _gameManager.ConfirmMove(type, _isWhite, true);
                     _myTurn = false;
                 }
             }
@@ -97,8 +93,7 @@ namespace Hive
                         ConfirmMovingHexOnGameboard(selectedHex);
                     }
                 }
-                else if (_hexesInfoProvider.IsItCurrentPlayerHex(selectedHex, _isWhite)
-                  && _rulesValidator.CanMoveHex(selectedHex))
+                else if (_hexesInfoProvider.IsItCurrentPlayerHex(selectedHex, _isWhite))
                 {
                     StartMovingHex(selectedHex);
                 }
@@ -111,7 +106,7 @@ namespace Hive
             {
                 _addingHexToBoard = false;
                 _myTurn = false;
-                _gameManager.ConfirmMove(_lastSelectedTileType, true);
+                _gameManager.ConfirmMove(_lastSelectedTileType, _isWhite, true);
             }
         }
 
@@ -134,7 +129,7 @@ namespace Hive
             {
                 _movingHexOnBoard = false;
                 _myTurn = false;
-                _gameManager.ConfirmMove(_lastSelectedTileType, false);
+                _gameManager.ConfirmMove(_lastSelectedTileType, _isWhite, false);
             }
         }
     }

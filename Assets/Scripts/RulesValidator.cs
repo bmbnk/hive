@@ -1,27 +1,26 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Hive
 {
     public class RulesValidator : MonoBehaviour
     {
-        public GameObject BeetlePiece;
-        private HexesStoreScript _hexesStore;
-        private HexesInfoProvider _hexesInfoProvider;
         private GameBoardScript _gameBoard;
+        private GameEngineScript _gameEngine;
 
         void Start()
         {
             GameObject gameBoardGameobject = GameObject.FindWithTag("GameBoard");
             _gameBoard = gameBoardGameobject.GetComponent<GameBoardScript>();
 
-            GameObject hexesStoreGameObject = GameObject.FindWithTag("HexesStore");
-            _hexesStore = hexesStoreGameObject.GetComponent<HexesStoreScript>();
+            GameObject gameEngineGameObject = GameObject.FindWithTag("GameEngine");
+            _gameEngine = gameEngineGameObject.GetComponent<GameEngineScript>();
+        }
 
-            GameObject hexesInfoProviderGameObject = GameObject.FindWithTag("HexesInfoProvider");
-            _hexesInfoProvider = hexesInfoProviderGameObject.GetComponent<HexesInfoProvider>();
+
+        public bool BlackHexesWon()
+        {
+            return IsBeeFullySurrounded(true);
         }
 
         public bool CanMakeMove(bool white)
@@ -29,98 +28,64 @@ namespace Hive
             return CanMove(white) || CanAdd(white);
         }
 
-        private bool CanMove(bool white)
+        public bool CanMoveHex(int hexId)
         {
-            var hexes = white ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
+            var position = _gameBoard.Get2DTopPositionByHexId(hexId);
 
-            foreach (var hex in hexes)
+            return position != (-1, -1)
+                && IsBeeOnBoard(_gameEngine.IsPieceWhite(hexId))
+                && !IsOneHiveRuleBroken(hexId);
+        }
+
+        public bool GameIsDrawn()
+        {
+            return BlackHexesWon() && WhiteHexesWon();
+        }
+
+        private int GetFirstFoundPieceOnBoardId(bool white, PieceType pieceType)
+        {
+            var hexesOnBoardIds = white ? _gameEngine.WhiteHexesOnBoardIds : _gameEngine.BlackHexesOnBoardIds;
+            int pieceHexId = -1;
+
+            foreach (var hexId in hexesOnBoardIds)
             {
-                var hexScript = hex.GetComponent<HexWrapperController>();
-                if (hexScript.isOnGameboard && CanMoveHex(hex))
+                if (_gameEngine.GetPieceType(hexId) == pieceType)
                 {
-                    List<(int, int)> availableMovePositions = hexScript
-                    .piece
-                    .GetComponent<IPieceController>()
-                    .GetPieceSpecificPositions(_gameBoard.GetPositionByHexId(hexScript.HexId), _gameBoard.GetGameBoard3D());
-                    if (availableMovePositions.Count > 0)
-                        return true;
+                    pieceHexId = hexId;
+                    break;
                 }
             }
-            return false;
+            return pieceHexId;
         }
 
-        private bool CanAdd(bool white)
+        public bool IsBeeOnBoard(bool white)
         {
-            if (AnyPositionToAddExists(white))
-            {
-                foreach (var type in Enum.GetValues(typeof(PieceType)).Cast<PieceType>())
-                {
-                    if (AnyHexToAddExists(type, white))
-                        return true;
-                }
-            }
-            return false;
+            return GetFirstFoundPieceOnBoardId(white, PieceType.BEE) != -1;
         }
 
-        private bool AnyHexToAddExists(PieceType type, bool white)
+        public bool IsBeeOnBoardRuleBroken(bool white) //If it is fourth move of the player and the bee piece is not on the table than the rule is broken
         {
-            var hexes = white ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
-            int hexToAddPropositionIdx = hexes.FindIndex(hex =>
-            {
-                var hexScript = hex.GetComponent<HexWrapperController>();
-                return !hexScript.isOnGameboard && hexScript.piece.GetComponent<IPieceController>().GetPieceType() == type;
-            });
-            return hexToAddPropositionIdx != -1;
+            var hexesOnBoardIds = white ? _gameEngine.WhiteHexesOnBoardIds : _gameEngine.BlackHexesOnBoardIds;
+            return hexesOnBoardIds.Count > 2 && !IsBeeOnBoard(white);
         }
 
-        private bool AnyPositionToAddExists(bool white)
+        public bool IsGameOver()
         {
-            if (!_hexesInfoProvider.FirstMovesWereMade())
-                return true;
-
-            var hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
-            List<(int, int)> availablePositions = PieceMovesTools.GetPositionsToAddHex(hexesOnBoardIds, _gameBoard.GetGameBoard2D());
-            if (availablePositions.Count > 0)
-                return true;
-
-            return false;
+            return BlackHexesWon() || WhiteHexesWon();
         }
 
-        public bool CanMoveHex(GameObject hex)
+        public bool IsOneHiveRuleBroken(int hexId)
         {
-            var hexScript = hex.GetComponent<HexWrapperController>();
-            //var beetleScript = BeetlePiece.GetComponent<BeetlePieceController>();
-
-            _gameBoard.NumberOfHexesUnderHex(hexScript.HexId);
-
-            var position = _gameBoard.GetPositionByHexId(hexScript.HexId);
-
-            //return !beetleScript.IsHexUnderneathBeetle(hexScript.HexId)
-            return !(position.Item3 > 0)
-                && _hexesInfoProvider.IsBeeOnBoard(hexScript.isWhite)
-                && !IsOneHiveRuleBroken(hex);
-        }
-
-        public bool IsBeeOnGameboardRuleBroken(bool white) //If it is fourth move of the player and the bee piece is not on the table than the rule is broken
-        {
-            var hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
-
-            if (hexesOnBoardIds.Count > 2 && !_hexesInfoProvider.IsBeeOnBoard(white))
-                return true;
-            return false;
-        }
-
-        public bool IsOneHiveRuleBroken(GameObject hexToMove)
-        {
-            var hexToMoveScript = hexToMove.GetComponent<HexWrapperController>();
-
-            if (hexToMoveScript.transform.position.y > 0)
+            if (_gameBoard.NumberOfHexesUnderHex(hexId) > 0)
                 return false;
 
-            //int[,] gameBoardWithoutHex = (int[,])_gameBoard.gameBoard.Clone();
             int[,] gameBoardWithoutHex = _gameBoard.GetGameBoard2D();
 
-            (int, int) hexPositionOnBoard = _gameBoard.Get2DTopPositionByHexId(hexToMoveScript.HexId);
+            (int, int) hexPositionOnBoard = _gameBoard.Get2DTopPositionByHexId(hexId);
+
+            if (hexPositionOnBoard == (-1, -1))
+                return false;
+
             gameBoardWithoutHex[hexPositionOnBoard.Item1, hexPositionOnBoard.Item2] = 0;
 
             // TODO: You can optimize it by choosing one neighbour from groups of neighbours that are connected, because if you can reached one, than you can reach all of them
@@ -138,12 +103,31 @@ namespace Hive
             return false;
         }
 
-        private bool PositionsAreConnected((int, int) startPosition, (int, int) endPosition, int[,] gameBoard)
+        public bool WhiteHexesWon()
         {
-            List<(int, int)> visitedPositions = new List<(int, int)>();
-            visitedPositions.Add(startPosition);
+            return IsBeeFullySurrounded(false);
+        }
 
-            return DFS(startPosition, endPosition, gameBoard);
+
+        private bool CanAdd(bool white)
+        {
+            return _gameEngine.GetAddingMovesForPlayer(white).Count > 0;
+        }
+
+        private bool CanMove(bool white)
+        {
+            var hexesOnBoardIds = white ? _gameEngine.WhiteHexesOnBoardIds : _gameEngine.BlackHexesOnBoardIds;
+
+            foreach (var hexId in hexesOnBoardIds)
+            {
+                if (CanMoveHex(hexId))
+                {
+                    List<(int, int, int)> availableMovePositions = _gameEngine.GetAvailableMovePositionsForHex(hexId);
+                    if (availableMovePositions.Count > 0)
+                        return true;
+                }
+            }
+            return false;
         }
 
         private bool DFS((int, int) startPosition, (int, int) endPosition, int[,] gameBoard)
@@ -179,6 +163,27 @@ namespace Hive
                 return false;
 
             return DFSStep(endPosition, gameBoard, notFullyExploredPositions, visitedPositions);
+        }
+
+        private bool IsBeeFullySurrounded(bool white)
+        {
+            int beeHexId = GetFirstFoundPieceOnBoardId(white, PieceType.BEE);
+
+            if (beeHexId != -1)
+            {
+                if (PieceMovesTools.GetNeighbours(_gameBoard.Get2DPositionByHexId(beeHexId), _gameBoard.GetGameBoard2D()).Count == 6)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private bool PositionsAreConnected((int, int) startPosition, (int, int) endPosition, int[,] gameBoard)
+        {
+            List<(int, int)> visitedPositions = new List<(int, int)>();
+            visitedPositions.Add(startPosition);
+
+            return DFS(startPosition, endPosition, gameBoard);
         }
     }
 }

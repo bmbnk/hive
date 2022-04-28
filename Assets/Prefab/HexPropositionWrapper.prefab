@@ -45,12 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed6d7b85b7a48cf916aa2595de5949, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  hex: {fileID: 6568174140440670724}
+  Hex: {fileID: 6568174140440670724}
   HexId: 0
-  isOnGameboard: 0
-  piece: {fileID: 0}
-  isWhite: 0
 --- !u!1 &6568174140440670724
 GameObject:
   m_ObjectHideFlags: 0
@@ -148,7 +144,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b4ffc6dea3d547c9a220a83f055d54a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
   hexWrapper: {fileID: 2449543555522651668}
 --- !u!64 &6862438309984682664
 MeshCollider:

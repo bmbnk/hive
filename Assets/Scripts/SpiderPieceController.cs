@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace Hive
 {
-    public class SpiderPieceController : MonoBehaviour, IPieceController
+    public class SpiderPieceController : IPieceController
     {
         public PieceType GetPieceType() => PieceType.SPIDER;
 
 
-        public List<(int, int)> GetPieceSpecificPositions((int, int, int) hexPosition3D, int[,,] originalGameBoard3D)
+        public List<(int, int, int)> GetPieceSpecificPositions((int, int, int) hexPosition3D, int[,,] originalGameBoard3D)
         {
             //TODO: Check in the manual for this game, but you should probably check also path
             //from different neighbours that you will meet on this 3 steps road
@@ -18,7 +18,13 @@ namespace Hive
 
             (int, int) hexPosition = (hexPosition3D.Item1, hexPosition3D.Item2);
             int[,] gameBoard = GetGameBoardWithoutHex(originalGameBoard2D, hexPosition);
-            return getMovePositions(gameBoard, hexPosition);
+
+            var positions2D = getMovePositions(gameBoard, hexPosition);
+
+            List<(int, int, int)> positions = new List<(int, int, int)>();
+            positions2D.ForEach(position => positions.Add((position.Item1, position.Item2, 0)));
+
+            return positions;
         }
 
         private int[,] GetGameBoardWithoutHex(int[,] originalGameBoard, (int, int) hexPosition)

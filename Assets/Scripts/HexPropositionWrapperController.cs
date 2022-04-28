@@ -4,6 +4,6 @@ namespace Hive
 {
     public class HexPropositionWrapperController : HexWrapperController
     {
-        public (int, int) positionOnBoard;
+        public (int, int, int) positionOnBoard;
     }
 }

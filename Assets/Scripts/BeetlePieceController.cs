@@ -1,74 +1,66 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 
 namespace Hive
 {
-    public class BeetlePieceController : MonoBehaviour, IPieceController
+    public class BeetlePieceController : IPieceController
     {
         public PieceType GetPieceType() => PieceType.BEETLE;
 
 
-        public List<(int, int)> GetPieceSpecificPositions((int, int, int) hexPosition3D, int[,,] gameBoard3D)
+        public List<(int, int, int)> GetPieceSpecificPositions((int, int, int) hexPosition3D, int[,,] gameBoard3D)
         {
             (int, int) hexPosition = (hexPosition3D.Item1, hexPosition3D.Item2);
             int[,] gameBoard = PieceMovesTools.GetGameBoard2Dfrom3D(gameBoard3D);
 
-            List<(int, int)> positions;
+            List<(int, int)> positions2D;
 
             if (HexesOnPositionNumber(hexPosition, gameBoard3D) > 1)
             {
-                positions = PieceMovesTools.GetPositionsAroundPosition(hexPosition);
+                positions2D = PieceMovesTools.GetPositionsAroundPosition(hexPosition);
             }
             else
             {
-                positions = PieceMovesTools.GetPositionsNextToNeighboursAroundPosition(hexPosition, gameBoard);
+                positions2D = PieceMovesTools.GetPositionsNextToNeighboursAroundPosition(hexPosition, gameBoard);
                 List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(hexPosition, gameBoard);
-                neighbours.ForEach(neighbour => positions.Add(neighbour));
+                neighbours.ForEach(neighbour => positions2D.Add(neighbour));
             }
 
 
-            for (int i = positions.Count - 1; i >= 0; i--)
+            for (int i = positions2D.Count - 1; i >= 0; i--)
             {
-                int heightOfLowerStackNextToPosition = HexesOnPositionNumber(PieceMovesTools.GetNextPositionAroundHex(positions[i], hexPosition, true), gameBoard3D);
-                int heightOfSecondStackNextToPosition = HexesOnPositionNumber(PieceMovesTools.GetNextPositionAroundHex(positions[i], hexPosition, false), gameBoard3D);
+                int heightOfLowerStackNextToPosition = HexesOnPositionNumber(PieceMovesTools.GetNextPositionAroundHex(positions2D[i], hexPosition, true), gameBoard3D);
+                int heightOfSecondStackNextToPosition = HexesOnPositionNumber(PieceMovesTools.GetNextPositionAroundHex(positions2D[i], hexPosition, false), gameBoard3D);
 
                 if (heightOfSecondStackNextToPosition < heightOfLowerStackNextToPosition)
                     heightOfLowerStackNextToPosition = heightOfSecondStackNextToPosition;
 
-                int heightOfPositionStack = HexesOnPositionNumber(positions[i], gameBoard3D);
-                int heightOfCurrentPositionStack = NumberOfHexesUnderHex(hexPosition3D, gameBoard3D);
+                int heightOfPositionStack = HexesOnPositionNumber(positions2D[i], gameBoard3D);
+                //int heightOfCurrentPositionStack = NumberOfHexesUnderHex(hexPosition3D);
+                int heightOfCurrentPositionStack = hexPosition3D.Item3;
 
                 if (heightOfPositionStack < heightOfLowerStackNextToPosition && heightOfCurrentPositionStack < heightOfLowerStackNextToPosition)
-                    positions.Remove(positions[i]);
+                    positions2D.Remove(positions2D[i]);
             }
+
+            var positions = new List<(int, int, int)>();
+
+            positions2D.ForEach(position =>
+            {
+                var positionHeight = HexesOnPositionNumber(position, gameBoard3D);
+                positions.Add((position.Item1, position.Item2, positionHeight));
+            });
 
             return positions;
         }
 
         private int HexesOnPositionNumber((int, int) position, int[,,] gameBoard3D)
         {
-            if (gameBoard3D[position.Item1, position.Item2, 0] != 0)
-                return NumberOfHexesUnderHex((position.Item1, position.Item2, 0), gameBoard3D) + 1;
-            return 0;
-        }
-
-        private int NumberOfHexesUnderHex((int, int, int) position, int[,,] gameBoard3D)
-        {
-            int[] positionStack = Enumerable.Range(position.Item3 + 1, gameBoard3D.GetLength(2)- (position.Item3 + 1))
-                .Select(h => gameBoard3D[position.Item1, position.Item2, h])
-                .ToArray();
-
-            int hexesCounter = 0;
-
-            foreach (var id in positionStack)
+            for (int h = 0; h < gameBoard3D.GetLength(2); h++)
             {
-                if (id == 0)
-                    break;
-                hexesCounter++;
+                if (gameBoard3D[position.Item1, position.Item2, h] == 0)
+                    return h;
             }
-
-            return hexesCounter;
+            return gameBoard3D.GetLength(2);
         }
     }
 }

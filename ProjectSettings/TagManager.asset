@@ -54,6 +54,8 @@ TagManager:
   - LeftSideMenu
   - RightSideMenu
   - ColorChoiceMenuPanel
+  - ChoiceMenuPanel
+  - GameEngine
   layers:
   - Default
   - TransparentFX

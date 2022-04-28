@@ -29,9 +29,6 @@ namespace Hive
         public GameObject BlackHex10;
         public GameObject BlackHex11;
 
-        public List<int> whiteHexesOnBoardIds = new List<int>();
-        public List<int> blackHexesOnBoardIds = new List<int>();
-
         public GameObject hexToMove;
         public List<GameObject> hexPropositionsToMove;
 

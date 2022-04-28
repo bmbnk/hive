@@ -14,13 +14,16 @@ namespace Hive
         private const float MovingTime = 2f;
 
         private HexesStoreScript _hexesStore;
+        private GameEngineScript _gameEngine;
 
-        //private bool _isCameraMoving = false;
 
         void Start()
         {
             GameObject hexesStoreGameObject = GameObject.FindWithTag("HexesStore");
             _hexesStore = hexesStoreGameObject.GetComponent<HexesStoreScript>();
+
+            GameObject gameEngineGameObject = GameObject.FindWithTag("GameEngine");
+            _gameEngine = gameEngineGameObject.GetComponent<GameEngineScript>();
 
             _startPosition = transform.position;
             _startFieldOfView = Camera.main.fieldOfView;
@@ -56,13 +59,14 @@ namespace Hive
         {
             List<Vector3> hexesOnBoardPositionsVectors = new List<Vector3>();
             var hexes = white ? _hexesStore.whiteHexes : _hexesStore.blackHexes;
-            var hexesOnBoardIds = white ? _hexesStore.whiteHexesOnBoardIds : _hexesStore.blackHexesOnBoardIds;
-            hexesOnBoardIds.ForEach(hexOnBoardId =>
+            var hexesOnBoardIds = white ? _gameEngine.WhiteHexesOnBoardIds : _gameEngine.BlackHexesOnBoardIds;
+
+            foreach (var hexId in hexesOnBoardIds)
             {
                 var hexOnBoard = hexes
-                    .FindLast(hex => hex.GetComponent<HexWrapperController>().HexId == hexOnBoardId);
+                    .FindLast(hex => hex.GetComponent<HexWrapperController>().HexId == hexId);
                 hexesOnBoardPositionsVectors.Add(hexOnBoard.transform.position);
-            });
+            }
 
             return hexesOnBoardPositionsVectors;
         }
@@ -70,7 +74,7 @@ namespace Hive
         private void UpdatePosition(List<Vector3> hexPositionVectors)
         {
             Vector3 hexesCenterPosition = GetCenterOfMass(hexPositionVectors);
-            //_isCameraMoving = true;
+
             iTween.MoveTo(gameObject, iTween.Hash(
                     "name", "CameraPositionUpdate",
                     "position", _startPosition + hexesCenterPosition,
@@ -79,17 +83,14 @@ namespace Hive
                     "oncomplete", "UnsetCameraMoving"));
         }
 
-        //private void UnsetCameraMoving()
-        //{
-        //    _isCameraMoving = false;
-        //}
-
         private Vector3 GetCenterOfMass(List<Vector3> positionsVectors)
         {
             Vector3 vectorSum = new Vector3(0, 0, 0);
             positionsVectors.ForEach(vector => vectorSum += vector);
 
-            return vectorSum / positionsVectors.Count;
+            if (positionsVectors.Count > 0)
+                return vectorSum / positionsVectors.Count;
+            return new Vector3(0, 0, 0);
         }
 
         private void UpdateZoom(List<Vector3> hexPositionVectors)

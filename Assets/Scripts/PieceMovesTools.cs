@@ -206,31 +206,36 @@ namespace Hive
             return (-1, -1);
         }
 
-        public static Vector3 GetVectorFromStartToEnd((int, int) startPosition, (int, int) endPositon)
+        public static Vector3 GetVectorFromStartToEnd((int, int, int) startPosition, (int, int, int) endPosition)
         {
+            var startPosition2D = (startPosition.Item1, startPosition.Item2);
             Vector3 vector = new Vector3(0, 0, 0);
 
             //make both positions rows even or odd
-            if ((startPosition.Item1 + endPositon.Item1) % 2 == 1)
+            if ((startPosition2D.Item1 + endPosition.Item1) % 2 == 1)
             {
-                var positionOffset = startPosition.Item1 % 2 == 1 ? _neighboursLocationParameters[0].EvenRowNeighbourIdxsDelta : _neighboursLocationParameters[0].OddRowNeighbourIdxsDelta;
+                var positionOffset = startPosition2D.Item1 % 2 == 1 ? _neighboursLocationParameters[0].EvenRowNeighbourIdxsDelta : _neighboursLocationParameters[0].OddRowNeighbourIdxsDelta;
                 var offsetVector = _neighboursLocationParameters[0].Vector;
-                startPosition = (startPosition.Item1 + positionOffset.Item1, startPosition.Item2 + positionOffset.Item2);
+                startPosition2D = (startPosition2D.Item1 + positionOffset.Item1, startPosition2D.Item2 + positionOffset.Item2);
                 vector += offsetVector + 2 * offsetVector.normalized * Padding;
             }
 
             Vector3 moveHexLeftVector = _neighboursLocationParameters[1].Vector;
-            int positionToLeftNumber = (endPositon.Item2 - startPosition.Item2);
+            int positionToLeftNumber = (endPosition.Item2 - startPosition2D.Item2);
             vector += positionToLeftNumber * (moveHexLeftVector + moveHexLeftVector.normalized * 2 * Padding);
 
             Vector3 moveHexDownVector = new Vector3(0, 0, 3 * HexHalfDistanceBetweenSides / Mathf.Sqrt(3) * 2);
-            int positionsDownNumber = (startPosition.Item1 - endPositon.Item1);
+            int positionsDownNumber = (startPosition2D.Item1 - endPosition.Item1);
             vector += positionsDownNumber / 2 * (moveHexDownVector + 2 * moveHexDownVector.normalized * Padding * Mathf.Sqrt(3));
+
+
+            Vector3 verticalVector = GetVerticalVector(endPosition.Item3 - startPosition.Item3);
+            vector += verticalVector;
 
             return vector;
         }
 
-        public static Vector3 GetVerticalVector(int hexesNumber)
+        private static Vector3 GetVerticalVector(int hexesNumber)
         {
             Vector3 hexesHeightVector = hexesNumber * new Vector3(0, HexHeight, 0);
             return hexesHeightVector;
@@ -363,9 +368,23 @@ namespace Hive
 
             for (int row = 0; row < height; row++)
                 for (int col = 0; col < width; col++)
-                    gameBoard2D[row, col] = gameBoard3D[row, col, 0];
+                    gameBoard2D[row, col] = GetTopHexIdByPosition((row, col), gameBoard3D);
 
             return gameBoard2D;
+        }
+
+        private static int GetTopHexIdByPosition((int, int) position, int[,,] gameBoard3D)
+        {
+            int topHexId = 0;
+
+            int height = gameBoard3D.GetLength(2);
+            for (int h = 0; h < height; h++)
+            {
+                if (gameBoard3D[position.Item1, position.Item2, h] == 0)
+                    break;
+                topHexId = gameBoard3D[position.Item1, position.Item2, h];
+            }
+            return topHexId;
         }
     }
 }

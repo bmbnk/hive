@@ -4,38 +4,38 @@ using UnityEngine;
 
 namespace Hive
 {
-    public class AntPieceController : MonoBehaviour, IPieceController
+    public class AntPieceController : IPieceController
     {
         public PieceType GetPieceType() => PieceType.ANT;
 
 
-        public List<(int, int)> GetPieceSpecificPositions((int, int, int) hexPosition3D, int[,,] originalGameBoard3D)
+        public List<(int, int, int)> GetPieceSpecificPositions((int, int, int) hexPosition3D, int[,,] originalGameBoard3D)
         {
             int[,] originalGameBoard2D = PieceMovesTools.GetGameBoard2Dfrom3D(originalGameBoard3D);
 
             (int, int) hexPosition = (hexPosition3D.Item1, hexPosition3D.Item2);
             int[,] gameBoard = GetGameBoardWithoutHex(originalGameBoard2D, hexPosition);
 
-            List<(int, int)> positions = new List<(int, int)>();
-            positions.Add(hexPosition);
+            List<(int, int)> positions2D = new List<(int, int)>();
+            positions2D.Add(hexPosition);
 
             bool nextPositionFound = true;
             (int, int) lastPivotNeighbour;
             List<(int, int)> notAllowedPositions;
 
-            List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(positions.Last(), gameBoard, false);
+            List<(int, int)> neighbours = PieceMovesTools.GetNeighbours(positions2D.Last(), gameBoard, false);
             lastPivotNeighbour = neighbours[0];
 
             while (nextPositionFound)
             {
                 nextPositionFound = false;
 
-                neighbours = PieceMovesTools.GetNeighbours(positions.Last(), gameBoard, false);
-                notAllowedPositions = PieceMovesTools.GetNotAllowedPositionsAroundPosition(neighbours, positions.Last());
-                (int, int) nextPosition = PieceMovesTools.GetNextFreePositionAroundHex(positions.Last(), lastPivotNeighbour, gameBoard);
+                neighbours = PieceMovesTools.GetNeighbours(positions2D.Last(), gameBoard, false);
+                notAllowedPositions = PieceMovesTools.GetNotAllowedPositionsAroundPosition(neighbours, positions2D.Last());
+                (int, int) nextPosition = PieceMovesTools.GetNextFreePositionAroundHex(positions2D.Last(), lastPivotNeighbour, gameBoard);
                 if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
                 {
-                    positions.Add(nextPosition);
+                    positions2D.Add(nextPosition);
                     nextPositionFound = true;
                 }
                 else
@@ -45,10 +45,10 @@ namespace Hive
                     for (int i = 1; i < neighbours.Count; i++)
                     {
                         (int, int) nextNeighbour = neighbours[(lastPivotNeighbourIdx + i) % neighbours.Count];
-                        nextPosition = PieceMovesTools.GetNextFreePositionAroundHex(positions.Last(), nextNeighbour, gameBoard);
+                        nextPosition = PieceMovesTools.GetNextFreePositionAroundHex(positions2D.Last(), nextNeighbour, gameBoard);
                         if (nextPosition != (-1, -1) && !notAllowedPositions.Contains(nextPosition))
                         {
-                            positions.Add(nextPosition);
+                            positions2D.Add(nextPosition);
                             lastPivotNeighbour = nextNeighbour;
                             nextPositionFound = true;
                             break;
@@ -56,15 +56,18 @@ namespace Hive
                     }
                 }
 
-                if (positions.Count > 3 && PieceEnteredLoop(positions))
+                if (positions2D.Count > 3 && PieceEnteredLoop(positions2D))
                 {
                     for (int i = 0; i < 2; i++)
-                        positions.RemoveAt(positions.Count - 1);
+                        positions2D.RemoveAt(positions2D.Count - 1);
                     break;
                 }
             }
 
-            positions.Remove(hexPosition);
+            positions2D.Remove(hexPosition);
+
+            List<(int, int, int)> positions = new List<(int, int, int)>();
+            positions2D.ForEach(position => positions.Add((position.Item1, position.Item2, 0)));
 
             return positions;
         }

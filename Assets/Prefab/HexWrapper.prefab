@@ -45,12 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53f52988945664e25975a80f965f16af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  hex: {fileID: 6568174140440670724}
+  Hex: {fileID: 919132149155446097, guid: b8b87d6eba13b4a74b508d2e3ca195d5, type: 3}
   HexId: 0
-  isOnGameboard: 0
-  piece: {fileID: 0}
-  isWhite: 0
 --- !u!1 &6568174140440670724
 GameObject:
   m_ObjectHideFlags: 0

@@ -96,6 +96,11 @@ namespace Hive
             GamePanel.SetActive(false);
         }
 
+        public void HideStartMenu()
+        {
+            StartMenuPanel.SetActive(false);
+        }
+
         public void LaunchColorChoiceMenu()
         {
             DeactivatePanels();
