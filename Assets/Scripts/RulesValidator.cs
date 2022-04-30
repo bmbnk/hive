@@ -33,7 +33,7 @@ namespace Hive
             var position = _gameBoard.Get2DTopPositionByHexId(hexId);
 
             return position != (-1, -1)
-                && IsBeeOnBoard(_gameEngine.IsPieceWhite(hexId))
+                && IsBeeOnBoard(HexIdToPiecePropertyMapper.IsPieceWhite(hexId))
                 && !IsOneHiveRuleBroken(hexId);
         }
 
@@ -49,7 +49,7 @@ namespace Hive
 
             foreach (var hexId in hexesOnBoardIds)
             {
-                if (_gameEngine.GetPieceType(hexId) == pieceType)
+                if (HexIdToPiecePropertyMapper.GetPieceType(hexId) == pieceType)
                 {
                     pieceHexId = hexId;
                     break;

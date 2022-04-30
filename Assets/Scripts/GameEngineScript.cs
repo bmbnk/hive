@@ -6,8 +6,6 @@ namespace Hive
 {
     public class GameEngineScript : MonoBehaviour
     {
-        private const int WhitePiecesBoundaryId = 11;
-
         private GameBoardScript _gameBoard;
         private RulesValidator _rulesValidator;
 
@@ -23,51 +21,13 @@ namespace Hive
         public ISet<int> WhiteHexesOnBoardIds => new HashSet<int>(_whiteHexesOnBoardIds);
         public ISet<int> BlackHexesOnBoardIds => new HashSet<int>(_blackHexesOnBoardIds);
 
-        private Dictionary<int, PieceType> _hexIdToPieceTypeMapping =
-            new Dictionary<int, PieceType>()
-            {
-                {1, PieceType.BEE},
-                {2, PieceType.BEETLE},
-                {3, PieceType.BEETLE},
-                {4, PieceType.SPIDER},
-                {5, PieceType.SPIDER},
-                {6, PieceType.ANT},
-                {7, PieceType.ANT},
-                {8, PieceType.ANT},
-                {9, PieceType.GRASSHOPPER},
-                {10, PieceType.GRASSHOPPER},
-                {11, PieceType.GRASSHOPPER},
-
-                {12, PieceType.BEE},
-                {13, PieceType.BEETLE},
-                {14, PieceType.BEETLE},
-                {15, PieceType.SPIDER},
-                {16, PieceType.SPIDER},
-                {17, PieceType.ANT},
-                {18, PieceType.ANT},
-                {19, PieceType.ANT},
-                {20, PieceType.GRASSHOPPER},
-                {21, PieceType.GRASSHOPPER},
-                {22, PieceType.GRASSHOPPER}
-            };
-
-        private Dictionary<PieceType, IPieceController> _pieceTypeToControllerMapping =
-            new Dictionary<PieceType, IPieceController>()
-            {
-                {PieceType.BEE, new BeePieceController()},
-                {PieceType.BEETLE, new BeetlePieceController()},
-                {PieceType.SPIDER, new SpiderPieceController()},
-                {PieceType.ANT, new AntPieceController()},
-                {PieceType.GRASSHOPPER, new GrasshopperPieceController()},
-            };
-
 
         void Start()
         {
-            Initialize();
+            Init();
         }
 
-        private void Initialize()
+        private void Init()
         {
             GameObject gameBoardGameobject = GameObject.FindWithTag("GameBoard");
             _gameBoard = gameBoardGameobject.GetComponent<GameBoardScript>();
@@ -85,8 +45,8 @@ namespace Hive
             var availablePositions = GetAvailableAddingPositions(white);
             if (availablePositions.Count > 0)
             {
-                int idStartValue = white ? 1 : WhitePiecesBoundaryId + 1;
-                for (int id = idStartValue; id < idStartValue + WhitePiecesBoundaryId; id++)
+                int idStartValue = white ? 1 : HexIdToPiecePropertyMapper.WhitePiecesBoundaryId + 1;
+                for (int id = idStartValue; id < idStartValue + HexIdToPiecePropertyMapper.WhitePiecesBoundaryId; id++)
                     if (!playerHexesOnBoardIds.Contains(id))
                         moves.Add(id, availablePositions);
             }
@@ -126,7 +86,8 @@ namespace Hive
         {
             if (_rulesValidator.CanMoveHex(hexId))
             {
-                IPieceController pieceController = _pieceTypeToControllerMapping[_hexIdToPieceTypeMapping[hexId]];
+                //IPieceController pieceController = _pieceTypeToControllerMapping[_hexIdToPieceTypeMapping[hexId]];
+                IPieceController pieceController = HexIdToPiecePropertyMapper.GetPieceController(hexId);
 
                 return pieceController.GetPieceSpecificPositions(
                     _gameBoard.GetPositionByHexId(hexId),
@@ -163,12 +124,6 @@ namespace Hive
             return moves;
         }
 
-        // there should be some check and return default value
-        public PieceType GetPieceType(int hexId)
-        {
-            return _hexIdToPieceTypeMapping[hexId];
-        }
-
         public (int, int, int) GetPositionByHexId(int hexId)
         {
             return _gameBoard.GetPositionByHexId(hexId);
@@ -177,11 +132,6 @@ namespace Hive
         public bool IsMoveValid(int hexId, (int, int, int) targetPosition)
         {
             return  CanAddPiece(hexId, targetPosition) || CanMovePiece(hexId, targetPosition);
-        }
-
-        public bool IsPieceWhite(int hexId)
-        {
-            return hexId <= WhitePiecesBoundaryId;
         }
 
         public bool MakeMove(int hexId, (int, int, int) targetPosition)
@@ -222,7 +172,7 @@ namespace Hive
         private void AddPiece(int hexId, (int, int, int) targetPosition)
         {
             _gameBoard.AddElement(hexId, targetPosition);
-            var hexesOnBoardIds = IsPieceWhite(hexId) ? _whiteHexesOnBoardIds : _blackHexesOnBoardIds;
+            var hexesOnBoardIds = HexIdToPiecePropertyMapper.IsPieceWhite(hexId) ? _whiteHexesOnBoardIds : _blackHexesOnBoardIds;
             if (_whiteHexesOnBoardIds.Count == 0 && _blackHexesOnBoardIds.Count == 0)
                 _gameState = GameState.InProgress;
             hexesOnBoardIds.Add(hexId);
@@ -232,7 +182,7 @@ namespace Hive
         {
             if (!_whiteHexesOnBoardIds.Contains(hexId) && !_blackHexesOnBoardIds.Contains(hexId))
             {
-                var availablePositions = GetAvailableAddingPositions(IsPieceWhite(hexId));
+                var availablePositions = GetAvailableAddingPositions(HexIdToPiecePropertyMapper.IsPieceWhite(hexId));
                 return availablePositions.Contains(targetPosition);
             }
             return false;

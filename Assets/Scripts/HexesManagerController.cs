@@ -186,7 +186,7 @@ namespace Hive
             foreach (var hex in hexes)
             {
                 HexWrapperController hexScript = hex.GetComponent<HexWrapperController>();
-                if (_gameEngine.GetPieceType(hexScript.HexId) == type
+                if (HexIdToPiecePropertyMapper.GetPieceType(hexScript.HexId) == type
                     && !hexesOnBoardIds.Contains(hexScript.HexId))
                 {
                     hexToAddProposition = hex;

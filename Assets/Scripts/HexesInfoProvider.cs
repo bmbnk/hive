@@ -30,7 +30,7 @@ namespace Hive
             hexes.ForEach(hex =>
             {
                 var hexScript = hex.GetComponent<HexWrapperController>();
-                if (_gameEngine.GetPieceType(hexScript.HexId) == pieceType && !hexesOnBoardIds.Contains(hexScript.HexId))
+                if (HexIdToPiecePropertyMapper.GetPieceType(hexScript.HexId) == pieceType && !hexesOnBoardIds.Contains(hexScript.HexId))
                     counter++;
             });
 
@@ -46,7 +46,7 @@ namespace Hive
         public bool IsItCurrentPlayerHex(GameObject selectedHex, bool isWhiteTurn)
         {
             return !IsItPropositionHex(selectedHex)
-                && _gameEngine.IsPieceWhite(selectedHex.GetComponent<HexWrapperController>().HexId) == isWhiteTurn;
+                && HexIdToPiecePropertyMapper.IsPieceWhite(selectedHex.GetComponent<HexWrapperController>().HexId) == isWhiteTurn;
         }
 
         public bool IsItFirstMove()

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Hive
 {
-    public class AIPlayer : Agent, IPlayer
+    public class AIPlayer : IPlayer
     {
         private GameManagerController _gameManager;
 
@@ -29,21 +29,6 @@ namespace Hive
         }
 
         public void MakeMove()
-        {
-
-        }
-
-        public override void OnEpisodeBegin()
-        {
-            //_gameManager.StartGame(true);
-        }
-
-        public override void CollectObservations(VectorSensor sensor)
-        {
-
-        }
-
-        public override void OnActionReceived(ActionBuffers actionBuffers)
         {
 
         }
