@@ -41,7 +41,7 @@ namespace Hive
 
         public override void CollectObservations(VectorSensor sensor)
         {
-            int[,] gameBoard = GameBoardRepresentations.GetFlatGameboard(_gameEngine.GameBoard);
+            int[,] gameBoard = GameBoardRepresentations.GetFlatGameboard(_gameEngine.GameBoard, true);
 
             for (int row = 0; row < gameBoard.GetLength(0); row++)
             {
@@ -78,7 +78,7 @@ namespace Hive
                     {
                         float reward = (!_gameEngine.IsWhiteTurn && _gameEngine.GameState == GameState.WhiteWon)
                             || (_gameEngine.IsWhiteTurn && _gameEngine.GameState == GameState.BlackWon) ? 1 : -1;
-                        Debug.Log($"Reward for move ({hexId}, {row}, {col}, {height}) is {reward}");
+                        //Debug.Log($"Reward for move ({hexId}, {row}, {col}, {height}) is {reward}");
                         SetReward(reward);
                         EndEpisode();
                         return;
@@ -92,6 +92,6 @@ namespace Hive
                 }
             }
             RequestDecision();
-        }   
+        }
     }
 }

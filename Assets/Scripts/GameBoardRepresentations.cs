@@ -56,6 +56,9 @@
                     if (!maxColFound && gameBoard[i, maxCol] != 0)
                         maxColFound = true;
                 }
+
+                if (minRow > maxRow)
+                    break;
                 if (!minRowFound)
                     minRow++;
                 if (!maxRowFound)
