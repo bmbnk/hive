@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Hive
@@ -12,7 +14,9 @@ namespace Hive
         private GameState _gameState = GameState.NotStarted;
         public GameState GameState => _gameState;
 
-        private bool _isWhiteTurn = true;
+        public int[,,] GameBoard => _gameBoard.GetGameBoard3D();
+
+        private bool _isWhiteTurn = false;
         public bool IsWhiteTurn => _isWhiteTurn;
 
         private ISet<int> _whiteHexesOnBoardIds = new HashSet<int>();
@@ -200,7 +204,28 @@ namespace Hive
 
         private void MovePiece(int hexId, (int, int, int) targetPosition)
         {
-              _gameBoard.MoveElement(hexId, targetPosition);
+            _gameBoard.MoveElement(hexId, targetPosition);
+            //LogToFileAsync($"({hexId}, {targetPosition.Item1}, {targetPosition.Item2}, {targetPosition.Item3})");
+            //LogToFileAsync(ArrayToString(GameBoardRepresentations.GetOriginalGameBoardFromPaper(_gameBoard.GetGameBoard3D())));
         }
+
+        //private async Task LogToFileAsync(string text)
+        //{
+        //    using StreamWriter file = new("game.txt", append: true);
+        //    await file.WriteLineAsync(text);
+        //}
+
+        //private string ArrayToString(int[,] array)
+        //{
+        //    string arrayString = "";
+
+        //    for(int i = 0; i < array.GetLength(0); i++)
+        //    {
+        //        for (int j = 0; j < array.GetLength(1); j++)
+        //            arrayString += (array[i, j] == 0 ? "_" : array[i, j].ToString()) + " ";
+        //        arrayString += "\n";
+        //    }
+        //    return arrayString;
+        //}
     }
 }

@@ -69,20 +69,12 @@ namespace Hive
                 {(false, PieceType.GRASSHOPPER), 10}
             };
 
-        public static IPieceController GetPieceController(int hexId)
-        {
-            return _pieceTypeToControllerMapping[_hexIdToPieceTypeMapping[hexId]];
-        }
+        public static IPieceController GetPieceController(int hexId) => _pieceTypeToControllerMapping[_hexIdToPieceTypeMapping[hexId]];
+        public static int GetPieceId(int hexId) => _colorAndTypeToPieceIdMapping[(IsPieceWhite(hexId), _hexIdToPieceTypeMapping[hexId])];
 
         // there should be some check and return default value
-        public static PieceType GetPieceType(int hexId)
-        {
-            return _hexIdToPieceTypeMapping[hexId];
-        }
+        public static PieceType GetPieceType(int hexId) => _hexIdToPieceTypeMapping[hexId];
+        public static bool IsPieceWhite(int hexId) => hexId <= _whitePiecesBoundaryId;
 
-        public static bool IsPieceWhite(int hexId)
-        {
-            return hexId <= _whitePiecesBoundaryId;
-        }
     }
 }

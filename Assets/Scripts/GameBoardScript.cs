@@ -206,6 +206,25 @@ namespace Hive
 
                 _gameBoard = centeredGameBoard;
             }
+
+
+            //var gameBoardRepresentation = GameBoardRepresentations.GetFlatGameboard(GetGameBoard3D());
+            //Debug.Log(ArrayToString(gameBoardRepresentation));
+            //var trimmedGameBoardRepresentation = GameBoardRepresentations.GetFlatGameboard(GetGameBoard3D(), true);
+            //Debug.Log(ArrayToString(trimmedGameBoardRepresentation));
         }
+
+        //private string ArrayToString(int[,] array)
+        //{
+        //    string arrayString = "";
+
+        //    for (int i = 0; i < array.GetLength(0); i++)
+        //    {
+        //        for (int j = 0; j < array.GetLength(1); j++)
+        //            arrayString += (array[i, j] == 0 ? "_" : array[i, j].ToString()) + " ";
+        //        arrayString += "\n";
+        //    }
+        //    return arrayString;
+        //}
     }
 }

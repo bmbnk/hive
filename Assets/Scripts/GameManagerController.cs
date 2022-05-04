@@ -17,6 +17,8 @@ namespace Hive
         private IPlayer _player1;
         private IPlayer _player2;
 
+        //private bool _startedApp = false;
+
         void Start()
         {
             GameObject gameEngineGameObject = GameObject.FindWithTag("GameEngine");
@@ -40,6 +42,11 @@ namespace Hive
 
         void Update()
         {
+            //if (!_startedApp)
+            //{
+            //    StartGame(false);
+            //    _startedApp = true;
+            //}
             if (Input.GetKey("escape")
                 && (_gameEngine.GameState == GameState.InProgress
                 || _gameEngine.GameState == GameState.NotStarted))

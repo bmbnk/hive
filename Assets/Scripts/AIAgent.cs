@@ -41,65 +41,57 @@ namespace Hive
 
         public override void CollectObservations(VectorSensor sensor)
         {
-            ////    // you can only pass changes to the gameboard each time so that it
-            ////    // can be updated in python script
+            int[,] gameBoard = GameBoardRepresentations.GetFlatGameboard(_gameEngine.GameBoard);
 
-            //List<float> allPiecesIdsInHexIdOrder = _hexIdToPieceTypeMapping.Select(entry =>
-            //    (float)_colorAndTypeToPieceIdMapping[
-            //        (_isWhiteTurn ? IsPieceWhite(entry.Key) : !IsPieceWhite(entry.Key), entry.Value)
-            //        ]).ToList();
+            for (int row = 0; row < gameBoard.GetLength(0); row++)
+            {
+                var gameBoardRow = Enumerable.Range(0, gameBoard.GetLength(1))
+                    .Select(col => (float)gameBoard[row, col])
+                    .ToArray();
 
-            //sensor.AddObservation(allPiecesIdsInHexIdOrder);
-
-            //foreach (var hexId in _hexIdToPieceTypeMapping.Keys)
-            //{
-            //    var hexPosition = _gameBoard.GetPositionByHexId(hexId);
-            //    sensor.AddObservation(new Vector3(hexPosition.Item1, hexPosition.Item2, hexPosition.Item3));
-            //}
-
-            //var availableMoves = GetAddingMovesForPlayer(_isWhiteTurn);
-
-            //foreach (var movingMove in GetMovingMovesForPlayer(_isWhiteTurn))
-            //{
-            //    availableMoves[movingMove.Key] = movingMove.Value;
-            //}
-
-            //for (int hexId = 1; hexId <= WhitePiecesBoundaryId; hexId++)
-            //{
-            //    var movesForHexId = availableMoves.Where(move => move.Key == (_isWhiteTurn ? hexId : hexId + WhitePiecesBoundaryId));
-            //    if (movesForHexId.Count() > 0)
-            //    {
-            //        //var 
-            //        //sensor.AddObservation(new Vector)
-            //    }
-            //}
+                sensor.AddObservation(gameBoardRow);
+            }
         }
 
         public override void OnActionReceived(ActionBuffers actionBuffers)
         {
-            int hexId = actionBuffers.DiscreteActions[0];
-
-            if (!_gameEngine.IsWhiteTurn)
-                hexId += HexIdToPiecePropertyMapper.WhitePiecesBoundaryId;
-
-            int row = actionBuffers.DiscreteActions[1];
-            int col = actionBuffers.DiscreteActions[1];
-            int height = actionBuffers.DiscreteActions[1];
-
-            if (_gameEngine.MakeMove(hexId, (row, col, height)))
+            if (actionBuffers.DiscreteActions[0] != 0)
             {
-                if (_gameEngine.GameState == GameState.WhiteWon || _gameEngine.GameState == GameState.BlackWon)
+                //Debug.Log("#####");
+                //Debug.Log(actionBuffers.DiscreteActions[0]);
+                //Debug.Log(actionBuffers.DiscreteActions[1]);
+                //Debug.Log(actionBuffers.DiscreteActions[2]);
+                //Debug.Log(actionBuffers.DiscreteActions[3]);
+                //Debug.Log("#####");
+                int hexId = actionBuffers.DiscreteActions[0];
+
+                if (!_gameEngine.IsWhiteTurn)
+                    hexId += HexIdToPiecePropertyMapper.WhitePiecesBoundaryId;
+
+                int row = actionBuffers.DiscreteActions[1];
+                int col = actionBuffers.DiscreteActions[2];
+                int height = actionBuffers.DiscreteActions[3];
+
+                if (_gameEngine.MakeMove(hexId, (row, col, height)))
                 {
-                    SetReward((!_gameEngine.IsWhiteTurn && _gameEngine.GameState == GameState.WhiteWon)
-                        || (_gameEngine.IsWhiteTurn && _gameEngine.GameState == GameState.BlackWon) ? 1 : -1);
-                    EndEpisode();
-                }
-                else if (_gameEngine.GameState == GameState.Draw)
-                {
-                    EndEpisode();
+                    if (_gameEngine.GameState == GameState.WhiteWon || _gameEngine.GameState == GameState.BlackWon)
+                    {
+                        float reward = (!_gameEngine.IsWhiteTurn && _gameEngine.GameState == GameState.WhiteWon)
+                            || (_gameEngine.IsWhiteTurn && _gameEngine.GameState == GameState.BlackWon) ? 1 : -1;
+                        Debug.Log($"Reward for move ({hexId}, {row}, {col}, {height}) is {reward}");
+                        SetReward(reward);
+                        EndEpisode();
+                        return;
+                    }
+                    else if (_gameEngine.GameState == GameState.Draw)
+                    {
+                        SetReward(0);
+                        EndEpisode();
+                        return;
+                    }
                 }
             }
             RequestDecision();
-        }
+        }   
     }
 }
